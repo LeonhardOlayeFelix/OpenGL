@@ -38,6 +38,12 @@ void VertexArray::RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLay
 	}
 }
 
+void VertexArray::RecordIndexBuffer(const IndexBuffer& ibo)
+{
+	ibo.Bind();
+	m_IndexBuffer = &ibo;
+}
+
 
 
 

@@ -136,26 +136,15 @@ int main(void)
             2, 3, 0
         };
 
-
-
-    
-        unsigned int vao; 
-    
-        GLCall(glGenVertexArrays(1, &vao));
-        GLCall(glBindVertexArray(vao));
-
-        VertexArray va;
-
+        VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
         VertexBufferLayout layout;
         layout.Push<float>(2);
 
+        IndexBuffer ibo(indicies, 2 * 3);
 
-        VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
-
+        VertexArray va;
         va.RecordVBOLayout(vbo, layout);
     
-
-        IndexBuffer ibo(indicies, 2 * 3);
 
         ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
 
@@ -166,11 +155,6 @@ int main(void)
         int location = glGetUniformLocation(shader, "u_Color");
         ASSERT(location != -1);
         GLCall(glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f));
-
-        GLCall(glBindVertexArray(0));
-        GLCall(glUseProgram(0));
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 
         float r = 0.0f;
@@ -185,8 +169,8 @@ int main(void)
             GLCall(glUseProgram(shader));
             GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 
-            GLCall(glBindVertexArray(vao));
             va.Bind();
+            va.RecordIndexBuffer(ibo);
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
             if (r > 1.0f)
