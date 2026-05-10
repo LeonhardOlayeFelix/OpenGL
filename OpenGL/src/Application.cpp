@@ -136,19 +136,17 @@ int main(void)
 
 
     
-    unsigned int vbo, ibo, vao; 
+    unsigned int vao; 
     
     GLCall(glGenVertexArrays(1, &vao));
     GLCall(glBindVertexArray(vao));
 
-    VertexBuffer vboBuffer(positions, 4 * 2 * sizeof(float));
+    VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
 
     GLCall(glEnableVertexAttribArray(0)); //Enables the vertex attrib array
     GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * sizeof(float), 0));
     
-    GLCall(glGenBuffers(1, &ibo));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 2 * sizeof(unsigned int), indicies, GL_STATIC_DRAW));
+    IndexBuffer ibo(indicies, 2 * 3);
 
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
 
