@@ -1,7 +1,7 @@
 #pragma once
+#include "ErrorHandling.h"
 #include <vector>
 #include <GL/glew.h>
-#include "Renderer.h"
 
 struct VertexAttribute {
 	unsigned int type;
@@ -22,7 +22,7 @@ struct VertexAttribute {
 class VertexBufferLayout
 {
 private:
-	std::vector<VertexAttribute> m_Elements;
+	std::vector<VertexAttribute> m_Attributes;
 	unsigned int m_Stride;
 
 public:
@@ -35,22 +35,22 @@ public:
 
 	template<>
 	void Push<float>(unsigned int count) {
-		m_Elements.push_back({ GL_FLOAT, count, GL_FALSE });
+		m_Attributes.push_back({ GL_FLOAT, count, GL_FALSE });
 		m_Stride += count * VertexAttribute::GetSizeOfType(GL_FLOAT);
 	}
 
 	template<> 
 	void Push<unsigned int>(unsigned int count) {
-		m_Elements.push_back({ GL_UNSIGNED_INT, count, GL_FALSE });
+		m_Attributes.push_back({ GL_UNSIGNED_INT, count, GL_FALSE });
 		m_Stride += count * VertexAttribute::GetSizeOfType(GL_UNSIGNED_INT);
 	}
 	template<>
 	void Push<unsigned char>(unsigned int count) {
-		m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
+		m_Attributes.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
 		m_Stride += count * VertexAttribute::GetSizeOfType(GL_UNSIGNED_BYTE);
 	}
 
-	inline const std::vector<VertexAttribute>& GetElements() const { return m_Elements; }
+	inline const std::vector<VertexAttribute>& GetAttributes() const { return m_Attributes; }
 	inline unsigned int GetStride() const { return m_Stride; }
 };
 

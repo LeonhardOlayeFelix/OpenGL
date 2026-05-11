@@ -1,16 +1,12 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <malloc.h>
-#include <fstream>
-#include <string>
-#include <sstream>
 
-#include "Renderer.h"
 #include "ShaderProgram.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
+#include "Renderer.h"
 
 int main(void)
 {
@@ -61,25 +57,25 @@ int main(void)
         va.RecordVBOLayout(vbo, layout);
 
         ShaderProgram shaderProgram("res/shaders/Basic.shader");
+
         shaderProgram.Bind();
         shaderProgram.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+        va.RecordIndexBuffer(ibo);
+
+        Renderer renderer;
 
         float r = 0.0f;
         float increment = 0.05f;
         while (!glfwWindowShouldClose(window))
         {
         
-            glClear(GL_COLOR_BUFFER_BIT);
-
-
-            va.Bind();
-            va.RecordIndexBuffer(ibo);
-            shaderProgram.Bind();
+            renderer.Clear();
+            
             shaderProgram.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+            renderer.Draw(va, shaderProgram);
 
-            if (r > 1.0f)
+             if (r > 1.0f)
                 increment = -0.05f;
             else if (r < 0.0f)
                 increment = 0.05f;

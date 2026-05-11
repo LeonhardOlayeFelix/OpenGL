@@ -1,9 +1,9 @@
-#include "ShaderProgram.h"
 #include <GL/glew.h>
 #include <fstream>
 #include <sstream>
-#include "Renderer.h"
 #include <iostream>
+#include "ShaderProgram.h"
+#include "ErrorHandling.h"
 
 
 ShaderProgram::ShaderProgram(const std::string& filepath) : m_FilePath(filepath), m_RendererID(0) {
@@ -108,10 +108,14 @@ void ShaderProgram::SetUniform4f(const std::string& name, float v0, float v1, fl
 
 int ShaderProgram::GetUniformLocation(const std::string& name)
 {
+    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+        return m_UniformLocationCache[name];
+
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     if (location == -1)
         std::cout << "Warning: Uniform '" << name << "' doesn't exist!" << std::endl;
 
+    m_UniformLocationCache[name] = location;
     return location;
 }
 

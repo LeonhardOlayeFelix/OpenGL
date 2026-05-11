@@ -14,6 +14,7 @@ public:
 
 	void RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLayout& vbl);
 	void RecordIndexBuffer(const IndexBuffer& ibo);
+	unsigned int GetIndexBufferCount() const;
 	void Bind() const;
 	void Unbind() const;
 };

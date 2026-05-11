@@ -1,6 +1,5 @@
 #include "VertexArray.h"
-#include "Renderer.h"
-#include "VertexBuffer.h"
+#include "ErrorHandling.h"
 
 VertexArray::VertexArray() : m_IndexBuffer(nullptr)
 {
@@ -22,7 +21,7 @@ void VertexArray::RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLay
 	Bind();
 	vbo.Bind(); 
 
-	const std::vector<VertexAttribute>& elements = vbl.GetElements();
+	const std::vector<VertexAttribute>& elements = vbl.GetAttributes();
 
 	unsigned int offset = 0;
 
@@ -40,8 +39,14 @@ void VertexArray::RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLay
 
 void VertexArray::RecordIndexBuffer(const IndexBuffer& ibo)
 {
+	Bind();
 	ibo.Bind();
 	m_IndexBuffer = &ibo;
+}
+
+unsigned int VertexArray::GetIndexBufferCount() const
+{
+	return m_IndexBuffer->GetCount();
 }
 
 
