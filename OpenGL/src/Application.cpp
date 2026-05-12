@@ -41,10 +41,10 @@ int main(void)
 
 
         float positions[] = {
-           -0.5f,  -0.5f, 0.0f, 0.0f,
-            0.5f,  -0.5f, 1.0f, 0.0f,
-            0.5f,   0.5f, 1.0f, 1.0f,
-           -0.5f,   0.5f, 0.0f, 1.0f
+           -0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            0.5f,  -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+            0.5f,   0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+           -0.5f,   0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
         };
 
         unsigned int indicies[] = {
@@ -52,11 +52,11 @@ int main(void)
             2, 3, 0
         };
 
-        VertexBuffer vbo(positions, 4 * 4 * sizeof(float));
+        VertexBuffer vbo(positions, 4 * 8 * sizeof(float));
         VertexBufferLayout layout;
         layout.Push<float>(2);
         layout.Push<float>(2);
-
+        layout.Push<float>(4);
         VertexArray va;
         va.RecordVBOLayout(vbo, layout);
 
