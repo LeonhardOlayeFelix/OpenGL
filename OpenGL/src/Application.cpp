@@ -7,10 +7,13 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Renderer.h"
+#include "Texture.h"
 
 int main(void)
 {
     GLFWwindow* window;
+    Renderer renderer;
+
 
     if (!glfwInit())
         return -1;
@@ -35,11 +38,13 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
+
+
         float positions[] = {
-           -0.5f,  -0.5f,
-            0.5f,  -0.5f,
-            0.5f,   0.5f,
-           -0.5f,   0.5f,
+           -0.5f,  -0.5f, 0.0f, 0.0f,
+            0.5f,  -0.5f, 1.0f, 0.0f,
+            0.5f,   0.5f, 1.0f, 1.0f,
+           -0.5f,   0.5f, 0.0f, 1.0f
         };
 
         unsigned int indicies[] = {
@@ -47,41 +52,30 @@ int main(void)
             2, 3, 0
         };
 
-        VertexBuffer vbo(positions, 4 * 2 * sizeof(float));
+        VertexBuffer vbo(positions, 4 * 4 * sizeof(float));
         VertexBufferLayout layout;
         layout.Push<float>(2);
-
-        IndexBuffer ibo(indicies, 2 * 3);
+        layout.Push<float>(2);
 
         VertexArray va;
         va.RecordVBOLayout(vbo, layout);
 
-        ShaderProgram shaderProgram("res/shaders/Basic.shader");
-
-        shaderProgram.Bind();
-        shaderProgram.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+        IndexBuffer ibo(indicies, 2 * 3);
         va.RecordIndexBuffer(ibo);
 
-        Renderer renderer;
+        ShaderProgram shaderProgram("res/shaders/Basic.shader");
+        shaderProgram.Bind();
 
-        float r = 0.0f;
-        float increment = 0.05f;
+        Texture texture("res/textures/cover.png");
+        texture.Bind();
+
         while (!glfwWindowShouldClose(window))
         {
         
             renderer.Clear();
-            
-            shaderProgram.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+            shaderProgram.SetUniform1i("u_Texture", 0);
 
             renderer.Draw(va, shaderProgram);
-
-             if (r > 1.0f)
-                increment = -0.05f;
-            else if (r < 0.0f)
-                increment = 0.05f;
-
-            r += increment;
-
 
             glfwSwapBuffers(window);
             glfwPollEvents();
