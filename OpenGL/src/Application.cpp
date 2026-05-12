@@ -12,7 +12,6 @@
 int main(void)
 {
     GLFWwindow* window;
-    Renderer renderer;
 
 
     if (!glfwInit())
@@ -38,7 +37,7 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
-
+        Renderer renderer;
 
         float positions[] = {
            -0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,

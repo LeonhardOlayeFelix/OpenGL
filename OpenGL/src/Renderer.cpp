@@ -2,6 +2,12 @@
 #include "ErrorHandling.h"
 #include <GL/glew.h>
 
+Renderer::Renderer()
+{
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	GLCall(glEnable(GL_BLEND));
+}
+
 void Renderer::Draw(const VertexArray& vao, const ShaderProgram& shader) const
 {
 	shader.Bind();
