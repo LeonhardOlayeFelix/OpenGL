@@ -9,6 +9,10 @@
 #include "Renderer.h"
 #include "Texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "Application.h"
+
 int main(void)
 {
     GLFWwindow* window;
@@ -21,7 +25,7 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -40,10 +44,10 @@ int main(void)
         Renderer renderer;
 
         float positions[] = {
-           -0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-            0.5f,  -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-            0.5f,   0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-           -0.5f,   0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            100.0f,  100.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            200.0f,  100.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+            200.0f,   200.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+            100.0f,   200.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
         };
 
         unsigned int indicies[] = {
@@ -68,11 +72,18 @@ int main(void)
         Texture texture("res/textures/cover.png");
         texture.Bind();
 
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f); //mapseach vertex from pixel space to NDC space so it can be shown on screen
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0)); //Transforms each vertex in the world by this matrix to simulate camera/view
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0)); //Transforms each vertex to its position in the world
+
         while (!glfwWindowShouldClose(window))
         {
-        
+            view = glm::translate(view, glm::vec3(10, 0, 0));
+            glm::mat4 mvp = proj * view * model;
+
             renderer.Clear();
             shaderProgram.SetUniform1i("u_Texture", 0);
+            shaderProgram.SetUniformMat4f("u_MVP", mvp);
 
             renderer.Draw(va, shaderProgram);
 
