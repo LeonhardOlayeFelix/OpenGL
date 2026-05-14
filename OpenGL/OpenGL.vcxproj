@@ -152,6 +152,8 @@
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\test\Test.cpp" />
+    <ClCompile Include="src\test\TestClearColor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
@@ -463,6 +465,8 @@
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBufferLayout.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\test\Test.h" />
+    <ClInclude Include="src\test\TestClearColor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\vendor\glm\detail\func_common.inl" />

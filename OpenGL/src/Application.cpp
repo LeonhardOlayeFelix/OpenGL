@@ -55,10 +55,10 @@ int main(void)
         Renderer renderer;
 
         float positions[] = {
-            0.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-            200.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-            200.0f,   200.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-            0.0f,   200.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            -50.0f,  -50.0f, 0.0f, 0.0f,
+             50.0f,  -50.0f, 1.0f, 0.0f,
+             50.0f,   50.0f, 1.0f, 1.0f,
+            -50.0f,   50.0f, 0.0f, 1.0f,
         };
 
         unsigned int indicies[] = {
@@ -70,7 +70,6 @@ int main(void)
         VertexBufferLayout layout;
         layout.Push<float>(2);
         layout.Push<float>(2);
-        layout.Push<float>(4);
         VertexArray va;
         va.RecordVBOLayout(vbo, layout);
 
@@ -79,6 +78,7 @@ int main(void)
 
         ShaderProgram shaderProgram("res/shaders/Basic.shader");
         shaderProgram.Bind();
+        shaderProgram.SetUniform1i("u_Texture", 0);
 
         Texture texture("res/textures/cover.png");
         texture.Bind();
@@ -86,7 +86,8 @@ int main(void)
         glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1000.0f, 1000.0f); //mapseach vertex from pixel space to NDC space so it can be shown on screen
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)); //Transforms each vertex in the world by this matrix to simulate camera/view
 
-        glm::vec3 translation(0, 0, 0);
+        glm::vec3 translationA(400, 0, 0);
+        glm::vec3 translationB(0, 0, 0);
 
 
         while (!glfwWindowShouldClose(window))
@@ -95,19 +96,31 @@ int main(void)
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            ImGui::Begin("Settings");
-            ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            {
+                ImGui::Begin("Settings");
+                ImGui::SliderFloat3("Translation A", &translationA.x, 0.0f, 960.0f);
+                ImGui::SliderFloat3("Translation B", &translationB.x, 0.0f, 960.0f);
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            }
+
             ImGui::End();
-
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-            glm::mat4 mvp = proj * view * model;
-
             renderer.Clear();
-            shaderProgram.SetUniform1i("u_Texture", 0);
-            shaderProgram.SetUniformMat4f("u_MVP", mvp);
 
-            renderer.Draw(va, shaderProgram);
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+                glm::mat4 mvp = proj * view * model;
+                shaderProgram.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, shaderProgram);
+            }
+            
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
+                glm::mat4 mvp = proj * view * model;
+                shaderProgram.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, shaderProgram);
+            }
+            
+            
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
