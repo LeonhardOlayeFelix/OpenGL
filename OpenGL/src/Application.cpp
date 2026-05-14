@@ -55,10 +55,10 @@ int main(void)
         Renderer renderer;
 
         float positions[] = {
-            100.0f,  100.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-            200.0f,  100.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+            0.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            200.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
             200.0f,   200.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-            100.0f,   200.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            0.0f,   200.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
         };
 
         unsigned int indicies[] = {
@@ -83,18 +83,24 @@ int main(void)
         Texture texture("res/textures/cover.png");
         texture.Bind();
 
-        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f); //mapseach vertex from pixel space to NDC space so it can be shown on screen
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0)); //Transforms each vertex in the world by this matrix to simulate camera/view
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0)); //Transforms each vertex to its position in the world
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1000.0f, 1000.0f); //mapseach vertex from pixel space to NDC space so it can be shown on screen
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)); //Transforms each vertex in the world by this matrix to simulate camera/view
+
+        glm::vec3 translation(0, 0, 0);
+
 
         while (!glfwWindowShouldClose(window))
         {
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
-            ImGui::ShowDemoWindow();
 
-            view = glm::translate(view, glm::vec3(10, 0, 0));
+            ImGui::Begin("Settings");
+            ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
             glm::mat4 mvp = proj * view * model;
 
             renderer.Clear();
@@ -108,7 +114,7 @@ int main(void)
 
             glfwSwapBuffers(window);
             glfwPollEvents();
-
+             
 
         }
 
