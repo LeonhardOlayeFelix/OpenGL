@@ -12,12 +12,13 @@
 #include "vendor/glm/glm.hpp"
 #include "vendor/glm/gtc/matrix_transform.hpp"
 #include "Application.h"
+#include "vendor/imgui/imgui.h"
+#include "vendor/imgui/imgui_impl_glfw.h"
+#include "vendor/imgui/imgui_impl_opengl3.h"
 
 int main(void)
 {
     GLFWwindow* window;
-
-
     if (!glfwInit())
         return -1;
 
@@ -38,6 +39,16 @@ int main(void)
 
     if (glewInit() != GLEW_OK)
         std::cout << "Error!" << std::endl;
+
+    IMGUI_CHECKVERSION();
+
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;    
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;     
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
@@ -78,6 +89,11 @@ int main(void)
 
         while (!glfwWindowShouldClose(window))
         {
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+            ImGui::ShowDemoWindow();
+
             view = glm::translate(view, glm::vec3(10, 0, 0));
             glm::mat4 mvp = proj * view * model;
 
@@ -87,12 +103,19 @@ int main(void)
 
             renderer.Draw(va, shaderProgram);
 
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
             glfwSwapBuffers(window);
             glfwPollEvents();
+
+
         }
 
     }
-
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
     return 0;
 }
