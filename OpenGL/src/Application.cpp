@@ -15,16 +15,15 @@
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
+#include "scene/SceneClearColor.h"
+#include "scene/SceneMenu.h"
+#include "ErrorHandling.h"
 
 int main(void)
 {
     GLFWwindow* window;
     if (!glfwInit())
         return -1;
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
     if (!window)
@@ -40,98 +39,58 @@ int main(void)
     if (glewInit() != GLEW_OK)
         std::cout << "Error!" << std::endl;
 
+    Renderer renderer;
+
     IMGUI_CHECKVERSION();
 
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;    
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;     
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
 
-
-    std::cout << glGetString(GL_VERSION) << std::endl;
     {
-        Renderer renderer;
+        scene::Scene* currentScene = nullptr;
 
-        float positions[] = {
-            -50.0f,  -50.0f, 0.0f, 0.0f,
-             50.0f,  -50.0f, 1.0f, 0.0f,
-             50.0f,   50.0f, 1.0f, 1.0f,
-            -50.0f,   50.0f, 0.0f, 1.0f,
-        };
+        scene::SceneMenu* sceneMenu = new scene::SceneMenu(currentScene);
+        currentScene = sceneMenu;
 
-        unsigned int indicies[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
-
-        VertexBuffer vbo(positions, 4 * 8 * sizeof(float));
-        VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
-        VertexArray va;
-        va.RecordVBOLayout(vbo, layout);
-
-        IndexBuffer ibo(indicies, 2 * 3);
-        va.RecordIndexBuffer(ibo);
-
-        ShaderProgram shaderProgram("res/shaders/Basic.shader");
-        shaderProgram.Bind();
-        shaderProgram.SetUniform1i("u_Texture", 0);
-
-        Texture texture("res/textures/cover.png");
-        texture.Bind();
-
-        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1000.0f, 1000.0f); //mapseach vertex from pixel space to NDC space so it can be shown on screen
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)); //Transforms each vertex in the world by this matrix to simulate camera/view
-
-        glm::vec3 translationA(400, 0, 0);
-        glm::vec3 translationB(0, 0, 0);
-
+        sceneMenu->RegisterScene<scene::SceneClearColor>("Colour");
 
         while (!glfwWindowShouldClose(window))
         {
+            GLCall(glClearColor(0.12f, 0.12f, 0.12f, 1.0f));
+            renderer.Clear();
+
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            {
-                ImGui::Begin("Settings");
-                ImGui::SliderFloat3("Translation A", &translationA.x, 0.0f, 960.0f);
-                ImGui::SliderFloat3("Translation B", &translationB.x, 0.0f, 960.0f);
-                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            }
+            if (currentScene) {
+                currentScene->OnUpdate(0.0f);
+                currentScene->OnRender();
 
-            ImGui::End();
-            renderer.Clear();
+                ImGui::Begin(currentScene->GetName());
+                if (currentScene != sceneMenu ) {
 
-            {
-                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
-                glm::mat4 mvp = proj * view * model;
-                shaderProgram.SetUniformMat4f("u_MVP", mvp);
-                renderer.Draw(va, shaderProgram);
+                    if (ImGui::Button("Back to Scene Menu")) {
+                        delete currentScene;
+                        currentScene = sceneMenu;
+                    }
+
+                }
+                currentScene->OnImGuiRender();
+                ImGui::End();
             }
-            
-            {
-                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
-                glm::mat4 mvp = proj * view * model;
-                shaderProgram.SetUniformMat4f("u_MVP", mvp);
-                renderer.Draw(va, shaderProgram);
-            }
-            
-            
 
             ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             glfwSwapBuffers(window);
             glfwPollEvents();
-             
-
         }
-
+        delete currentScene;
+        if (currentScene != sceneMenu) delete sceneMenu;
     }
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
