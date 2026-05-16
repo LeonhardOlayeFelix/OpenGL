@@ -133,8 +133,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\scene\SceneMenu.cpp" />
+    <ClCompile Include="src\scene\MenuScene.cpp" />
     <ClCompile Include="src\ErrorHandling.cpp" />
+    <ClCompile Include="src\scene\Texture2DScene.cpp" />
     <ClCompile Include="src\ShaderProgram.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
@@ -154,12 +155,13 @@
     <ClCompile Include="src\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\scene\Scene.cpp" />
-    <ClCompile Include="src\scene\SceneClearColor.cpp" />
+    <ClCompile Include="src\scene\ClearColourScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\scene\SceneMenu.h" />
+    <ClInclude Include="src\scene\MenuScene.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\ErrorHandling.h" />
+    <ClInclude Include="src\scene\Texture2DScene.h" />
     <ClInclude Include="src\ShaderProgram.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Renderer.h" />
@@ -468,7 +470,7 @@
     <ClInclude Include="src\VertexBufferLayout.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\scene\Scene.h" />
-    <ClInclude Include="src\scene\SceneClearColor.h" />
+    <ClInclude Include="src\scene\ClearColourScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\vendor\glm\detail\func_common.inl" />

@@ -2,11 +2,12 @@
 #include "Scene.h"
 
 namespace scene {
-	class SceneClearColor : public Scene
+	class ClearColourScene : public Scene
 	{
 	public:
-		SceneClearColor();
-		~SceneClearColor();
+		ClearColourScene();
+		ClearColourScene(const char* name);
+		~ClearColourScene();
 
 		void OnUpdate(float deltaTime) override;
 		void OnRender() override;

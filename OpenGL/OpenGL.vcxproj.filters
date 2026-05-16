@@ -75,10 +75,13 @@
     <ClCompile Include="src\scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\SceneClearColor.cpp">
+    <ClCompile Include="src\scene\ClearColourScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\SceneMenu.cpp">
+    <ClCompile Include="src\scene\MenuScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\Texture2DScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1013,10 +1016,13 @@
     <ClInclude Include="src\scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\SceneClearColor.h">
+    <ClInclude Include="src\scene\ClearColourScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\SceneMenu.h">
+    <ClInclude Include="src\scene\MenuScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene\Texture2DScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

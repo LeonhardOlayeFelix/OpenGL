@@ -15,8 +15,9 @@
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
-#include "scene/SceneClearColor.h"
-#include "scene/SceneMenu.h"
+#include "scene/ClearColourScene.h"
+#include "scene/Texture2DScene.h"
+#include "scene/MenuScene.h"
 #include "ErrorHandling.h"
 
 int main(void)
@@ -50,10 +51,11 @@ int main(void)
     {
         scene::Scene* currentScene = nullptr;
 
-        scene::SceneMenu* sceneMenu = new scene::SceneMenu(currentScene);
+        scene::MenuScene* sceneMenu = new scene::MenuScene(currentScene);
         currentScene = sceneMenu;
 
-        sceneMenu->RegisterScene<scene::SceneClearColor>("Colour");
+        sceneMenu->RegisterScene<scene::ClearColourScene>("Colour");
+        sceneMenu->RegisterScene<scene::Texture2DScene>("TEXTURES");
 
         while (!glfwWindowShouldClose(window))
         {

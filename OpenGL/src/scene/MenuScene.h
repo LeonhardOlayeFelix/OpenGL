@@ -5,11 +5,11 @@
 #include <functional>
 
 namespace scene {
-	class SceneMenu : public Scene
+	class MenuScene : public Scene
 	{
 	public:
-		SceneMenu(Scene*& currentScene);
-		~SceneMenu();
+		MenuScene(Scene*& currentScene);
+		~MenuScene();
 
 		void OnUpdate(float deltaTime) override;
 		void OnRender() override;
@@ -20,7 +20,7 @@ namespace scene {
 		template<typename T>
 		void RegisterScene(const char* name) 
 		{
-			std::function<Scene* ()> f = []() {return new T(); };
+           std::function<Scene* ()> f = [name]() { return new T(name); };
 			m_Scenes.push_back({ name, f });
 		}
 
