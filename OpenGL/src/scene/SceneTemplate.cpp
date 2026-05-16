@@ -7,7 +7,7 @@
 
 namespace scene {
 
-    SampleScene::SampleScene() : Scene("Sample Scene")
+    SampleScene::SampleScene()
     {
 
     }

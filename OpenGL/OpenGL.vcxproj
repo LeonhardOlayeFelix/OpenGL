@@ -158,6 +158,7 @@
     <ClCompile Include="src\scene\ClearColourScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\scene\MenuScene.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\ErrorHandling.h" />

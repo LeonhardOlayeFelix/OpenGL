@@ -6,8 +6,7 @@ namespace scene {
 	{
 	public:
 		ClearColourScene();
-		ClearColourScene(const char* name);
-		~ClearColourScene();
+		~ClearColourScene() override;
 
 		void OnUpdate(float deltaTime) override;
 		void OnRender() override;

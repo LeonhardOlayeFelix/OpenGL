@@ -7,11 +7,7 @@
 
 namespace scene {
 
-    ClearColourScene::ClearColourScene() : Scene("Colour"), m_ClearColor{0.2f, 0.3f, 0.8f, 1.0f}
-    {
-
-    }
-    ClearColourScene::ClearColourScene(const char* name) : Scene(name), m_ClearColor{0.2f, 0.3f, 0.8f, 1.0f}
+    ClearColourScene::ClearColourScene() : m_ClearColor{0.0f, 0.0f, 0.0f, 1.0f}
     {
 
     }

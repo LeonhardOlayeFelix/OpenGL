@@ -2,23 +2,15 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "ShaderProgram.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Renderer.h"
-#include "Texture.h"
-
-#include "vendor/glm/glm.hpp"
-#include "vendor/glm/gtc/matrix_transform.hpp"
-#include "Application.h"
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
+
+#include "Application.h"
+#include "Renderer.h"
+#include "scene/MenuScene.h"
 #include "scene/ClearColourScene.h"
 #include "scene/Texture2DScene.h"
-#include "scene/MenuScene.h"
-#include "ErrorHandling.h"
 
 int main(void)
 {
@@ -59,7 +51,6 @@ int main(void)
 
         while (!glfwWindowShouldClose(window))
         {
-            GLCall(glClearColor(0.12f, 0.12f, 0.12f, 1.0f));
             renderer.Clear();
 
             ImGui_ImplOpenGL3_NewFrame();
@@ -70,7 +61,7 @@ int main(void)
                 currentScene->OnUpdate(0.0f);
                 currentScene->OnRender();
 
-                ImGui::Begin(currentScene->GetName());
+                ImGui::Begin("Application");
                 if (currentScene != sceneMenu ) {
 
                     if (ImGui::Button("Back to Scene Menu")) {

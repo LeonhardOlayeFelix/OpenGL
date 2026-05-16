@@ -20,7 +20,7 @@ namespace scene {
 		template<typename T>
 		void RegisterScene(const char* name) 
 		{
-           std::function<Scene* ()> f = [name]() { return new T(name); };
+           std::function<Scene* ()> f = []() { return new T(); };
 			m_Scenes.push_back({ name, f });
 		}
 

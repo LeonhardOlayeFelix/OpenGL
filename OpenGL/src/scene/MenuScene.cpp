@@ -1,7 +1,7 @@
 #include "MenuScene.h"
 #include "imgui.h"
 
-scene::MenuScene::MenuScene(Scene*& currentScene) : Scene("Scene Menu"), m_CurrentScene(currentScene)
+scene::MenuScene::MenuScene(Scene*& currentScene) : m_CurrentScene(currentScene)
 {
 }
 
