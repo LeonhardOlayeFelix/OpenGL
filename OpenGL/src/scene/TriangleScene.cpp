@@ -1,11 +1,12 @@
 #include "TriangleScene.h"
+#include <GLFW/glfw3.h>
 
 scene::TriangleScene::TriangleScene()
 {
 	float positions[] = {
-		-0.5f, -0.5f, 0.0f, 1.0f, 0.00f, 0.00f, 1.0f,
-		 0.5f, -0.5f, 0.0f, 0.00f, 1.0f, 0.00f, 1.0f,
-		 0.0f,  0.5f, 0.0f, 0.00f, 0.00f, 1.0f, 1.0f
+		-0.25f, -0.25f, 0.0f, 1.0f, 0.00f, 0.00f, 1.0f,
+		 0.25f, -0.25f, 0.0f, 0.00f, 1.0f, 0.00f, 1.0f,
+		 0.0f,  0.25f, 0.0f, 0.00f, 0.00f, 1.0f, 1.0f
 	};
 
 	unsigned int indicies[] = {
@@ -28,6 +29,7 @@ scene::TriangleScene::TriangleScene()
 	m_VAO->RecordIndexBuffer(*m_IBO);
 
 	m_Shader = std::make_unique<ShaderProgram>("res/shaders/TriangleSceneShader.shader");
+	m_Shader->Bind();
 }
 
 scene::TriangleScene::~TriangleScene()
@@ -41,6 +43,10 @@ void scene::TriangleScene::OnUpdate(float deltaTime)
 void scene::TriangleScene::OnRender()
 {
 	Renderer renderer;
+
+	m_Shader->SetUniform1f("u_Opacity", (sin(4 * glfwGetTime() / 2) / 2.0f) + 0.5f);
+	m_Shader->SetUniform1f("u_XOffset", sin(glfwGetTime()) / 2);
+	m_Shader->SetUniform1f("u_YOffset", cos(glfwGetTime()) / 2);
 
 	renderer.Draw(*m_VAO, *m_Shader);
 
