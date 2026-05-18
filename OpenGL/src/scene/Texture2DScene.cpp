@@ -3,7 +3,7 @@
 #include "imgui.h"
 #include "Texture2DScene.h"
 #include "ErrorHandling.h"
-#include "../Common.h"
+#include "Common.h"
 
 namespace scene {
 

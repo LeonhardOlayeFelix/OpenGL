@@ -64,30 +64,33 @@ unsigned int ShaderProgram::CreateShaderProgram(const std::string& vertexShader,
 }
 
 unsigned int ShaderProgram::CompileShader(unsigned int type, const std::string& source) {
-    unsigned int id = glCreateShader(type);
-    const char* src = source.c_str();
-    glShaderSource(id, 1, &src, nullptr);
-    glCompileShader(id);
+    unsigned int shader = glCreateShader(type);
+    const char* shaderSource = source.c_str();
+
+    glShaderSource(shader, 1, &shaderSource, nullptr);
+    glCompileShader(shader);
 
     int result;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+
+
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
 
     if (result == GL_FALSE) {
         int length;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
         char* message = (char*)alloca(length * sizeof(char));
 
-        glGetShaderInfoLog(id, length, &length, message);
+        glGetShaderInfoLog(shader, length, &length, message);
 
         std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
         std::cout << message << std::endl;
 
-        glDeleteShader(id);
+        glDeleteShader(shader);
         return 0;
     }
 
 
-    return id;
+    return shader;
 }
 
 void ShaderProgram::Bind() const

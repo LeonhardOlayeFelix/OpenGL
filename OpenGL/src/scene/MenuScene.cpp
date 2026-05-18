@@ -13,8 +13,10 @@ void scene::MenuScene::OnUpdate(float deltaTime)
 {
 }
 
+
 void scene::MenuScene::OnRender()
 {
+
 }
 
 void scene::MenuScene::OnImGuiRender()
@@ -24,5 +26,13 @@ void scene::MenuScene::OnImGuiRender()
 		if (ImGui::Button(scene.first.c_str())) {
 			m_CurrentScene = scene.second();
 		}
+	}
+}
+
+void scene::MenuScene::SetScene(const char* name)
+{
+	for (auto& scene : m_Scenes) {
+		if (scene.first == name)
+			m_CurrentScene = scene.second();
 	}
 }

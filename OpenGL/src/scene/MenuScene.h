@@ -24,6 +24,8 @@ namespace scene {
 			m_Scenes.push_back({ name, f });
 		}
 
+		void SetScene(const char* name);
+
 	private:
 		Scene*& m_CurrentScene;
 		std::vector<std::pair<std::string, std::function<Scene* ()>>> m_Scenes;
