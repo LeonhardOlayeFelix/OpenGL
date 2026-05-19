@@ -37,7 +37,7 @@ void main(void)
     MenuScene->RegisterScene<scene::TriangleScene>("Triangle");
     MenuScene->RegisterScene<scene::Texture2DScene>("Textures");
 
-    MenuScene->SetScene("Triangle");
+    MenuScene->SetScene("Textures");
 
     Renderer renderer;
 

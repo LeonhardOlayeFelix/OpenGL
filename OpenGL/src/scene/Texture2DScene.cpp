@@ -1,42 +1,67 @@
-#include <GL/glew.h>
-
-#include "imgui.h"
 #include "Texture2DScene.h"
-#include "ErrorHandling.h"
-#include "Common.h"
+#include <GLFW/glfw3.h>
 
-namespace scene {
+scene::Texture2DScene::Texture2DScene()
+{
+	float vertices[] = {
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,   1.0f, 1.0f,
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,   1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.0f, 0.0f,
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,   0.0f, 1.0f
+	};
 
-    Texture2DScene::Texture2DScene() 
-    { 
-    
-    }
+	unsigned int indicies[] = {
+		0, 1, 2,
+		0, 2, 3
+	};
 
-    Texture2DScene::~Texture2DScene()
-    {
-    
-    }
+	m_VAO = std::make_unique<VertexArray>();
+	m_VAO->Bind();
 
-    void Texture2DScene::OnUpdate(float deltaTime)
-    {
-    
-    }
+	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
 
-    void Texture2DScene::OnRender()
-    {
-        GLCall(glClearColor(0.12f, 0.12f, 0.12f, 1.0f));
-        GLCall(glClear(GL_COLOR_BUFFER_BIT));
+	VertexBufferLayout layout;
+	layout.Push<float>(3);
+	layout.Push<float>(4);
+	layout.Push<float>(2);
 
+	m_VAO->RecordVBOLayout(*m_VBO, layout);
 
+	m_IBO = std::make_unique<IndexBuffer>(indicies, sizeof(indicies)/sizeof(unsigned int));
 
+	m_VAO->RecordIndexBuffer(*m_IBO);
 
+	m_Shader = std::make_unique<ShaderProgram>("res/shaders/Texture2DSceneShader.shader");
+	m_Shader->Bind();
+	m_Shader->SetUniform1i("u_Texture", 0);
+	m_Shader->SetUniform1i("u_Texture2", 1);
 
-    }    
+	m_Texture = std::make_unique<Texture>("res/textures/cover.png");
+	m_Texture->Bind(0);
 
-    void Texture2DScene::OnImGuiRender()
-    {
-
-    }           
+	m_Texture2 = std::make_unique<Texture>("res/textures/container.jpg");
+	m_Texture2->Bind(1);
 
 }
 
+scene::Texture2DScene::~Texture2DScene()
+{
+}
+
+void scene::Texture2DScene::OnUpdate(float deltaTime)
+{
+}
+
+void scene::Texture2DScene::OnRender()
+{
+	Renderer renderer;
+
+	m_Shader->Bind();
+	m_Texture->Bind(0);
+	m_Texture2->Bind(1);
+	renderer.Draw(*m_VAO, *m_Shader);
+}
+
+void scene::Texture2DScene::OnImGuiRender()
+{
+}
