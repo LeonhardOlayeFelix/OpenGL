@@ -14,6 +14,7 @@
 #include "scene/MenuScene.h"
 #include "scene/Texture2DScene.h"
 #include "scene/TriangleScene.h"
+#include "scene/TransformationsScene.h"
 
 void main(void)
 {
@@ -36,8 +37,9 @@ void main(void)
 
     MenuScene->RegisterScene<scene::TriangleScene>("Triangle");
     MenuScene->RegisterScene<scene::Texture2DScene>("Textures");
+    MenuScene->RegisterScene<scene::TransformationsScene>("Transformations");
 
-    MenuScene->SetScene("Textures");
+    MenuScene->SetScene("Transformations");
 
     Renderer renderer;
 

@@ -87,6 +87,9 @@
     <ClCompile Include="src\scene\TriangleScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\scene\TransformationsScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\abstraction\Renderer.h">
@@ -1032,6 +1035,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\TriangleScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene\TransformationsScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
