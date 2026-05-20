@@ -1,13 +1,16 @@
 #include "Texture2DScene.h"
 #include <GLFW/glfw3.h>
-
+#include "vendor/imgui/imgui.h"
 scene::Texture2DScene::Texture2DScene()
 {
+	m_float = 2.0f;
+	m_float2 = 0.2f;
+
 	float vertices[] = {
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,   1.0f, 1.0f,
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,   1.0f, 0.0f,
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,   m_float, m_float,
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,   m_float, 0.0f,
 		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.0f, 0.0f,
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,   0.0f, 1.0f
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,   0.0f, m_float
 	};
 
 	unsigned int indicies[] = {
@@ -35,11 +38,12 @@ scene::Texture2DScene::Texture2DScene()
 	m_Shader->Bind();
 	m_Shader->SetUniform1i("u_Texture", 0);
 	m_Shader->SetUniform1i("u_Texture2", 1);
+	m_Shader->SetUniform1f("u_Float", m_float2);
 
-	m_Texture = std::make_unique<Texture>("res/textures/cover.png");
+	m_Texture = std::make_unique<Texture>("res/textures/container.jpg");
 	m_Texture->Bind(0);
 
-	m_Texture2 = std::make_unique<Texture>("res/textures/container.jpg");
+	m_Texture2 = std::make_unique<Texture>("res/textures/awesomeface.png");
 	m_Texture2->Bind(1);
 
 }
@@ -64,4 +68,21 @@ void scene::Texture2DScene::OnRender()
 
 void scene::Texture2DScene::OnImGuiRender()
 {
+	ImGui::Begin("Edit texture float");
+	if (ImGui::SliderFloat("Float", &m_float, 1.0f, 10.0f))
+	{
+		float vertices[] = {
+			 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,   m_float, m_float,
+			 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,   m_float, 0.0f,
+			-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.0f,    0.0f,
+			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,   0.0f,    m_float
+		};
+
+		m_VBO->Bind();
+		m_VBO->UpdateData(vertices, sizeof(vertices));
+	}
+	if (ImGui::SliderFloat("Float 2", &m_float2, 0.0f, 1.0f)) {
+		m_Shader->SetUniform1f("u_Float", m_float2);
+	}
+	ImGui::End();
 }

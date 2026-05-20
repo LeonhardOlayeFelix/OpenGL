@@ -21,6 +21,8 @@ namespace scene{
 		std::unique_ptr<ShaderProgram> m_Shader;
 		std::unique_ptr<Texture> m_Texture;
 		std::unique_ptr<Texture> m_Texture2;
+		float m_float;
+		float m_float2;
 	};
 }
 
