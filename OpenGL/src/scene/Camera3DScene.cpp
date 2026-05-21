@@ -4,7 +4,6 @@
 scene::Camera3DScene::Camera3DScene()
 {
 
-	m_CameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
 
 
 	float vertices[] = {
@@ -68,7 +67,6 @@ scene::Camera3DScene::Camera3DScene()
 	m_VAO->Bind();
 
 	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
-
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(2);
@@ -86,6 +84,7 @@ scene::Camera3DScene::Camera3DScene()
 	m_Texture2 = std::make_unique<Texture>("res/textures/awesomeface.png");
 	m_Texture2->Bind(1);
 
+	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, -3.0f), m_WorldUp, -90.0, 0.0f);
 }
 
 scene::Camera3DScene::~Camera3DScene()
@@ -101,43 +100,26 @@ void scene::Camera3DScene::OnUpdate(float deltaTime, GLFWwindow* window)
 	m_Window = window;
 	if (!m_CallbacksSet) SetCallbacks();
 
-	glm::vec3 cameraFront = GetCameraFront();
-	const float cameraSpeed = 2.5f * deltaTime;
 	if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
-		m_CameraPosition += cameraSpeed * cameraFront;
+		m_Camera->ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
-		m_CameraPosition -= cameraSpeed * cameraFront;
+		m_Camera->ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
-		m_CameraPosition -= cameraSpeed * glm::normalize(glm::cross(cameraFront, m_WorldUp));
+		m_Camera->ProcessKeyboard(CameraMovement::LEFT, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
-		m_CameraPosition += cameraSpeed * glm::normalize(glm::cross(cameraFront, m_WorldUp));
+		m_Camera->ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		m_CameraPosition += cameraSpeed * m_WorldUp;
+		m_Camera->ProcessKeyboard(CameraMovement::UP, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		m_CameraPosition -= cameraSpeed * m_WorldUp;
+		m_Camera->ProcessKeyboard(CameraMovement::DOWN, deltaTime);
 }
 
 void scene::Camera3DScene::OnRender()
-{
-
-}
-
-void scene::Camera3DScene::OnImGuiRender()
 {
 	Renderer renderer;
 	m_Shader->Bind();
 	m_Texture->Bind(0);
 	m_Texture2->Bind(1);
-
-	glm::vec3 cameraFront = GetCameraFront();
-	glm::vec3 cameraUp = GetCameraUp();
-
-	ImGui::SliderFloat("Fov", &m_Fov, 0.0f, 80.0f);
-	ImGui::SliderFloat("Yaw", &m_Yaw, -180.0f, 180.0f);
-	ImGui::SliderFloat("Pitch", &m_Pitch, -180.0f, 180.0f);
-	ImGui::SliderFloat3("Camera Position", glm::value_ptr(m_CameraPosition), -10.0f, 10.0f);
-	ImGui::SliderFloat3("Camera Up", glm::value_ptr(cameraUp), -1.0f, 1.0f);
-	ImGui::SliderFloat3("Camera Front", glm::value_ptr(cameraFront), -1.0f, 1.0f);
 
 	m_ModelTransform = glm::mat4(1.0f);
 	m_ModelTransform = glm::translate(m_ModelTransform, glm::vec3(m_TranslateX, m_TranslateY, m_TranslateZ));
@@ -145,27 +127,35 @@ void scene::Camera3DScene::OnImGuiRender()
 	m_ModelTransform = glm::scale(m_ModelTransform, glm::vec3(m_ScaleX, m_ScaleY, m_ScaleZ));
 	m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
 
-
-	m_ViewTransform = glm::lookAt(m_CameraPosition, m_CameraPosition + cameraFront, m_WorldUp);
+	m_ViewTransform = m_Camera->GetViewMatrix();
 	m_Shader->SetUniformMat4f("u_View", m_ViewTransform);
 
-
-	m_ProjTransform = glm::perspective(glm::radians(m_Fov), 800.0f / 600.0f, 0.1f, 100.0f);
+	m_ProjTransform = glm::perspective(glm::radians(m_Camera->Fov), 800.0f / 600.0f, 0.1f, 100.0f);
 	m_Shader->SetUniformMat4f("u_Proj", m_ProjTransform);
-
 
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
-	for (unsigned int i = 0; i < 10; i++){
+	for (unsigned int i = 0; i < 10; i++) {
 		m_ModelTransform = glm::mat4(1.0f);
 		m_ModelTransform = glm::translate(m_ModelTransform, m_CubePositions[i]);
 		m_ModelTransform = glm::rotate(m_ModelTransform, glm::degrees(m_Angle / 180.0f * 3.14f), glm::vec3(1.0, 1.0, -1.0));
 		m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
 		renderer.DrawArray(*m_VAO, *m_Shader);
 	}
+
 }
 
-
+void scene::Camera3DScene::OnImGuiRender()
+{
+	ImGui::BeginDisabled(true);
+	ImGui::SliderFloat("Fov", &m_Camera->Fov, 0.0f, 90.0f);
+	ImGui::SliderFloat("Yaw", &m_Camera->Yaw, -180.0f, 180.0f);
+	ImGui::SliderFloat("Pitch", &m_Camera->Pitch, -180.0f, 180.0f);
+	ImGui::SliderFloat3("Camera Position", glm::value_ptr(m_Camera->Position), -10.0f, 10.0f);
+	ImGui::SliderFloat3("Camera Up", glm::value_ptr(m_Camera->Up), -1.0f, 1.0f);
+	ImGui::SliderFloat3("Camera Front", glm::value_ptr(m_Camera->Front), -1.0f, 1.0f);
+	ImGui::EndDisabled();
+}
 
 void scene::Camera3DScene::SetCallbacks()
 {
@@ -196,24 +186,12 @@ void scene::Camera3DScene::SetCallbacks()
 		scene->m_LastMouseX = xpos;
 		scene->m_LastMouseY = ypos;
 
-		offsetX *= scene->m_MouseSensitivity;
-		offsetY *= scene->m_MouseSensitivity;
-
-		scene->m_Yaw += offsetX;
-		scene->m_Pitch += offsetY;
-
-		if (scene->m_Pitch > 89.0f)  scene->m_Pitch = 89.0f;
-		if (scene->m_Pitch < -89.0f) scene->m_Pitch = -89.0f;
+		scene->m_Camera->ProcessMouseMovement(offsetX, offsetY);
 		});
 
 	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) {
 		Camera3DScene* scene = static_cast<Camera3DScene*>(glfwGetWindowUserPointer(window));
-
-		scene->m_Fov -= (float)yOffset;
-		if (scene->m_Fov < 1.0f)
-			scene->m_Fov = 1.0f;
-		if (scene->m_Fov > 80.0f)
-			scene->m_Fov = 80.0f;
+		scene->m_Camera->ProcessMouseScroll((float)yOffset);
 		});
 
 	m_CallbacksSet = true;

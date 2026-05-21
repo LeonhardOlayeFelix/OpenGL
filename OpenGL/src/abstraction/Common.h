@@ -7,7 +7,7 @@
 #include "Texture.h"
 #include "ShaderProgram.h"
 #include "Renderer.h"
-
+#include "Camera.h"
 
 
 #include "vendor/glm/glm.hpp"
