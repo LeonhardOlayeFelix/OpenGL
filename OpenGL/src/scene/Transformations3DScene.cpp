@@ -12,6 +12,7 @@ scene::Transformations3DScene::Transformations3DScene()
 	m_ScaleX = 1.0f;
 	m_ScaleY = 1.0f;
 	m_ScaleZ = 1.0f;
+	m_Fov = 45.0f;
 
 	float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -95,11 +96,8 @@ scene::Transformations3DScene::Transformations3DScene()
 	m_ViewTransform = glm::mat4(1.0f);
 	m_ViewTransform = glm::translate(m_ViewTransform, glm::vec3(0.0f, 0.0f, -3.0f));
 
-	m_ProjTransform = glm::mat4(1.0f);
-	m_ProjTransform = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
 	m_Shader->SetUniformMat4f("u_View", m_ViewTransform);
-	m_Shader->SetUniformMat4f("u_Proj", m_ProjTransform);
 
 
 
@@ -132,12 +130,17 @@ void scene::Transformations3DScene::OnImGuiRender()
 	ImGui::SliderFloat("Scale X", &m_ScaleX, 0.0f, 2.0f);
 	ImGui::SliderFloat("Scale Y", &m_ScaleY, 0.0f, 2.0f);
 	ImGui::SliderFloat("Scale Z", &m_ScaleZ, 0.0f, 2.0f);
+	ImGui::SliderFloat("Fov", &m_Fov, 0.0f, 360.0f);
 
 	m_ModelTransform = glm::mat4(1.0f);
 	m_ModelTransform = glm::translate(m_ModelTransform, glm::vec3(m_TranslateX, m_TranslateY, m_TranslateZ));
 	m_ModelTransform = glm::rotate(m_ModelTransform, glm::degrees(m_Angle / 180.0f * 3.14f), glm::vec3(1.0, 1.0, -1.0));
 	m_ModelTransform = glm::scale(m_ModelTransform, glm::vec3(m_ScaleX, m_ScaleY, m_ScaleZ));
 	m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
+
+	m_ProjTransform = glm::perspective(glm::radians(m_Fov), 800.0f / 600.0f, 0.1f, 100.0f);
+	m_Shader->SetUniformMat4f("u_Proj", m_ProjTransform);
+
 
 	renderer.DrawArray(*m_VAO, *m_Shader);
 

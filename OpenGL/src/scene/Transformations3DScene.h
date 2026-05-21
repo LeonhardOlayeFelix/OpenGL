@@ -37,6 +37,7 @@ namespace scene {
 		float m_ScaleX;
 		float m_ScaleY;
 		float m_ScaleZ;
+		float m_Fov;
 
 	};
 }
