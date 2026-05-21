@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\scene\Transformations3DScene.cpp" />
     <ClCompile Include="src\scene\MenuScene.cpp" />
     <ClCompile Include="src\abstraction\ErrorHandling.cpp" />
     <ClCompile Include="src\scene\Texture2DScene.cpp" />
@@ -161,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\abstraction\Common.h" />
+    <ClInclude Include="src\scene\Transformations3DScene.h" />
     <ClInclude Include="src\scene\MenuScene.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\abstraction\ErrorHandling.h" />

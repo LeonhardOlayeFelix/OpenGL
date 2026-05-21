@@ -5,6 +5,7 @@
 class Renderer {
 public:
 	Renderer();
-	void Draw(const VertexArray& vao, const ShaderProgram& shader) const;
+	void DrawElements(const VertexArray& vao, const ShaderProgram& shader) const;
+	void DrawArray(const VertexArray& vao, const ShaderProgram& shader) const;
 	void Clear() const;
 };

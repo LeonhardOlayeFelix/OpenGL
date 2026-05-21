@@ -1,7 +1,7 @@
 #include "VertexArray.h"
 #include "ErrorHandling.h"
 
-VertexArray::VertexArray() : m_IndexBuffer(nullptr)
+VertexArray::VertexArray() : m_IndexBuffer(nullptr), m_VBOCount(0)
 {
 	GLCall(glGenVertexArrays(1, &m_RendererID));
 }
@@ -20,6 +20,7 @@ void VertexArray::RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLay
 {
 	Bind();
 	vbo.Bind(); 
+	m_VBOCount += vbo.GetCount();
 
 	const std::vector<VertexAttribute>& elements = vbl.GetAttributes();
 
@@ -44,10 +45,7 @@ void VertexArray::RecordIndexBuffer(const IndexBuffer& ibo)
 	m_IndexBuffer = &ibo;
 }
 
-unsigned int VertexArray::GetIndexBufferCount() const
-{
-	return m_IndexBuffer->GetCount();
-}
+
 
 
 

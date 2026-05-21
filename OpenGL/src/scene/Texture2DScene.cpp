@@ -64,12 +64,11 @@ void scene::Texture2DScene::OnRender()
 	m_Shader->Bind();
 	m_Texture->Bind(0);
 	m_Texture2->Bind(1);
-	renderer.Draw(*m_VAO, *m_Shader);
+	renderer.DrawElements(*m_VAO, *m_Shader);
 }
 
 void scene::Texture2DScene::OnImGuiRender()
 {
-	ImGui::Begin("Edit texture float");
 	if (ImGui::SliderFloat("Float", &m_float, 1.0f, 10.0f))
 	{
 		float vertices[] = {
@@ -85,5 +84,4 @@ void scene::Texture2DScene::OnImGuiRender()
 	if (ImGui::SliderFloat("Float 2", &m_float2, 0.0f, 1.0f)) {
 		m_Shader->SetUniform1f("u_Float", m_float2);
 	}
-	ImGui::End();
 }

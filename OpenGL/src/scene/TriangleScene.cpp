@@ -48,7 +48,7 @@ void scene::TriangleScene::OnRender()
 	m_Shader->SetUniform1f("u_XOffset", sin(glfwGetTime()) / 2);
 	m_Shader->SetUniform1f("u_YOffset", cos(glfwGetTime()) / 2);
 
-	renderer.Draw(*m_VAO, *m_Shader);
+	renderer.DrawElements(*m_VAO, *m_Shader);
 
 }
 

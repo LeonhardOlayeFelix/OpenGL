@@ -52,6 +52,9 @@ scene::TransformationsScene::TransformationsScene()
 	m_Texture2 = std::make_unique<Texture>("res/textures/awesomeface.png");
 	m_Texture2->Bind(1);
 
+	// Below code transforms model coordinates into world coordinates. 
+	// By expressing the model orientation as a matrix M
+	// M gets us from points expressed in M's point of view to the worlds point of view.
 
 	m_ModelTransform = glm::mat4(1.0f);
 	m_ModelTransform = glm::translate(m_ModelTransform, glm::vec3(m_TranslateX, m_TranslateY, m_TranslateZ));
@@ -76,12 +79,14 @@ void scene::TransformationsScene::OnRender()
 	m_Shader->Bind();
 	m_Texture->Bind(0);
 	m_Texture2->Bind(1);
-	renderer.Draw(*m_VAO, *m_Shader);
+	renderer.DrawElements(*m_VAO, *m_Shader);
+
+	 
+
 }
 
 void scene::TransformationsScene::OnImGuiRender()
 {
-	ImGui::Begin("Editor");
 
 	ImGui::SliderFloat("Translation X", &m_TranslateX, -0.5f, 0.5f);
 	ImGui::SliderFloat("Translation Y", &m_TranslateY, -0.5f, 0.5f);
@@ -98,6 +103,5 @@ void scene::TransformationsScene::OnImGuiRender()
 
 	m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
 
-	ImGui::End();
 
 }
