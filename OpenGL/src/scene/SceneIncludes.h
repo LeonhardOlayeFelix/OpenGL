@@ -1,0 +1,9 @@
+#pragma once
+
+#include "scene/Scene.h"
+#include "scene/MenuScene.h"
+#include "scene/Texture2DScene.h"
+#include "scene/TriangleScene.h"
+#include "scene/TransformationsScene.h"
+#include "scene/Transformations3DScene.h"
+#include "scene/Camera3DScene.h"

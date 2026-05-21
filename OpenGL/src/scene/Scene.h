@@ -1,4 +1,7 @@
 #pragma once
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 namespace scene {
 	class Scene
 	{
@@ -6,7 +9,7 @@ namespace scene {
 		Scene();
 		virtual ~Scene() {}
 
-		virtual void OnUpdate(float deltaTime) {}
+		virtual void OnUpdate(float deltaTime, GLFWwindow* window) {}
 		virtual void OnRender() {}
 		virtual void OnImGuiRender() {}
 	};

@@ -13,7 +13,7 @@ namespace scene {
     }
     ClearColourScene::~ClearColourScene() {}
 
-    void ClearColourScene::OnUpdate(float deltaTime) {}
+    void ClearColourScene::OnUpdate(float deltaTime, GLFWwindow* window) {}
     void ClearColourScene::OnRender()
     {
         GLCall(glClearColor(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]));

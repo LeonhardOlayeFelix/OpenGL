@@ -36,7 +36,7 @@ scene::TriangleScene::~TriangleScene()
 {
 }
 
-void scene::TriangleScene::OnUpdate(float deltaTime)
+void scene::TriangleScene::OnUpdate(float deltaTime, GLFWwindow* window)
 {
 }
 

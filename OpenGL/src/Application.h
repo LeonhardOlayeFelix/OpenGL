@@ -1,4 +1,6 @@
 #pragma once
+#include <GL/glew.h>
+
 #include "Common.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

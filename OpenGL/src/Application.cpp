@@ -10,12 +10,8 @@
 #include "vendor/imgui/imgui_impl_opengl3.h"
 #include "Application.h"
 
-#include "scene/Scene.h"
-#include "scene/MenuScene.h"
-#include "scene/Texture2DScene.h"
-#include "scene/TriangleScene.h"
-#include "scene/TransformationsScene.h"
-#include "scene/Transformations3DScene.h"
+
+#include "scene/SceneIncludes.h"
 
 void main(void)
 {
@@ -40,11 +36,13 @@ void main(void)
     MenuScene->RegisterScene<scene::Texture2DScene>("Textures");
     MenuScene->RegisterScene<scene::TransformationsScene>("Transformations");
     MenuScene->RegisterScene<scene::Transformations3DScene>("Transformations in 3D");
+    MenuScene->RegisterScene<scene::Camera3DScene>("Camera in 3D");
 
-    MenuScene->SetScene("Transformations in 3D");
+    MenuScene->SetScene("Camera in 3D");
 
     Renderer renderer;
 
+    float lastFrame = 0.0f;
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -56,7 +54,11 @@ void main(void)
         ImGui::NewFrame();
 
         if (currentScene) {
-            currentScene->OnUpdate(0.0f);
+
+            float currentFrame = glfwGetTime();
+            currentScene->OnUpdate(currentFrame - lastFrame, window);
+            lastFrame = currentFrame;
+
             currentScene->OnRender();
 
             ImGui::Begin("Application");

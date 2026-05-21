@@ -10,11 +10,11 @@
 #include "vendor/glm/gtc/type_ptr.hpp"
 
 namespace scene {
-	class Transformations3DScene : public Scene
+	class Camera3DScene : public Scene
 	{
 	public:
-		Transformations3DScene();
-		~Transformations3DScene();
+		Camera3DScene();
+		~Camera3DScene();
 
 		void OnUpdate(float deltaTime, GLFWwindow* window) override;
 		void OnRender() override;
@@ -30,15 +30,31 @@ namespace scene {
 		glm::mat4 m_ViewTransform;
 		glm::mat4 m_ProjTransform;
 		std::array<glm::vec3, 10> m_CubePositions;
-		float m_TranslateX;
-		float m_TranslateY;
-		float m_TranslateZ;
-		float m_Angle;
-		float m_ScaleX;
-		float m_ScaleY;
-		float m_ScaleZ;
-		float m_Fov;
+		GLFWwindow* m_Window;
+		float m_TranslateX = 0.0f;
+		float m_TranslateY = 0.0f;
+		float m_TranslateZ = 0.0f;
+		float m_Angle = 0.0f;
+		float m_ScaleX = 1.0f;
+		float m_ScaleY = 1.0f;
+		float m_ScaleZ = 1.0f;
+		float m_Fov = 45.0f;
+		float m_Yaw = -90.0f;
+		float m_Pitch;
+		glm::vec3 m_CameraPosition;
+		glm::vec3 m_CameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+	private:
+		inline glm::vec3 GetCameraFront() 
+		{
+			//Euler angles
+			return glm::normalize(glm::vec3(
+				cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch)),
+				sin(glm::radians(m_Pitch)),
+				sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch))
+			));
+
+		}
 	};
 }
 

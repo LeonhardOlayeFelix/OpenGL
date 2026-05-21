@@ -9,7 +9,7 @@ scene::MenuScene::~MenuScene()
 {
 }
 
-void scene::MenuScene::OnUpdate(float deltaTime)
+void scene::MenuScene::OnUpdate(float deltaTime, GLFWwindow* window)
 {
 }
 

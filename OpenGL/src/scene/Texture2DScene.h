@@ -11,7 +11,7 @@ namespace scene{
 		Texture2DScene();
 		~Texture2DScene();
 
-		void OnUpdate(float deltaTime) override;
+		void OnUpdate(float deltaTime, GLFWwindow* window) override;
 		void OnRender() override;
 		void OnImGuiRender() override;
 	private:

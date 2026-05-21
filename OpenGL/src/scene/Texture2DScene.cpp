@@ -53,7 +53,7 @@ scene::Texture2DScene::~Texture2DScene()
 {
 }
 
-void scene::Texture2DScene::OnUpdate(float deltaTime)
+void scene::Texture2DScene::OnUpdate(float deltaTime, GLFWwindow* window)
 {
 }
 
