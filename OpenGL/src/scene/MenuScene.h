@@ -11,7 +11,7 @@ namespace scene {
 		MenuScene(Scene*& currentScene);
 		~MenuScene();
 
-		void OnUpdate(float deltaTime, GLFWwindow* window) override;
+		void OnUpdate(double deltaTime, GLFWwindow* window) override;
 		void OnRender() override;
 		void OnImGuiRender() override;
 

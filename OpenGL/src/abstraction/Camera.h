@@ -32,13 +32,9 @@ public:
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Fov;
-
 	Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
-	
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
-
-	void ProcessKeyboard(CameraMovement direction, float deltaTime);
-
+	void ProcessKeyboard(CameraMovement direction, double deltaTime);
 	void ProcessMouseMovement(float xoffset, float yoffset);
 	void ProcessMouseScroll(float yoffset);
 	glm::mat4 GetViewMatrix();

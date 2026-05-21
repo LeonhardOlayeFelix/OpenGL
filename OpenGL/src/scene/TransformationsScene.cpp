@@ -69,7 +69,7 @@ scene::TransformationsScene::~TransformationsScene()
 {
 }
 
-void scene::TransformationsScene::OnUpdate(float deltaTime, GLFWwindow* window)
+void scene::TransformationsScene::OnUpdate(double deltaTime, GLFWwindow* window)
 {
 }
 

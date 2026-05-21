@@ -9,7 +9,7 @@ namespace scene {
 		Scene();
 		virtual ~Scene() {}
 
-		virtual void OnUpdate(float deltaTime, GLFWwindow* window) {}
+		virtual void OnUpdate(double deltaTime, GLFWwindow* window) {}
 		virtual void OnRender() {}
 		virtual void OnImGuiRender() {}
 	};

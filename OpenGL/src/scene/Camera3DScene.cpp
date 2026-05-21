@@ -3,9 +3,6 @@
 
 scene::Camera3DScene::Camera3DScene()
 {
-
-
-
 	float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -84,7 +81,7 @@ scene::Camera3DScene::Camera3DScene()
 	m_Texture2 = std::make_unique<Texture>("res/textures/awesomeface.png");
 	m_Texture2->Bind(1);
 
-	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, -3.0f), m_WorldUp, -90.0, 0.0f);
+	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0, 0.0f);
 }
 
 scene::Camera3DScene::~Camera3DScene()
@@ -95,7 +92,7 @@ scene::Camera3DScene::~Camera3DScene()
 	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
-void scene::Camera3DScene::OnUpdate(float deltaTime, GLFWwindow* window)
+void scene::Camera3DScene::OnUpdate(double deltaTime, GLFWwindow* window)
 {
 	m_Window = window;
 	if (!m_CallbacksSet) SetCallbacks();
@@ -120,26 +117,20 @@ void scene::Camera3DScene::OnRender()
 	m_Shader->Bind();
 	m_Texture->Bind(0);
 	m_Texture2->Bind(1);
+	 
+	m_Shader->SetUniformMat4f("u_Model", glm::rotate(glm::mat4(1.0f), glm::degrees((float)glfwGetTime()), glm::vec3(1.0, 1.0, -1.0)));
 
-	m_ModelTransform = glm::mat4(1.0f);
-	m_ModelTransform = glm::translate(m_ModelTransform, glm::vec3(m_TranslateX, m_TranslateY, m_TranslateZ));
-	m_ModelTransform = glm::rotate(m_ModelTransform, glm::degrees(m_Angle / 180.0f * 3.14f), glm::vec3(1.0, 1.0, -1.0));
-	m_ModelTransform = glm::scale(m_ModelTransform, glm::vec3(m_ScaleX, m_ScaleY, m_ScaleZ));
-	m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
+	m_Shader->SetUniformMat4f("u_View", m_Camera->GetViewMatrix());
 
-	m_ViewTransform = m_Camera->GetViewMatrix();
-	m_Shader->SetUniformMat4f("u_View", m_ViewTransform);
-
-	m_ProjTransform = glm::perspective(glm::radians(m_Camera->Fov), 800.0f / 600.0f, 0.1f, 100.0f);
-	m_Shader->SetUniformMat4f("u_Proj", m_ProjTransform);
+	m_Shader->SetUniformMat4f("u_Proj", glm::perspective(glm::radians(m_Camera->Fov), 800.0f / 600.0f, 0.1f, 100.0f));
 
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
 	for (unsigned int i = 0; i < 10; i++) {
-		m_ModelTransform = glm::mat4(1.0f);
-		m_ModelTransform = glm::translate(m_ModelTransform, m_CubePositions[i]);
-		m_ModelTransform = glm::rotate(m_ModelTransform, glm::degrees(m_Angle / 180.0f * 3.14f), glm::vec3(1.0, 1.0, -1.0));
-		m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
+		glm::mat4 modelTransform = glm::mat4(1.0f);
+		modelTransform = glm::translate(modelTransform, m_CubePositions[i]);
+		modelTransform = glm::rotate(modelTransform, glm::degrees((float)glfwGetTime() / 180.0f * 3.14f), glm::vec3(1.0, 1.0, -1.0));
+		m_Shader->SetUniformMat4f("u_Model", modelTransform);
 		renderer.DrawArray(*m_VAO, *m_Shader);
 	}
 
@@ -180,8 +171,8 @@ void scene::Camera3DScene::SetCallbacks()
 
 		if (!scene->m_MouseHeld) return;
 
-		float offsetX = xpos - scene->m_LastMouseX;
-		float offsetY = scene->m_LastMouseY - ypos;
+		double offsetX = xpos - scene->m_LastMouseX;
+		double offsetY = scene->m_LastMouseY - ypos;
 
 		scene->m_LastMouseX = xpos;
 		scene->m_LastMouseY = ypos;

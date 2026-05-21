@@ -16,7 +16,7 @@ namespace scene {
 		Transformations3DScene();
 		~Transformations3DScene();
 
-		void OnUpdate(float deltaTime, GLFWwindow* window) override;
+		void OnUpdate(double deltaTime, GLFWwindow* window) override;
 		void OnRender() override;
 		void OnImGuiRender() override;
 	private:

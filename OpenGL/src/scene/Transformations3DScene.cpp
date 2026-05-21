@@ -107,7 +107,7 @@ scene::Transformations3DScene::~Transformations3DScene()
 {
 }
 
-void scene::Transformations3DScene::OnUpdate(float deltaTime, GLFWwindow* window)
+void scene::Transformations3DScene::OnUpdate(double deltaTime, GLFWwindow* window)
 {
 }
 

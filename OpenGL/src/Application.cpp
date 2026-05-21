@@ -42,7 +42,7 @@ void main(void)
 
     Renderer renderer;
 
-    float lastFrame = 0.0f;
+    double lastFrame = 0.0f;
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -55,7 +55,7 @@ void main(void)
 
         if (currentScene) {
 
-            float currentFrame = glfwGetTime();
+            double currentFrame = glfwGetTime();
             currentScene->OnUpdate(currentFrame - lastFrame, window);
             lastFrame = currentFrame;
 
