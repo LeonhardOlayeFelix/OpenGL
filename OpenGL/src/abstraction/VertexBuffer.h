@@ -2,13 +2,13 @@
 class VertexBuffer {
 private:
 	unsigned int m_RendererID;
-	int m_count;
+	unsigned int m_count;
 public:
-	VertexBuffer(const void* data, unsigned int size);
+	VertexBuffer(const void* data, size_t size);
 	~VertexBuffer();
 
 	void Bind() const;
 	void Unbind() const;
-	void UpdateData(const void* data, unsigned int size);
-	inline int GetCount() const { return m_count; };
+	void UpdateData(const void* data, size_t size);
+	inline unsigned int GetCount() const { return m_count; };
 };

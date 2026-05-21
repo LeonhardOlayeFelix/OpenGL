@@ -20,7 +20,7 @@ void Renderer::DrawArray(const VertexArray& vao, const ShaderProgram& shader) co
 {
 	shader.Bind();
 	vao.Bind();
-	GLCall(glDrawArrays(GL_TRIANGLES, 0, vao.GetVertexBufferCount() / 3));
+	GLCall(glDrawArrays(GL_TRIANGLES, 0, vao.GetVertexBufferSize() / vao.GetStride()));
 }
 
 
