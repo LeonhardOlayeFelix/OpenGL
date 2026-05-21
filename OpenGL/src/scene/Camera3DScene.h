@@ -9,6 +9,8 @@
 #include "vendor/glm/gtc/matrix_transform.hpp"
 #include "vendor/glm/gtc/type_ptr.hpp"
 
+#include <GLFW/glfw3.h>
+
 namespace scene {
 	class Camera3DScene : public Scene
 	{
@@ -30,6 +32,8 @@ namespace scene {
 		glm::mat4 m_ViewTransform;
 		glm::mat4 m_ProjTransform;
 		std::array<glm::vec3, 10> m_CubePositions;
+		glm::vec3 m_CameraPosition;
+		const glm::vec3 m_WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 		GLFWwindow* m_Window;
 		float m_TranslateX = 0.0f;
 		float m_TranslateY = 0.0f;
@@ -41,10 +45,13 @@ namespace scene {
 		float m_Fov = 45.0f;
 		float m_Yaw = -90.0f;
 		float m_Pitch;
-		glm::vec3 m_CameraPosition;
-		glm::vec3 m_CameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
+		bool  m_CallbacksSet = false;
+		bool  m_MouseHeld = false;
+		float m_LastMouseX = 0.0f;
+		float m_LastMouseY = 0.0f;
+		float m_MouseSensitivity = 0.25f;
 	private:
+		void SetCallbacks();
 		inline glm::vec3 GetCameraFront() 
 		{
 			//Euler angles
@@ -53,7 +60,10 @@ namespace scene {
 				sin(glm::radians(m_Pitch)),
 				sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch))
 			));
-
+		}
+		inline glm::vec3 GetCameraUp() {
+			glm::vec3 right = glm::normalize(glm::cross(GetCameraFront(), m_WorldUp));
+			return glm::normalize(glm::cross(right, GetCameraFront()));
 		}
 	};
 }

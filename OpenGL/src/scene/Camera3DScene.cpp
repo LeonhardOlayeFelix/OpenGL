@@ -86,31 +86,35 @@ scene::Camera3DScene::Camera3DScene()
 	m_Texture2 = std::make_unique<Texture>("res/textures/awesomeface.png");
 	m_Texture2->Bind(1);
 
-
-
-
-
-
-	
-
 }
 
 scene::Camera3DScene::~Camera3DScene()
 {
+	glfwSetCursorPosCallback(m_Window, nullptr);
+	glfwSetMouseButtonCallback(m_Window, nullptr);
+	glfwSetScrollCallback(m_Window, nullptr);
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void scene::Camera3DScene::OnUpdate(float deltaTime, GLFWwindow* window)
 {
+	m_Window = window;
+	if (!m_CallbacksSet) SetCallbacks();
+
 	glm::vec3 cameraFront = GetCameraFront();
 	const float cameraSpeed = 2.5f * deltaTime;
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
 		m_CameraPosition += cameraSpeed * cameraFront;
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
 		m_CameraPosition -= cameraSpeed * cameraFront;
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		m_CameraPosition -= cameraSpeed * glm::normalize(glm::cross(cameraFront, m_CameraUp));
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		m_CameraPosition += cameraSpeed * glm::normalize(glm::cross(cameraFront, m_CameraUp));
+	if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
+		m_CameraPosition -= cameraSpeed * glm::normalize(glm::cross(cameraFront, m_WorldUp));
+	if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
+		m_CameraPosition += cameraSpeed * glm::normalize(glm::cross(cameraFront, m_WorldUp));
+	if (glfwGetKey(m_Window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		m_CameraPosition += cameraSpeed * m_WorldUp;
+	if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		m_CameraPosition -= cameraSpeed * m_WorldUp;
 }
 
 void scene::Camera3DScene::OnRender()
@@ -125,21 +129,15 @@ void scene::Camera3DScene::OnImGuiRender()
 	m_Texture->Bind(0);
 	m_Texture2->Bind(1);
 
-	ImGui::Begin("Object Transformations");
-	ImGui::SliderFloat("Translation X", &m_TranslateX, -2.0f, 2.0f);
-	ImGui::SliderFloat("Translation Y", &m_TranslateY, -2.0f, 2.0f);
-	ImGui::SliderFloat("Translation Z", &m_TranslateZ, -2.0f, 6.0f);
-	ImGui::SliderAngle("Angle", &m_Angle, 0.0f, 360.0f);
-	ImGui::SliderFloat("Scale X", &m_ScaleX, 0.0f, 2.0f);
-	ImGui::SliderFloat("Scale Y", &m_ScaleY, 0.0f, 2.0f);
-	ImGui::SliderFloat("Scale Z", &m_ScaleZ, 0.0f, 2.0f);
-	ImGui::End();
+	glm::vec3 cameraFront = GetCameraFront();
+	glm::vec3 cameraUp = GetCameraUp();
 
-	ImGui::Begin("Camera Transformation");
-	ImGui::SliderFloat("Fov", &m_Fov, 0.0f, 360.0f);
+	ImGui::SliderFloat("Fov", &m_Fov, 0.0f, 80.0f);
 	ImGui::SliderFloat("Yaw", &m_Yaw, -180.0f, 180.0f);
 	ImGui::SliderFloat("Pitch", &m_Pitch, -180.0f, 180.0f);
-	ImGui::End();
+	ImGui::SliderFloat3("Camera Position", glm::value_ptr(m_CameraPosition), -10.0f, 10.0f);
+	ImGui::SliderFloat3("Camera Up", glm::value_ptr(cameraUp), -1.0f, 1.0f);
+	ImGui::SliderFloat3("Camera Front", glm::value_ptr(cameraFront), -1.0f, 1.0f);
 
 	m_ModelTransform = glm::mat4(1.0f);
 	m_ModelTransform = glm::translate(m_ModelTransform, glm::vec3(m_TranslateX, m_TranslateY, m_TranslateZ));
@@ -148,7 +146,7 @@ void scene::Camera3DScene::OnImGuiRender()
 	m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
 
 
-	m_ViewTransform = glm::lookAt(m_CameraPosition, m_CameraPosition + GetCameraFront() , m_CameraUp);
+	m_ViewTransform = glm::lookAt(m_CameraPosition, m_CameraPosition + cameraFront, m_WorldUp);
 	m_Shader->SetUniformMat4f("u_View", m_ViewTransform);
 
 
@@ -165,9 +163,60 @@ void scene::Camera3DScene::OnImGuiRender()
 		m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
 		renderer.DrawArray(*m_VAO, *m_Shader);
 	}
+}
 
 
 
+void scene::Camera3DScene::SetCallbacks()
+{
+	glfwSetWindowUserPointer(m_Window, this);
+
+	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods) {
+		Camera3DScene* scene = static_cast<Camera3DScene*>(glfwGetWindowUserPointer(window));
+
+		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			scene->m_LastMouseX = x;
+			scene->m_LastMouseY = y;
+			scene->m_MouseHeld = true;
+		}
+		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+			scene->m_MouseHeld = false;
+		});
+
+	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos) {
+		Camera3DScene* scene = static_cast<Camera3DScene*>(glfwGetWindowUserPointer(window));
+
+		if (!scene->m_MouseHeld) return;
+
+		float offsetX = xpos - scene->m_LastMouseX;
+		float offsetY = scene->m_LastMouseY - ypos;
+
+		scene->m_LastMouseX = xpos;
+		scene->m_LastMouseY = ypos;
+
+		offsetX *= scene->m_MouseSensitivity;
+		offsetY *= scene->m_MouseSensitivity;
+
+		scene->m_Yaw += offsetX;
+		scene->m_Pitch += offsetY;
+
+		if (scene->m_Pitch > 89.0f)  scene->m_Pitch = 89.0f;
+		if (scene->m_Pitch < -89.0f) scene->m_Pitch = -89.0f;
+		});
+
+	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) {
+		Camera3DScene* scene = static_cast<Camera3DScene*>(glfwGetWindowUserPointer(window));
+
+		scene->m_Fov -= (float)yOffset;
+		if (scene->m_Fov < 1.0f)
+			scene->m_Fov = 1.0f;
+		if (scene->m_Fov > 80.0f)
+			scene->m_Fov = 80.0f;
+		});
+
+	m_CallbacksSet = true;
 }
 
 
