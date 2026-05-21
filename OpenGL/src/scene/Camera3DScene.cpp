@@ -81,7 +81,7 @@ scene::Camera3DScene::Camera3DScene()
 	m_Texture2 = std::make_unique<Texture>("res/textures/awesomeface.png");
 	m_Texture2->Bind(1);
 
-	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0, 0.0f);
+	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0, 0.0f);
 }
 
 scene::Camera3DScene::~Camera3DScene()
