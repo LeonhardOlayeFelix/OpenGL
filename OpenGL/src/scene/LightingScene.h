@@ -34,6 +34,8 @@ namespace scene {
 		std::unique_ptr<Texture> m_Texture2;
 		std::unique_ptr<Camera> m_Camera;
 
+		glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, -4.0f);
+		glm::vec3 m_LightIntensity = glm::vec3(1.0f, 1.0f, 1.0f);
 	};
 }
 

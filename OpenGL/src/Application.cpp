@@ -92,6 +92,7 @@ GLFWwindow* init() {
     if (!glfwInit())
         return 0;
 
+    glfwWindowHint(GLFW_SAMPLES, 4);
     window = glfwCreateWindow(960, 540, "LearnOpenGL", NULL, NULL);
     if (!window)
     {
@@ -106,6 +107,8 @@ GLFWwindow* init() {
     if (glewInit() != GLEW_OK)
         std::cout << "Error!" << std::endl;
 
+    glEnable(GL_MULTISAMPLE);
+
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;    
@@ -115,7 +118,7 @@ GLFWwindow* init() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
 
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, 960, 540);
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
