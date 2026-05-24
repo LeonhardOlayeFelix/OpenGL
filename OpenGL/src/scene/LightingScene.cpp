@@ -63,9 +63,9 @@ scene::LightingScene::LightingScene()
 	m_LightVAO->RecordVBOLayout(*m_VBO, layout);
 	m_LightVAO->Unbind();
 
-	m_Shader = std::make_unique<ShaderProgram>("res/shaders/LightSceneShader.shader");
+	m_ObjectShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneShader.shader");
 
-	m_LightShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneSourceShader.shader");
+	m_LampShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneSourceShader.shader");
 
 	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0, 0.0f);
 }
@@ -102,7 +102,6 @@ void scene::LightingScene::OnUpdate(double deltaTime, GLFWwindow* window)
 
 void scene::LightingScene::OnRender()
 {
-	m_LightIntensity = glm::vec4(1, 1, 1, 1);
 
 	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
 	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
@@ -110,30 +109,53 @@ void scene::LightingScene::OnRender()
 	Renderer renderer;
 
 	m_VAO->Bind();
-	m_Shader->Bind();
-	m_Shader->SetUniformMat4f("u_View", viewMatrix);
-	m_Shader->SetUniformMat4f("u_Proj", perspectiveMatrix);
-	m_Shader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
-	m_Shader->SetUniform3f("u_Albedo", glm::vec3(1.0, 0, 0));
-	m_Shader->SetUniform3f("m_LightIntensity", m_LightIntensity);
-	m_Shader->SetUniform3f("u_LightPosition", m_LightPosition);
-	renderer.DrawArray(*m_VAO, *m_Shader);
+	m_ObjectShader->Bind();
+	m_ObjectShader->SetUniformMat4f("u_View", viewMatrix);
+	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
+	m_ObjectShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
+	m_ObjectShader->SetUniform3f("u_Albedo", m_ObjectAlbedo);
+	m_ObjectShader->SetUniform3f("m_LightIntensity", m_LightIntensity);
+	m_ObjectShader->SetUniform3f("u_LightPosition", m_LightPosition);
+	m_ObjectShader->SetUniform1i("u_UseAmbientLighting", m_UseAmbientLighting);
+	m_ObjectShader->SetUniform1i("u_UseDiffuseLighting", m_UseDiffuseLighting);
+	renderer.DrawArray(*m_VAO, *m_ObjectShader);
 
 
 	m_LightVAO->Bind();
-	m_LightShader->Bind();
-	m_LightShader->SetUniformMat4f("u_View", viewMatrix);
-	m_LightShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
-	m_LightShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0f), m_LightPosition));
-	m_LightShader->SetUniform3f("u_LightColor", m_LightIntensity);
-	renderer.DrawArray(*m_LightVAO, *m_LightShader);
+	m_LampShader->Bind();
+	m_LampShader->SetUniformMat4f("u_View", viewMatrix);
+	m_LampShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
+	m_LampShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0f), m_LightPosition));
+	m_LampShader->SetUniform3f("u_LightColor", m_LightIntensity);
+	renderer.DrawArray(*m_LightVAO, *m_LampShader);
 
 	m_Camera->UpdateCameraVectors();
 }
 
 void scene::LightingScene::OnImGuiRender()
 {
-	ImGui::SliderFloat3("Light position", glm::value_ptr(m_LightPosition), -5.0, 5.0);
+
+	if (ImGui::CollapsingHeader("Object"))
+	{
+		ImGui::ColorPicker3("Albedo", glm::value_ptr(m_ObjectAlbedo));
+	}
+
+	if (ImGui::CollapsingHeader("Light"))
+	{
+		ImGui::SliderFloat3("Position", glm::value_ptr(m_LightPosition), -5.0f, 5.0f);
+		ImGui::SliderFloat3("Intensity", glm::value_ptr(m_LightIntensity), 0.0f, 1.0f);
+	}
+
+	if (ImGui::CollapsingHeader("Debug"))
+	{
+		ImGui::Checkbox("Ambient Lighting", &m_UseAmbientLighting);
+		ImGui::Checkbox("Diffuse Lighting", &m_UseDiffuseLighting);
+	}
+
+	ImGui::Separator();
+	ImGui::TextDisabled("Move camera: WASD");
+	ImGui::TextDisabled("Look around: JILK");
+
 }
 
 

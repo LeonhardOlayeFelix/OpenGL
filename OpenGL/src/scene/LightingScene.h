@@ -28,14 +28,18 @@ namespace scene {
 		std::unique_ptr<VertexArray> m_LightVAO;
 		std::unique_ptr<VertexBuffer> m_VBO;
 		std::unique_ptr<IndexBuffer> m_IBO;
-		std::unique_ptr<ShaderProgram> m_Shader;
-		std::unique_ptr<ShaderProgram> m_LightShader;
+		std::unique_ptr<ShaderProgram> m_ObjectShader;
+		std::unique_ptr<ShaderProgram> m_LampShader;
 		std::unique_ptr<Texture> m_Texture;
 		std::unique_ptr<Texture> m_Texture2;
 		std::unique_ptr<Camera> m_Camera;
 
 		glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, -4.0f);
 		glm::vec3 m_LightIntensity = glm::vec3(1.0f, 1.0f, 1.0f);
+		glm::vec3 m_ObjectAlbedo = glm::vec3(1.0f, 1.0f, 1.0f);
+		
+		bool m_UseAmbientLighting = true;
+		bool m_UseDiffuseLighting = true;
 	};
 }
 

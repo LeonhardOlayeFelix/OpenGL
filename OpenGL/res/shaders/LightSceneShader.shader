@@ -26,6 +26,9 @@ layout(location = 0) out vec4 color;
 uniform vec3  u_Albedo;
 uniform vec3  m_LightIntensity;
 uniform vec3  u_LightPosition;
+uniform bool u_UseAmbientLighting;
+uniform bool u_UseDiffuseLighting;
+
 
 in vec3 v_Normal;
 in vec3 v_FragPosition;
@@ -44,6 +47,10 @@ void main()
 
     vec3 ambient = k_a * I_a;
     vec3 diffuse = I_p * k_d * max(dot(N, L), 0.0);
+
+    if (!u_UseAmbientLighting) ambient = vec3(0);
+    if (!u_UseDiffuseLighting) diffuse = vec3(0);
+
 
     vec3 result = (ambient + diffuse) * u_Albedo;
 
