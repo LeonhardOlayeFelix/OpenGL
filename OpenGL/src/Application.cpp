@@ -37,7 +37,9 @@ void main(void)
     MenuScene->RegisterScene<scene::TransformationsScene>("Transformations");
     MenuScene->RegisterScene<scene::Transformations3DScene>("Transformations in 3D");
     MenuScene->RegisterScene<scene::Camera3DScene>("Camera in 3D");
+    MenuScene->RegisterScene<scene::LightingScene>("Lighting");
 
+    MenuScene->SetScene("Lighting");
 
     Renderer renderer;
 
@@ -109,7 +111,6 @@ GLFWwindow* init() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;    
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         
-
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();

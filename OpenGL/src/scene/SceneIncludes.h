@@ -7,3 +7,4 @@
 #include "scene/TransformationsScene.h"
 #include "scene/Transformations3DScene.h"
 #include "scene/Camera3DScene.h"
+#include "scene/LightingScene.h"

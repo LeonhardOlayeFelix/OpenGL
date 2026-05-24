@@ -12,11 +12,11 @@
 #include <GLFW/glfw3.h>
 
 namespace scene {
-	class Camera3DScene : public Scene
+	class LightingScene : public Scene
 	{
 	public:
-		Camera3DScene();
-		~Camera3DScene();
+		LightingScene();
+		~LightingScene();
 
 		void OnUpdate(double deltaTime, GLFWwindow* window) override;
 		void OnRender() override;
@@ -24,15 +24,16 @@ namespace scene {
 	private:
 		GLFWwindow* m_Window;
 
-		std::array<glm::vec3, 10> m_CubePositions;
-
 		std::unique_ptr<VertexArray> m_VAO;
+		std::unique_ptr<VertexArray> m_LightVAO;
 		std::unique_ptr<VertexBuffer> m_VBO;
 		std::unique_ptr<IndexBuffer> m_IBO;
 		std::unique_ptr<ShaderProgram> m_Shader;
+		std::unique_ptr<ShaderProgram> m_LightShader;
 		std::unique_ptr<Texture> m_Texture;
 		std::unique_ptr<Texture> m_Texture2;
 		std::unique_ptr<Camera> m_Camera;
+
 	};
 }
 
