@@ -34,14 +34,11 @@ namespace scene {
 		std::unique_ptr<Texture> m_Texture2;
 		std::unique_ptr<Camera> m_Camera;
 
-		bool  m_CallbacksSet = false;
 		bool  m_MouseHeld = false;
 
 		double m_LastMouseX = 0.0f;
 		double m_LastMouseY = 0.0f;
 
-	private:
-		void SetCallbacks();
 	};
 }
 

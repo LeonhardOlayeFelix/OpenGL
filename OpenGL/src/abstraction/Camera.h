@@ -40,7 +40,7 @@ public:
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetPerspectiveMatrix();
 
-private:
+public:
 	void UpdateCameraVectors();
 };
 

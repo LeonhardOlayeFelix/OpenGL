@@ -86,16 +86,11 @@ scene::Camera3DScene::Camera3DScene()
 
 scene::Camera3DScene::~Camera3DScene()
 {
-	glfwSetCursorPosCallback(m_Window, nullptr);
-	glfwSetMouseButtonCallback(m_Window, nullptr);
-	glfwSetScrollCallback(m_Window, nullptr);
-	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void scene::Camera3DScene::OnUpdate(double deltaTime, GLFWwindow* window)
 {
 	m_Window = window;
-	if (!m_CallbacksSet) SetCallbacks();
 
 	if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
 		m_Camera->ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
@@ -109,6 +104,14 @@ void scene::Camera3DScene::OnUpdate(double deltaTime, GLFWwindow* window)
 		m_Camera->ProcessKeyboard(CameraMovement::UP, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		m_Camera->ProcessKeyboard(CameraMovement::DOWN, deltaTime);
+	if (glfwGetKey(m_Window, GLFW_KEY_LEFT))
+		m_Camera->ProcessMouseMovement(-10, 0);
+	if (glfwGetKey(m_Window, GLFW_KEY_RIGHT))
+		m_Camera->ProcessMouseMovement(10, 0);
+	if (glfwGetKey(m_Window, GLFW_KEY_UP))
+		m_Camera->ProcessMouseMovement(0, 10);
+	if (glfwGetKey(m_Window, GLFW_KEY_DOWN))
+		m_Camera->ProcessMouseMovement(0, -10);
 }
 
 void scene::Camera3DScene::OnRender()
@@ -142,46 +145,7 @@ void scene::Camera3DScene::OnImGuiRender()
 	ImGui::SliderFloat3("Camera Up", glm::value_ptr(m_Camera->Up), -1.0f, 1.0f);
 	ImGui::SliderFloat3("Camera Front", glm::value_ptr(m_Camera->Front), -1.0f, 1.0f);
 	ImGui::EndDisabled();
-}
-
-void scene::Camera3DScene::SetCallbacks()
-{
-	glfwSetWindowUserPointer(m_Window, this);
-
-	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods) {
-		Camera3DScene* scene = static_cast<Camera3DScene*>(glfwGetWindowUserPointer(window));
-
-		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-			double x, y;
-			glfwGetCursorPos(window, &x, &y);
-			scene->m_LastMouseX = x;
-			scene->m_LastMouseY = y;
-			scene->m_MouseHeld = true;
-		}
-		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
-			scene->m_MouseHeld = false;
-		});
-
-	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos) {
-		Camera3DScene* scene = static_cast<Camera3DScene*>(glfwGetWindowUserPointer(window));
-
-		if (!scene->m_MouseHeld) return;
-
-		double offsetX = xpos - scene->m_LastMouseX;
-		double offsetY = scene->m_LastMouseY - ypos;
-
-		scene->m_LastMouseX = xpos;
-		scene->m_LastMouseY = ypos;
-
-		scene->m_Camera->ProcessMouseMovement(offsetX, offsetY);
-		});
-
-	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) {
-		Camera3DScene* scene = static_cast<Camera3DScene*>(glfwGetWindowUserPointer(window));
-		scene->m_Camera->ProcessMouseScroll((float)yOffset);
-		});
-
-	m_CallbacksSet = true;
+	m_Camera->UpdateCameraVectors();
 }
 
 
