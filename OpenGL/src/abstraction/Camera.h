@@ -38,6 +38,7 @@ public:
 	void ProcessMouseMovement(float xoffset, float yoffset);
 	void ProcessMouseScroll(float yoffset);
 	glm::mat4 GetViewMatrix();
+	glm::mat4 GetPerspectiveMatrix();
 
 private:
 	void UpdateCameraVectors();

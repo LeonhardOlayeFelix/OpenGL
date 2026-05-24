@@ -118,13 +118,9 @@ void scene::Camera3DScene::OnRender()
 	m_Texture->Bind(0);
 	m_Texture2->Bind(1);
 	 
-	m_Shader->SetUniformMat4f("u_Model", glm::rotate(glm::mat4(1.0f), glm::degrees((float)glfwGetTime()), glm::vec3(1.0, 1.0, -1.0)));
-
 	m_Shader->SetUniformMat4f("u_View", m_Camera->GetViewMatrix());
 
-	m_Shader->SetUniformMat4f("u_Proj", glm::perspective(glm::radians(m_Camera->Fov), 800.0f / 600.0f, 0.1f, 100.0f));
-
-	renderer.DrawArray(*m_VAO, *m_Shader);
+	m_Shader->SetUniformMat4f("u_Proj", m_Camera->GetPerspectiveMatrix());
 
 	for (unsigned int i = 0; i < 10; i++) {
 		glm::mat4 modelTransform = glm::mat4(1.0f);
