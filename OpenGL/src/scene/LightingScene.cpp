@@ -91,13 +91,13 @@ void scene::LightingScene::OnUpdate(double deltaTime, GLFWwindow* window)
 	if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		m_Camera->ProcessKeyboard(CameraMovement::DOWN, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_J))
-		m_Camera->ProcessMouseMovement(-10, 0);
+		m_Camera->ProcessMouseMovement(-500 * deltaTime, 0);
 	if (glfwGetKey(m_Window, GLFW_KEY_L))
-		m_Camera->ProcessMouseMovement(10, 0);
+		m_Camera->ProcessMouseMovement(500 * deltaTime, 0);
 	if (glfwGetKey(m_Window, GLFW_KEY_I))
-		m_Camera->ProcessMouseMovement(0, 10);
+		m_Camera->ProcessMouseMovement(0, 500 * deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_K))
-		m_Camera->ProcessMouseMovement(0, -10);
+		m_Camera->ProcessMouseMovement(0, -500 * deltaTime);
 }
 
 void scene::LightingScene::OnRender()
@@ -134,6 +134,7 @@ void scene::LightingScene::OnRender()
 
 void scene::LightingScene::OnImGuiRender()
 {
+	ImGuiIO& io = ImGui::GetIO();
 
 	if (ImGui::CollapsingHeader("Object"))
 	{
@@ -155,6 +156,7 @@ void scene::LightingScene::OnImGuiRender()
 	ImGui::Separator();
 	ImGui::TextDisabled("Move camera: WASD");
 	ImGui::TextDisabled("Look around: JILK");
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
 }
 

@@ -102,8 +102,6 @@ GLFWwindow* init() {
 
     glfwMakeContextCurrent(window);
 
-    glfwSwapInterval(10);
-
     if (glewInit() != GLEW_OK)
         std::cout << "Error!" << std::endl;
 
