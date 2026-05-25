@@ -42,11 +42,10 @@ namespace scene {
 		glm::vec3 m_ObjectTranslate = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 m_ObjectRotate = glm::vec3(0.0f, 0.0f, 0.0f);
 
-		bool m_UseAmbientLighting = true;
-		bool m_UseDiffuseLighting = true;
-
 		float m_Ka = 0.1;
 		float m_Kd = 0.8;
+		float m_Ks = 0.5;
+		float m_Shininess = 0.5;
 	};
 }
 

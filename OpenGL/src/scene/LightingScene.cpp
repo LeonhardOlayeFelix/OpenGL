@@ -122,12 +122,13 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
 	m_ObjectShader->SetUniformMat3f("u_Normal", normalMatrix);
 	m_ObjectShader->SetUniform3f("u_Albedo", m_ObjectAlbedo);
-	m_ObjectShader->SetUniform3f("m_LightIntensity", m_LightIntensity);
+	m_ObjectShader->SetUniform3f("u_LightIntensity", m_LightIntensity);
 	m_ObjectShader->SetUniform3f("u_LightPosition", m_LightPosition);
-	m_ObjectShader->SetUniform1i("u_UseAmbientLighting", m_UseAmbientLighting);
-	m_ObjectShader->SetUniform1i("u_UseDiffuseLighting", m_UseDiffuseLighting);
+	m_ObjectShader->SetUniform3f("u_ViewPosition", m_Camera->Position);
 	m_ObjectShader->SetUniform1f("u_Ka", m_Ka);
 	m_ObjectShader->SetUniform1f("u_Kd", m_Kd);
+	m_ObjectShader->SetUniform1f("u_Ks", m_Ks);
+	m_ObjectShader->SetUniform1f("u_Shininess", m_Shininess);
 	renderer.DrawArray(*m_VAO, *m_ObjectShader);
 
 
@@ -152,6 +153,7 @@ void scene::LightingScene::OnImGuiRender()
 		ImGui::SliderFloat3("Translate", glm::value_ptr(m_ObjectTranslate), -5.0f, 5.0f);
 		ImGui::SliderFloat3("Rotate", glm::value_ptr(m_ObjectRotate), 0.0, 360.0);
 		ImGui::SliderFloat3("Scale", glm::value_ptr(m_ObjectScale), 0.5f, 3.0f);
+		ImGui::SliderFloat("Shininess", &m_Shininess, 0.0f, 1.0f);
 	}
 
 	if (ImGui::CollapsingHeader("Lamp Properties"))
@@ -164,6 +166,7 @@ void scene::LightingScene::OnImGuiRender()
 	{
 		ImGui::SliderFloat("Ambient reflection coefficient", &m_Ka, 0.0f, 1.0f);
 		ImGui::SliderFloat("Diffuse reflection coefficient", &m_Kd, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular reflection coefficient", &m_Ks, 0.0f, 1.0f);
 	}
 
 	ImGui::Separator();
