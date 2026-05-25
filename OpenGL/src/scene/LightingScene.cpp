@@ -107,7 +107,14 @@ void scene::LightingScene::OnUpdate(double deltaTime, GLFWwindow* window)
 
 void scene::LightingScene::OnRender()
 {
-	m_Texture->Bind(0);
+	if (m_AutoMove) {
+		m_LightPosition.x = m_ObjectTranslate.x + 3.0f * cos(glfwGetTime());
+		m_LightPosition.y = m_ObjectTranslate.y + 5.0f * sin(glfwGetTime()) * cos(glfwGetTime());
+		m_LightPosition.z = m_ObjectTranslate.z + 3.0f * sin(glfwGetTime());
+		m_ObjectRotate.x = fmod(25 * glfwGetTime(), 360.0);
+		m_ObjectRotate.y = fmod(25 * glfwGetTime(), 360.0);
+		m_ObjectRotate.z = fmod(25 * glfwGetTime(), 360.0);
+	} 
 
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(modelMatrix, m_ObjectTranslate);
@@ -139,12 +146,18 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->SetUniform1f("u_Shininess", m_Shininess);
 	renderer.DrawArray(*m_VAO, *m_ObjectShader);
 
+	glm::mat4 lightModelMatrix = glm::mat4(1.0f);
+	lightModelMatrix = glm::translate(lightModelMatrix, m_LightPosition);
+	if (m_AutoMove) {
+		lightModelMatrix = glm::rotate(lightModelMatrix, (float)glm::radians(100 * glfwGetTime()), glm::vec3(1.0, 1.0, 1.0));
+	}
+
 
 	m_LightVAO->Bind();
 	m_LampShader->Bind();
 	m_LampShader->SetUniformMat4f("u_View", viewMatrix);
 	m_LampShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
-	m_LampShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0f), m_LightPosition));
+	m_LampShader->SetUniformMat4f("u_Model", lightModelMatrix);
 	m_LampShader->SetUniform3f("u_LightIntensity", m_LightIntensity);
 	m_LampShader->SetUniform1i("u_Texture", 0);
 	renderer.DrawArray(*m_LightVAO, *m_LampShader);
@@ -181,6 +194,7 @@ void scene::LightingScene::OnImGuiRender()
 	{
 		ImGui::SliderFloat3("Position", glm::value_ptr(m_LightPosition), -5.0f, 5.0f);
 		ImGui::SliderFloat3("Intensity", glm::value_ptr(m_LightIntensity), 0.0f, 1.0f);
+		ImGui::Checkbox("Auto Move Light", &m_AutoMove);
 	}
 
 	ImGui::Separator();
