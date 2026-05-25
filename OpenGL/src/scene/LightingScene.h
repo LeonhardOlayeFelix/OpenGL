@@ -28,7 +28,9 @@ namespace scene {
 		std::unique_ptr<VertexArray> m_LightVAO;
 		std::unique_ptr<VertexBuffer> m_VBO;
 		std::unique_ptr<IndexBuffer> m_IBO;
-		std::unique_ptr<ShaderProgram> m_ObjectShader;
+		std::unique_ptr<ShaderProgram> m_PhongShader;
+		std::unique_ptr<ShaderProgram> m_GouraudShader;
+		ShaderProgram* m_ObjectShader = nullptr;
 		std::unique_ptr<ShaderProgram> m_LampShader;
 		std::unique_ptr<Texture> m_Texture;
 		std::unique_ptr<Texture> m_Texture2;
@@ -46,6 +48,9 @@ namespace scene {
 		float m_Kd = 0.8;
 		float m_Ks = 0.5;
 		float m_Shininess = 0.5;
+
+		int m_ShadingModel = 0;
+
 	};
 }
 

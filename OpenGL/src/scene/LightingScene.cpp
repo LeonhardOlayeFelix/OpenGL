@@ -63,7 +63,8 @@ scene::LightingScene::LightingScene()
 	m_LightVAO->RecordVBOLayout(*m_VBO, layout);
 	m_LightVAO->Unbind();
 
-	m_ObjectShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShader.shader");
+	m_PhongShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderPhong.shader");
+	m_GouraudShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderGouraud.shader");
 
 	m_LampShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneLampShader.shader");
 
@@ -102,6 +103,8 @@ void scene::LightingScene::OnUpdate(double deltaTime, GLFWwindow* window)
 
 void scene::LightingScene::OnRender()
 {
+	
+
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(modelMatrix, m_ObjectTranslate);
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(m_ObjectRotate.x), glm::vec3(1.0, 0.0, 0.0));
@@ -114,6 +117,7 @@ void scene::LightingScene::OnRender()
 	glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(modelMatrix)));
 
 	Renderer renderer;
+	m_ObjectShader = (m_ShadingModel == 0) ? m_PhongShader.get() : m_GouraudShader.get();
 
 	m_VAO->Bind();
 	m_ObjectShader->Bind();
@@ -164,6 +168,8 @@ void scene::LightingScene::OnImGuiRender()
 
 	if (ImGui::CollapsingHeader("Scene Lighting"))
 	{
+		const char* shadingModels[] = { "Phong", "Gouraud" };
+		ImGui::Combo("Shading Model", &m_ShadingModel, shadingModels, IM_ARRAYSIZE(shadingModels));
 		ImGui::SliderFloat("Ambient reflection coefficient", &m_Ka, 0.0f, 1.0f);
 		ImGui::SliderFloat("Diffuse reflection coefficient", &m_Kd, 0.0f, 1.0f);
 		ImGui::SliderFloat("Specular reflection coefficient", &m_Ks, 0.0f, 1.0f);
