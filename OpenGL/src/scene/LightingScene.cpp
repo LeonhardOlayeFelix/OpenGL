@@ -63,9 +63,9 @@ scene::LightingScene::LightingScene()
 	m_LightVAO->RecordVBOLayout(*m_VBO, layout);
 	m_LightVAO->Unbind();
 
-	m_ObjectShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneShader.shader");
+	m_ObjectShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShader.shader");
 
-	m_LampShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneSourceShader.shader");
+	m_LampShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneLampShader.shader");
 
 	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0, 0.0f);
 }
@@ -102,22 +102,32 @@ void scene::LightingScene::OnUpdate(double deltaTime, GLFWwindow* window)
 
 void scene::LightingScene::OnRender()
 {
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	modelMatrix = glm::translate(modelMatrix, m_ObjectTranslate);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(m_ObjectRotate.x), glm::vec3(1.0, 0.0, 0.0));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(m_ObjectRotate.y), glm::vec3(0.0, 1.0, 0.0));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(m_ObjectRotate.z), glm::vec3(0.0, 0.0, 1.0));
+	modelMatrix = glm::scale(modelMatrix, m_ObjectScale);
 
 	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
 	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
+	glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(modelMatrix)));
 
 	Renderer renderer;
 
 	m_VAO->Bind();
 	m_ObjectShader->Bind();
+	m_ObjectShader->SetUniformMat4f("u_Model", modelMatrix);
 	m_ObjectShader->SetUniformMat4f("u_View", viewMatrix);
 	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
-	m_ObjectShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
+	m_ObjectShader->SetUniformMat3f("u_Normal", normalMatrix);
 	m_ObjectShader->SetUniform3f("u_Albedo", m_ObjectAlbedo);
 	m_ObjectShader->SetUniform3f("m_LightIntensity", m_LightIntensity);
 	m_ObjectShader->SetUniform3f("u_LightPosition", m_LightPosition);
 	m_ObjectShader->SetUniform1i("u_UseAmbientLighting", m_UseAmbientLighting);
 	m_ObjectShader->SetUniform1i("u_UseDiffuseLighting", m_UseDiffuseLighting);
+	m_ObjectShader->SetUniform1f("u_Ka", m_Ka);
+	m_ObjectShader->SetUniform1f("u_Kd", m_Kd);
 	renderer.DrawArray(*m_VAO, *m_ObjectShader);
 
 
@@ -136,21 +146,24 @@ void scene::LightingScene::OnImGuiRender()
 {
 	ImGuiIO& io = ImGui::GetIO();
 
-	if (ImGui::CollapsingHeader("Object"))
+	if (ImGui::CollapsingHeader("Object Properties"))
 	{
 		ImGui::ColorPicker3("Albedo", glm::value_ptr(m_ObjectAlbedo));
+		ImGui::SliderFloat3("Translate", glm::value_ptr(m_ObjectTranslate), -5.0f, 5.0f);
+		ImGui::SliderFloat3("Rotate", glm::value_ptr(m_ObjectRotate), 0.0, 360.0);
+		ImGui::SliderFloat3("Scale", glm::value_ptr(m_ObjectScale), 0.5f, 3.0f);
 	}
 
-	if (ImGui::CollapsingHeader("Light"))
+	if (ImGui::CollapsingHeader("Lamp Properties"))
 	{
 		ImGui::SliderFloat3("Position", glm::value_ptr(m_LightPosition), -5.0f, 5.0f);
 		ImGui::SliderFloat3("Intensity", glm::value_ptr(m_LightIntensity), 0.0f, 1.0f);
 	}
 
-	if (ImGui::CollapsingHeader("Debug"))
+	if (ImGui::CollapsingHeader("Scene Lighting"))
 	{
-		ImGui::Checkbox("Ambient Lighting", &m_UseAmbientLighting);
-		ImGui::Checkbox("Diffuse Lighting", &m_UseDiffuseLighting);
+		ImGui::SliderFloat("Ambient reflection coefficient", &m_Ka, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse reflection coefficient", &m_Kd, 0.0f, 1.0f);
 	}
 
 	ImGui::Separator();

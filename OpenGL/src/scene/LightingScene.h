@@ -36,10 +36,17 @@ namespace scene {
 
 		glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, -4.0f);
 		glm::vec3 m_LightIntensity = glm::vec3(1.0f, 1.0f, 1.0f);
+
+		glm::vec3 m_ObjectScale = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec3 m_ObjectAlbedo = glm::vec3(1.0f, 1.0f, 1.0f);
-		
+		glm::vec3 m_ObjectTranslate = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 m_ObjectRotate = glm::vec3(0.0f, 0.0f, 0.0f);
+
 		bool m_UseAmbientLighting = true;
 		bool m_UseDiffuseLighting = true;
+
+		float m_Ka = 0.1;
+		float m_Kd = 0.8;
 	};
 }
 
