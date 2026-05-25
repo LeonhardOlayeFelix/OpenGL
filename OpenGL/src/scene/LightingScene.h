@@ -33,7 +33,6 @@ namespace scene {
 		ShaderProgram* m_ObjectShader = nullptr;
 		std::unique_ptr<ShaderProgram> m_LampShader;
 		std::unique_ptr<Texture> m_Texture;
-		std::unique_ptr<Texture> m_Texture2;
 		std::unique_ptr<Camera> m_Camera;
 
 		glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, -4.0f);

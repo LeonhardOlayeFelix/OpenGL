@@ -2,14 +2,18 @@
 #version 330 core
         
 layout(location = 0) in vec4 a_Position;
+layout(location = 2) in vec2 a_TexCoord;
 
 uniform mat4 u_Model;
 uniform mat4 u_View;
 uniform mat4 u_Proj;
 
+out vec2 v_TexCoord;
+
 void main()
 {
     gl_Position = u_Proj * u_View * u_Model * a_Position;
+    v_TexCoord = a_TexCoord;
 };
 
 #shader fragment
@@ -17,9 +21,13 @@ void main()
         
 layout(location = 0) out vec4 color;
 
-uniform vec3 u_LightColor;
+uniform vec3 u_LightIntensity;
+
+uniform sampler2D u_Texture;
+
+in vec2 v_TexCoord;
 
 void main()
 {
-    color = vec4(u_LightColor, 1.0);
+    color = texture(u_Texture, v_TexCoord) * vec4(u_LightIntensity, 1.0);
 };

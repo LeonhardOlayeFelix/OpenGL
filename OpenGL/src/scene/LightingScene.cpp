@@ -4,52 +4,53 @@
 scene::LightingScene::LightingScene()
 {
 	float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
 
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f
 	};
 
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(3);
+	layout.Push<float>(2);
 
 	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
 
@@ -62,6 +63,9 @@ scene::LightingScene::LightingScene()
 	m_LightVAO->Bind();
 	m_LightVAO->RecordVBOLayout(*m_VBO, layout);
 	m_LightVAO->Unbind();
+
+	m_Texture = std::make_unique<Texture>("res/textures/MinecraftLamp.png");
+	m_Texture->Bind(0);
 
 	m_PhongShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderPhong.shader");
 	m_GouraudShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderGouraud.shader");
@@ -103,7 +107,7 @@ void scene::LightingScene::OnUpdate(double deltaTime, GLFWwindow* window)
 
 void scene::LightingScene::OnRender()
 {
-	
+	m_Texture->Bind(0);
 
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(modelMatrix, m_ObjectTranslate);
@@ -141,7 +145,8 @@ void scene::LightingScene::OnRender()
 	m_LampShader->SetUniformMat4f("u_View", viewMatrix);
 	m_LampShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
 	m_LampShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0f), m_LightPosition));
-	m_LampShader->SetUniform3f("u_LightColor", m_LightIntensity);
+	m_LampShader->SetUniform3f("u_LightIntensity", m_LightIntensity);
+	m_LampShader->SetUniform1i("u_Texture", 0);
 	renderer.DrawArray(*m_LightVAO, *m_LampShader);
 
 	m_Camera->UpdateCameraVectors();
@@ -149,30 +154,33 @@ void scene::LightingScene::OnRender()
 
 void scene::LightingScene::OnImGuiRender()
 {
+	ImGui::SetNextWindowSizeConstraints(ImVec2(400.0f, 0.0f), ImVec2(FLT_MAX, FLT_MAX));
 	ImGuiIO& io = ImGui::GetIO();
 
 	if (ImGui::CollapsingHeader("Object Properties"))
 	{
-		ImGui::ColorPicker3("Albedo", glm::value_ptr(m_ObjectAlbedo));
+		ImGui::ColorPicker3("Albedo", glm::value_ptr(m_ObjectAlbedo), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoSidePreview);
 		ImGui::SliderFloat3("Translate", glm::value_ptr(m_ObjectTranslate), -5.0f, 5.0f);
 		ImGui::SliderFloat3("Rotate", glm::value_ptr(m_ObjectRotate), 0.0, 360.0);
 		ImGui::SliderFloat3("Scale", glm::value_ptr(m_ObjectScale), 0.5f, 3.0f);
-		ImGui::SliderFloat("Shininess", &m_Shininess, 0.0f, 1.0f);
+		const char* shadingModels[] = { "Phong", "Gouraud" };
+		ImGui::Combo("Shading Model", &m_ShadingModel, shadingModels, IM_ARRAYSIZE(shadingModels));
+
+		if (ImGui::CollapsingHeader("Reflection Parameters"))
+		{
+			ImGui::SliderFloat("Ka (Ambient)", &m_Ka, 0.0f, 1.0f);
+			ImGui::SliderFloat("Kd (Diffuse)", &m_Kd, 0.0f, 1.0f);
+			ImGui::SliderFloat("Ks (Specular)", &m_Ks, 0.0f, 1.0f);
+			ImGui::SliderFloat("Shininess", &m_Shininess, 0.0f, 1.0f);
+		}
+		
+
 	}
 
 	if (ImGui::CollapsingHeader("Lamp Properties"))
 	{
 		ImGui::SliderFloat3("Position", glm::value_ptr(m_LightPosition), -5.0f, 5.0f);
 		ImGui::SliderFloat3("Intensity", glm::value_ptr(m_LightIntensity), 0.0f, 1.0f);
-	}
-
-	if (ImGui::CollapsingHeader("Scene Lighting"))
-	{
-		const char* shadingModels[] = { "Phong", "Gouraud" };
-		ImGui::Combo("Shading Model", &m_ShadingModel, shadingModels, IM_ARRAYSIZE(shadingModels));
-		ImGui::SliderFloat("Ambient reflection coefficient", &m_Ka, 0.0f, 1.0f);
-		ImGui::SliderFloat("Diffuse reflection coefficient", &m_Kd, 0.0f, 1.0f);
-		ImGui::SliderFloat("Specular reflection coefficient", &m_Ks, 0.0f, 1.0f);
 	}
 
 	ImGui::Separator();
