@@ -143,6 +143,9 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->SetUniform1f("u_Ka", m_Ka);
 	m_ObjectShader->SetUniform1f("u_Kd", m_Kd);
 	m_ObjectShader->SetUniform1f("u_Ks", m_Ks);
+	m_ObjectShader->SetUniform1f("u_Kc", m_Kc);
+	m_ObjectShader->SetUniform1f("u_Kl", m_Kl);
+	m_ObjectShader->SetUniform1f("u_Kq", m_Kq);
 	m_ObjectShader->SetUniform1f("u_Shininess", m_Shininess);
 	renderer.DrawArray(*m_VAO, *m_ObjectShader);
 
@@ -173,7 +176,7 @@ void scene::LightingScene::OnImGuiRender()
 	if (ImGui::CollapsingHeader("Object Properties"))
 	{
 		ImGui::ColorPicker3("Albedo", glm::value_ptr(m_ObjectAlbedo), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoSidePreview);
-		ImGui::SliderFloat3("Translate", glm::value_ptr(m_ObjectTranslate), -5.0f, 5.0f);
+		ImGui::SliderFloat3("Translate", glm::value_ptr(m_ObjectTranslate), -50.0f, 50.0f);
 		ImGui::SliderFloat3("Rotate", glm::value_ptr(m_ObjectRotate), 0.0, 360.0);
 		ImGui::SliderFloat3("Scale", glm::value_ptr(m_ObjectScale), 0.5f, 3.0f);
 		const char* shadingModels[] = { "Phong", "Gouraud" };
@@ -184,6 +187,9 @@ void scene::LightingScene::OnImGuiRender()
 			ImGui::SliderFloat("Ka (Ambient)", &m_Ka, 0.0f, 1.0f);
 			ImGui::SliderFloat("Kd (Diffuse)", &m_Kd, 0.0f, 1.0f);
 			ImGui::SliderFloat("Ks (Specular)", &m_Ks, 0.0f, 1.0f);
+			ImGui::SliderFloat("Kc", &m_Kc, 0.0f, 1.0f);
+			ImGui::SliderFloat("Kl", &m_Kl, 0.0f, 1.0f);
+			ImGui::SliderFloat("Kq", &m_Kq, 0.0f, 1.0f);
 			ImGui::SliderFloat("Shininess", &m_Shininess, 0.0f, 1.0f);
 		}
 		

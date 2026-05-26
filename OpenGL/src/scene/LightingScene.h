@@ -46,6 +46,9 @@ namespace scene {
 		float m_Ka = 0.1;
 		float m_Kd = 0.8;
 		float m_Ks = 0.5;
+		float m_Kc = 1.0;
+		float m_Kl = 0.09;
+		float m_Kq = 0.032;
 		float m_Shininess = 0.5;
 
 		int m_ShadingModel = 0;
