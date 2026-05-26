@@ -36,20 +36,24 @@ namespace scene {
 		std::unique_ptr<Camera> m_Camera;
 
 		glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, -4.0f);
-		glm::vec3 m_LightIntensity = glm::vec3(1.0f, 1.0f, 1.0f);
+		glm::vec3 m_LightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+		glm::vec3 m_LightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+		glm::vec3 m_LightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
+
 		bool m_AutoMove = false;
 
 		glm::vec3 m_ObjectScale = glm::vec3(1.0f, 1.0f, 1.0f);
-		glm::vec3 m_ObjectAlbedo = glm::vec3(1.0f, 1.0f, 1.0f);
 		glm::vec3 m_ObjectTranslate = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 m_ObjectRotate = glm::vec3(0.0f, 0.0f, 0.0f);
-		float m_Ka = 0.1;
-		float m_Kd = 0.8;
-		float m_Ks = 0.5;
+		glm::vec3 m_ObjectAmbient = glm::vec3(1.0f, 0.5f, 0.31f);
+		glm::vec3 m_ObjectDiffuse = glm::vec3(1.0f, 0.5f, 0.31f);
+		glm::vec3 m_ObjectSpecular = glm::vec3(0.5f, 0.5f, 0.5f);
+
 		float m_Kc = 1.0;
 		float m_Kl = 0.09;
 		float m_Kq = 0.032;
-		float m_Shininess = 0.5;
+
+		float m_Shininess = 32.0f;
 
 		int m_ShadingModel = 0;
 

@@ -21,13 +21,11 @@ void main()
         
 layout(location = 0) out vec4 color;
 
-uniform vec3 u_LightIntensity;
-
 uniform sampler2D u_Texture;
 
 in vec2 v_TexCoord;
 
 void main()
 {
-    color = texture(u_Texture, v_TexCoord) * vec4(u_LightIntensity, 1.0);
+    color = texture(u_Texture, v_TexCoord);
 };
