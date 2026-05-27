@@ -67,12 +67,18 @@ scene::LightingScene::LightingScene()
 	m_Texture = std::make_unique<Texture>("res/textures/MinecraftLamp.png");
 	m_Texture->Bind(0);
 
+	m_Texture2 = std::make_unique<Texture>("res/textures/container2.png");
+	m_Texture2->Bind(1);
+
+	m_Texture3 = std::make_unique<Texture>("res/textures/container2_specular.png");
+	m_Texture3->Bind(2);
+
 	m_PhongShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderPhong.shader");
 	m_GouraudShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderGouraud.shader");
 
 	m_LampShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneLampShader.shader");
 
-	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0, 0.0f);
+	m_Camera = std::make_unique<Camera>(glm::vec3(-0.75f, 3.91f, -5.22), glm::vec3(0.0f, 1.0f, 0.0f), 57.0f, -40.0f);
 
 	m_ObjectShader = m_PhongShader.get();
 }
@@ -133,6 +139,8 @@ void scene::LightingScene::OnRender()
 
 	m_VAO->Bind();
 	m_ObjectShader->Bind();
+	m_Texture2->Bind(1);
+	m_Texture3->Bind(2);
 	m_ObjectShader->SetUniformMat4f("u_Model", modelMatrix);
 	m_ObjectShader->SetUniformMat4f("u_View", viewMatrix);
 	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
@@ -142,9 +150,8 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->SetUniform3f("u_Light.ambient", m_LightAmbient);
 	m_ObjectShader->SetUniform3f("u_Light.diffuse", m_LightDiffuse);
 	m_ObjectShader->SetUniform3f("u_Light.specular", m_LightSpecular);
-	m_ObjectShader->SetUniform3f("u_Material.ambient", m_ObjectAmbient);
-	m_ObjectShader->SetUniform3f("u_Material.diffuse", m_ObjectDiffuse);
-	m_ObjectShader->SetUniform3f("u_Material.specular", m_ObjectSpecular);
+	m_ObjectShader->SetUniform1i("u_Material.diffuse", 1);
+	m_ObjectShader->SetUniform1i("u_Material.specular", 2);
 	m_ObjectShader->SetUniform1f("u_Material.shininess", m_Shininess);
 	m_ObjectShader->SetUniform1f("u_Kc", m_Kc);
 	m_ObjectShader->SetUniform1f("u_Kl", m_Kl);
@@ -154,6 +161,7 @@ void scene::LightingScene::OnRender()
 	glm::mat4 lightModelMatrix = glm::translate(glm::mat4(1.0f), m_LightPosition);
 	if (m_AutoMove) lightModelMatrix = glm::rotate(lightModelMatrix, (float)glm::radians(100 * glfwGetTime()), glm::vec3(1.0, 1.0, 1.0));
 	
+	m_Texture->Bind(0);
 	m_LightVAO->Bind();
 	m_LampShader->Bind();
 	m_LampShader->SetUniformMat4f("u_View", viewMatrix);
@@ -172,10 +180,8 @@ void scene::LightingScene::OnImGuiRender()
 
 	if (ImGui::CollapsingHeader("Object Properties"))
 	{
-		ImGui::SliderFloat3("Ambience_o", glm::value_ptr(m_ObjectAmbient), 0.0f, 1.0f);
-		ImGui::SliderFloat3("Diffuse_o", glm::value_ptr(m_ObjectDiffuse), 0.0f, 1.0f);
 		ImGui::SliderFloat3("Specular_o", glm::value_ptr(m_ObjectSpecular), 0.0f, 1.0f);
-		ImGui::SliderFloat("Shininess_o", &m_Shininess, 0.0f, 1.0f);
+		ImGui::SliderFloat("Shininess_o", &m_Shininess, 0.0f, 200.0f);
 	}
 
 	if (ImGui::CollapsingHeader("Lamp Properties"))

@@ -33,10 +33,12 @@ namespace scene {
 		ShaderProgram* m_ObjectShader = nullptr;
 		std::unique_ptr<ShaderProgram> m_LampShader;
 		std::unique_ptr<Texture> m_Texture;
+		std::unique_ptr<Texture> m_Texture2;
+		std::unique_ptr<Texture> m_Texture3;
 		std::unique_ptr<Camera> m_Camera;
 
-		glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, -4.0f);
-		glm::vec3 m_LightAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+		glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, -2.0f);
+		glm::vec3 m_LightAmbient = glm::vec3(0.35f, 0.35f, 0.35f);
 		glm::vec3 m_LightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 		glm::vec3 m_LightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
 
