@@ -73,6 +73,9 @@ scene::LightingScene::LightingScene()
 	m_Texture3 = std::make_unique<Texture>("res/textures/container2_specular.png");
 	m_Texture3->Bind(2);
 
+	m_Texture4 = std::make_unique<Texture>("res/textures/matrix.jpg");
+	m_Texture4->Bind(3);
+
 	m_PhongShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderPhong.shader");
 	m_GouraudShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderGouraud.shader");
 
@@ -141,6 +144,7 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->Bind();
 	m_Texture2->Bind(1);
 	m_Texture3->Bind(2);
+	m_Texture4->Bind(3);
 	m_ObjectShader->SetUniformMat4f("u_Model", modelMatrix);
 	m_ObjectShader->SetUniformMat4f("u_View", viewMatrix);
 	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
@@ -152,6 +156,7 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->SetUniform3f("u_Light.specular", m_LightSpecular);
 	m_ObjectShader->SetUniform1i("u_Material.diffuse", 1);
 	m_ObjectShader->SetUniform1i("u_Material.specular", 2);
+	m_ObjectShader->SetUniform1i("u_Material.emission", 3);
 	m_ObjectShader->SetUniform1f("u_Material.shininess", m_Shininess);
 	m_ObjectShader->SetUniform1f("u_Kc", m_Kc);
 	m_ObjectShader->SetUniform1f("u_Kl", m_Kl);

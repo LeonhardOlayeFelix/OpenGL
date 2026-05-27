@@ -31,6 +31,7 @@ struct Material
 {
     sampler2D diffuse;
     sampler2D specular;
+    sampler2D emission;
     float shininess;
 };
 
@@ -66,11 +67,12 @@ void main()
     vec3 ambient  = vec3(texture(u_Material.diffuse, v_TexCoords))  * u_Light.ambient;
     vec3 diffuse  = vec3(texture(u_Material.diffuse, v_TexCoords))  * u_Light.diffuse  * max(dot(normal, lightDir), 0.0);
     vec3 specular = vec3(texture(u_Material.specular, v_TexCoords)) * u_Light.specular * pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
+    vec3 emission  = vec3(texture(u_Material.emission, v_TexCoords)) * (vec3(1.0) - step(0.1, vec3(texture(u_Material.specular, v_TexCoords))));
     float distance = length(u_Light.position - v_FragPosition);
     float attenuation = 1.0 / (u_Kc + u_Kl * distance + u_Kq * distance * distance);
     attenuation = 1.0;
 
-    vec3 result = ambient + attenuation * (diffuse + specular);
+    vec3 result = ambient + attenuation * (diffuse + specular) + emission;
 
     color = vec4(result, 1.0f);
 };
