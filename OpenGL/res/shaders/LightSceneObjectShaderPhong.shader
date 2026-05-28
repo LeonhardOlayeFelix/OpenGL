@@ -36,21 +36,25 @@ struct Material
 };
 
 struct Light {
+    vec3 direction;
     vec3 position;
   
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    float u_Kc;
+    float u_Kl;
+    float u_Kq;
+
+    float cutOff;
+    float outerCutOff;
 };
 
 uniform Material u_Material;
 uniform Light u_Light;
 
 uniform vec3 u_ViewPosition;
-
-uniform float u_Kc;
-uniform float u_Kl;
-uniform float u_Kq;
 
 in vec3 v_Normal;
 in vec3 v_FragPosition;
@@ -67,12 +71,16 @@ void main()
     vec3 ambient  = vec3(texture(u_Material.diffuse, v_TexCoords))  * u_Light.ambient;
     vec3 diffuse  = vec3(texture(u_Material.diffuse, v_TexCoords))  * u_Light.diffuse  * max(dot(normal, lightDir), 0.0);
     vec3 specular = vec3(texture(u_Material.specular, v_TexCoords)) * u_Light.specular * pow(max(dot(viewDir, reflectDir), 0.0), u_Material.shininess);
-    vec3 emission  = vec3(texture(u_Material.emission, v_TexCoords)) * (vec3(1.0) - step(0.1, vec3(texture(u_Material.specular, v_TexCoords))));
     float distance = length(u_Light.position - v_FragPosition);
-    float attenuation = 1.0 / (u_Kc + u_Kl * distance + u_Kq * distance * distance);
-    attenuation = 1.0;
+    float attenuation = 1.0 / (u_Light.u_Kc + u_Light.u_Kl * distance + u_Light.u_Kq * distance * distance);
+    float theta = dot(lightDir, normalize(-u_Light.direction));
+    float epsilon   = u_Light.cutOff - u_Light.outerCutOff;
+    float intensity = clamp((theta - u_Light.outerCutOff) / epsilon, 0.0, 1.0);    
 
-    vec3 result = ambient + attenuation * (diffuse + specular) + emission;
+    vec3 result = ambient + attenuation * intensity * (diffuse + specular);
+
+    
+
 
     color = vec4(result, 1.0f);
 };

@@ -150,22 +150,50 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
 	m_ObjectShader->SetUniformMat3f("u_Normal", normalMatrix);
 	m_ObjectShader->SetUniform3f("u_ViewPosition", m_Camera->Position);
-	m_ObjectShader->SetUniform3f("u_Light.position", m_LightPosition);
+	m_ObjectShader->SetUniform3f("u_Light.position", m_Camera->Position);
 	m_ObjectShader->SetUniform3f("u_Light.ambient", m_LightAmbient);
 	m_ObjectShader->SetUniform3f("u_Light.diffuse", m_LightDiffuse);
 	m_ObjectShader->SetUniform3f("u_Light.specular", m_LightSpecular);
+	m_ObjectShader->SetUniform3f("u_Light.direction", m_Camera->Front);
+	m_ObjectShader->SetUniform1f("u_Light.cutOff", glm::cos(glm::radians(12.5f)));
+	m_ObjectShader->SetUniform1f("u_Light.outerCutOff", glm::cos(glm::radians(17.5f)));
 	m_ObjectShader->SetUniform1i("u_Material.diffuse", 1);
 	m_ObjectShader->SetUniform1i("u_Material.specular", 2);
 	m_ObjectShader->SetUniform1i("u_Material.emission", 3);
 	m_ObjectShader->SetUniform1f("u_Material.shininess", m_Shininess);
-	m_ObjectShader->SetUniform1f("u_Kc", m_Kc);
-	m_ObjectShader->SetUniform1f("u_Kl", m_Kl);
-	m_ObjectShader->SetUniform1f("u_Kq", m_Kq);
-	renderer.DrawArray(*m_VAO, *m_ObjectShader);
+	m_ObjectShader->SetUniform1f("u_Light.u_Kc", m_Kc);
+	m_ObjectShader->SetUniform1f("u_Light.u_Kl", m_Kl);
+	m_ObjectShader->SetUniform1f("u_Light.u_Kq", m_Kq);
+
+	glm::vec3 cubePositions[] = {
+	glm::vec3(0.0f,  0.0f,  0.0f),
+	glm::vec3(2.0f,  5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f,  3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f,  2.0f, -2.5f),
+	glm::vec3(1.5f,  0.2f, -1.5f),
+	glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, cubePositions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+		m_ObjectShader->SetUniformMat4f("u_Model", model);
+		m_ObjectShader->SetUniformMat3f("u_Normal", normalMatrix);
+
+		renderer.DrawArray(*m_VAO, *m_ObjectShader);
+	}
 
 	glm::mat4 lightModelMatrix = glm::translate(glm::mat4(1.0f), m_LightPosition);
 	if (m_AutoMove) lightModelMatrix = glm::rotate(lightModelMatrix, (float)glm::radians(100 * glfwGetTime()), glm::vec3(1.0, 1.0, 1.0));
-	
+	lightModelMatrix = glm::scale(lightModelMatrix, glm::vec3(0.5f, 0.5f, 0.5f));
+
 	m_Texture->Bind(0);
 	m_LightVAO->Bind();
 	m_LampShader->Bind();
@@ -195,6 +223,7 @@ void scene::LightingScene::OnImGuiRender()
 		ImGui::SliderFloat3("Diffuse", glm::value_ptr(m_LightDiffuse), 0.0f, 1.0f);
 		ImGui::SliderFloat3("Specular", glm::value_ptr(m_LightSpecular), 0.0f, 1.0f);
 		ImGui::SliderFloat3("Position", glm::value_ptr(m_LightPosition), -10.0f, 10.0f);
+		ImGui::SliderFloat("Kq", &m_Kq, -10.0f, 10.0f);
 		ImGui::Checkbox("Auto Move Light", &m_AutoMove);
 	}
 

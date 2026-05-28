@@ -39,6 +39,7 @@ namespace scene {
 		std::unique_ptr<Camera> m_Camera;
 
 		glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, -2.0f);
+		glm::vec3 m_LightDirection = glm::vec3(-0.2f, -1.0f, -0.3f);
 		glm::vec3 m_LightAmbient = glm::vec3(0.17f, 0.17f, 0.17f);
 		glm::vec3 m_LightDiffuse = glm::vec3(0.5f, 0.5f, 0.5f);
 		glm::vec3 m_LightSpecular = glm::vec3(1.0f, 1.0f, 1.0f);
