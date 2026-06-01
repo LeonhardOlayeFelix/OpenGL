@@ -10,6 +10,7 @@
 #include "vendor/glm/gtc/type_ptr.hpp"
 
 #include <GLFW/glfw3.h>
+#include <assimp/Importer.hpp>
 
 namespace scene {
 
