@@ -10,13 +10,11 @@
 #include "vendor/imgui/imgui_impl_opengl3.h"
 #include "Application.h"
 
-
 #include "scene/SceneIncludes.h"
 
 void main(void)
 {
     GLFWwindow* window = init();
-
     float vertices[] = {
     -0.5f, -0.5f, 0.0f,
      0.5f, -0.5f, 0.0f,
