@@ -70,16 +70,11 @@ scene::LightingScene::LightingScene()
 	m_Texture2->Bind(1);
 	m_Texture3 = std::make_unique<Texture>("res/textures/container2_specular.png");
 	m_Texture3->Bind(2);
-	m_Texture4 = std::make_unique<Texture>("res/textures/matrix.jpg");
-	m_Texture4->Bind(3);
 
-	m_PhongShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderPhong.shader");
-	m_GouraudShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderGouraud.shader");
+	m_ObjectShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneObjectShaderPhong.shader");
 	m_LampShader = std::make_unique<ShaderProgram>("res/shaders/LightSceneLampShader.shader");
 
 	m_Camera = std::make_unique<Camera>(glm::vec3(-0.75f, 3.91f, -5.22), glm::vec3(0.0f, 1.0f, 0.0f), 57.0f, -40.0f);
-
-	m_ObjectShader = m_PhongShader.get();
 
 	m_PointLights[0].position = glm::vec3(0.7f, 0.2f, 2.0f);
 	m_PointLights[1].position = glm::vec3(2.3f, -3.3f, -4.0f);
@@ -170,7 +165,6 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->Bind();
 	m_Texture2->Bind(1);
 	m_Texture3->Bind(2);
-	m_Texture4->Bind(3);
 
 	m_ObjectShader->SetUniformMat4f("u_View", viewMatrix);
 	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
@@ -180,12 +174,12 @@ void scene::LightingScene::OnRender()
 	m_ObjectShader->SetUniform1i("u_Material.specular", 2);
 	m_ObjectShader->SetUniform1f("u_Material.shininess", m_Shininess);
 
-	SetDirLightUniforms(m_ObjectShader, m_DirLight);
+	SetDirLightUniforms(m_ObjectShader.get(), m_DirLight);
 
 	for (int i = 0; i < NR_POINT_LIGHTS; i++)
-		SetPointLightUniforms(m_ObjectShader, i, m_PointLights[i]);
+		SetPointLightUniforms(m_ObjectShader.get(), i, m_PointLights[i]);
 
-	SetSpotLightUniforms(m_ObjectShader, m_SpotLight, *m_Camera);
+	SetSpotLightUniforms(m_ObjectShader.get(), m_SpotLight, *m_Camera);
 
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f,  0.0f,   0.0f),
@@ -204,13 +198,18 @@ void scene::LightingScene::OnRender()
 	{
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, cubePositions[i]);
-		float angle = 20.0f * i;
-		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-		glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+		model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
 		m_ObjectShader->SetUniformMat4f("u_Model", model);
+
+		glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
 		m_ObjectShader->SetUniformMat3f("u_Normal", normalMatrix);
+
 		renderer.DrawArray(*m_VAO, *m_ObjectShader);
 	}
+
+	m_Texture->Bind(0);
+	m_LightVAO->Bind();
+	m_LampShader->Bind();
 
 	for (int i = 0; i < NR_POINT_LIGHTS; i++) {
 		glm::mat4 lightModelMatrix = glm::translate(glm::mat4(1.0f), m_PointLights[i].position);
@@ -218,13 +217,12 @@ void scene::LightingScene::OnRender()
 			lightModelMatrix = glm::rotate(lightModelMatrix, (float)glm::radians(100 * glfwGetTime()), glm::vec3(1.0, 1.0, 1.0));
 		lightModelMatrix = glm::scale(lightModelMatrix, glm::vec3(0.5f, 0.5f, 0.5f));
 
-		m_Texture->Bind(0);
-		m_LightVAO->Bind();
-		m_LampShader->Bind();
 		m_LampShader->SetUniformMat4f("u_View", viewMatrix);
 		m_LampShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
 		m_LampShader->SetUniformMat4f("u_Model", lightModelMatrix);
+		m_LampShader->SetUniform3f("u_Diffuse", m_PointLights[i].diffuse);
 		m_LampShader->SetUniform1i("u_Texture", 0);
+
 		renderer.DrawArray(*m_LightVAO, *m_LampShader);
 	}
 	

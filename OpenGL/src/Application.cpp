@@ -36,9 +36,10 @@ void main(void)
     MenuScene->RegisterScene<scene::Transformations3DScene>("Transformations in 3D");
     MenuScene->RegisterScene<scene::Camera3DScene>("Camera in 3D");
     MenuScene->RegisterScene<scene::LightingScene>("Lighting");
+    MenuScene->RegisterScene<scene::MeshLoadingScene>("Assimp");
 
-    MenuScene->SetScene("Lighting");
-
+    MenuScene->SetScene("Assimp");
+    
     Renderer renderer;
 
     double lastFrame = 0.0f;

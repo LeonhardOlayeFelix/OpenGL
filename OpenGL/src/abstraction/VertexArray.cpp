@@ -5,10 +5,31 @@ VertexArray::VertexArray() : m_IndexBuffer(nullptr), m_VBOSize(0), m_Stride(0)
 {
 	GLCall(glGenVertexArrays(1, &m_RendererID));
 }
+VertexArray::VertexArray(VertexArray&& other) noexcept
+	: m_RendererID(other.m_RendererID), m_IndexBuffer(other.m_IndexBuffer),
+	m_VBOSize(other.m_VBOSize), m_Stride(other.m_Stride)
+{
+	other.m_RendererID = 0;
+	other.m_IndexBuffer = nullptr;
+}
 
+VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
+{
+	if (this != &other) {
+		glDeleteVertexArrays(1, &m_RendererID);
+		m_RendererID = other.m_RendererID;
+		m_IndexBuffer = other.m_IndexBuffer;
+		m_VBOSize = other.m_VBOSize;
+		m_Stride = other.m_Stride;
+		other.m_RendererID = 0;
+		other.m_IndexBuffer = nullptr;
+	}
+	return *this;
+}
 VertexArray::~VertexArray()
 {
-	GLCall(glDeleteVertexArrays(1, &m_RendererID));
+	if (m_RendererID != 0)
+		GLCall(glDeleteVertexArrays(1, &m_RendererID));
 }
 void VertexArray::Bind() const {
 	glBindVertexArray(m_RendererID);

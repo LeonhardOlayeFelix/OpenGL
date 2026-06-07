@@ -10,9 +10,27 @@ VertexBuffer::VertexBuffer(const void* data, size_t size) : m_count(size)
 }
 
 VertexBuffer::~VertexBuffer() {
-    GLCall(glDeleteBuffers(1, &m_RendererID));
+    if (m_RendererID != 0)
+        GLCall(glDeleteBuffers(1, &m_RendererID));
+}
+VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept
+    : m_RendererID(other.m_RendererID), m_count(other.m_count)
+{
+    other.m_RendererID = 0;
+    other.m_count = 0;
 }
 
+VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
+{
+    if (this != &other) {
+        glDeleteBuffers(1, &m_RendererID);
+        m_RendererID = other.m_RendererID;
+        m_count = other.m_count;
+        other.m_RendererID = 0;
+        other.m_count = 0;
+    }
+    return *this;
+}
 void VertexBuffer::Bind() const
 {
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));

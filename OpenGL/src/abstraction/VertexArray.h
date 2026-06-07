@@ -14,6 +14,11 @@ public:
 	VertexArray();
 	~VertexArray();
 
+	VertexArray(const VertexArray&) = delete;
+	VertexArray& operator=(const VertexArray&) = delete;
+	VertexArray(VertexArray&& other) noexcept;
+	VertexArray& operator=(VertexArray&& other) noexcept;
+
 	void RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLayout& vbl);
 	void RecordIndexBuffer(const IndexBuffer& ibo);
 	inline unsigned int GetIndexBufferCount() const { return m_IndexBuffer->GetCount(); };

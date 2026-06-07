@@ -140,8 +140,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\abstraction\Camera.cpp" />
+    <ClCompile Include="src\abstraction\Mesh.cpp" />
+    <ClCompile Include="src\abstraction\Model.cpp" />
     <ClCompile Include="src\scene\Camera3DScene.cpp" />
     <ClCompile Include="src\scene\LightingScene.cpp" />
+    <ClCompile Include="src\scene\MeshLoadingScene.cpp" />
     <ClCompile Include="src\scene\Transformations3DScene.cpp" />
     <ClCompile Include="src\scene\MenuScene.cpp" />
     <ClCompile Include="src\abstraction\ErrorHandling.cpp" />
@@ -172,8 +175,11 @@
   <ItemGroup>
     <ClInclude Include="src\abstraction\Camera.h" />
     <ClInclude Include="src\abstraction\Common.h" />
+    <ClInclude Include="src\abstraction\Mesh.h" />
+    <ClInclude Include="src\abstraction\Model.h" />
     <ClInclude Include="src\scene\Camera3DScene.h" />
     <ClInclude Include="src\scene\LightingScene.h" />
+    <ClInclude Include="src\scene\MeshLoadingScene.h" />
     <ClInclude Include="src\scene\SceneIncludes.h" />
     <ClInclude Include="src\scene\Transformations3DScene.h" />
     <ClInclude Include="src\scene\MenuScene.h" />

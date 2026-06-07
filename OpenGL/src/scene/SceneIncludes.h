@@ -8,3 +8,4 @@
 #include "scene/Transformations3DScene.h"
 #include "scene/Camera3DScene.h"
 #include "scene/LightingScene.h"
+#include "MeshLoadingScene.h"
