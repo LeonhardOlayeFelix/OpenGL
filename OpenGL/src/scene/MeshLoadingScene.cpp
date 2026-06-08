@@ -57,7 +57,7 @@ void scene::MeshLoadingScene::OnRender()
 	m_LampShader->SetUniform1i("u_Texture", 0);
 	renderer.DrawArray(*m_LightVAO, *m_LampShader);
 	
- 	m_Model->Draw(*m_LampShader);
+  	m_Model->Draw(*m_LampShader);
 
 	m_Camera->UpdateCameraVectors();
 }
