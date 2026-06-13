@@ -52,12 +52,13 @@ void VertexArray::RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLay
 
 		const VertexAttribute& attribute = elements[i];
 
-		GLCall(glEnableVertexAttribArray(i));
+		GLCall(glEnableVertexAttribArray(m_AttributeIndex));
 
-		GLCall(glVertexAttribPointer(i, attribute.count, attribute.type, attribute.normalised, vbl.GetStride(), (const void*) offset));
+		GLCall(glVertexAttribPointer(m_AttributeIndex, attribute.count, attribute.type, attribute.normalised, vbl.GetStride(), (const void*) offset));
 
 		offset += attribute.count * VertexAttribute::GetSizeOfType(attribute.type);
 
+		m_AttributeIndex++;
 	}
 
 }
@@ -67,6 +68,12 @@ void VertexArray::RecordIndexBuffer(const IndexBuffer& ibo)
 	Bind();
 	ibo.Bind();
 	m_IndexBuffer = &ibo;
+}
+
+void VertexArray::SetAttribDivisor(unsigned int index, unsigned int divisor)
+{
+	Bind();
+	GLCall(glVertexAttribDivisor(index, divisor));
 }
 
 

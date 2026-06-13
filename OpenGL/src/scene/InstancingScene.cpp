@@ -7,16 +7,28 @@ scene::InstancingScene::InstancingScene()
 	DoPreviousInit();
 
 	float vertices[] = {
-		-0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-		 0.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-		 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		 0.0f,-0.5f, 0.0f, 0.2f, 0.5f, 0.8f,
+		-0.05f, 0.05f, 0.0f, 1.0f, 0.0f, 0.0f,
+		 0.05f, 0.05f, 0.0f, 0.0f, 1.0f, 0.0f,
+		 0.05f,-0.05f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.05f,-0.05f, 0.0f, 0.2f, 0.5f, 0.8f,
 	};
 
 	const unsigned int indicies[] = {
 		0, 1, 2,
 		0, 2, 3
 	};
+
+	int index = 0;
+	float offset = 0.1f;
+	for (int y = -10; y < 10; y += 2) {
+		for (int x = -10; x < 10; x += 2) {
+			glm::vec3 translation;
+			translation.x = (float)x / 10.0f + offset;
+			translation.y = (float)y / 10.0f + offset;
+			translation.z = 0;
+			translations[index++] = translation;
+		}
+	}
 
 	m_VAO = std::make_unique<VertexArray>();
 	m_VAO->Bind();
@@ -27,13 +39,25 @@ scene::InstancingScene::InstancingScene()
 	vbl.Push<float>(3);
 	vbl.Push<float>(3);
 
+	m_VAO->RecordVBOLayout(*m_VBO, vbl);
+
+	m_InstanceVBO = std::make_unique<VertexBuffer>(&translations[0], sizeof(translations));
+
+	VertexBufferLayout vbl2;
+	vbl2.Push<float>(3);
+
+	m_VAO->RecordVBOLayout(*m_InstanceVBO, vbl2);
+	m_VAO->SetAttribDivisor(2, 1);
+
 	m_IBO = std::make_unique<IndexBuffer>(indicies, sizeof(indicies) / sizeof(unsigned int));
 
-	m_VAO->RecordVBOLayout(*m_VBO, vbl);
 	m_VAO->RecordIndexBuffer(*m_IBO);
 
 	m_Shader = std::make_unique<ShaderProgram>("res/shaders/InstancingSceneShader.shader");
 	m_Shader->Bind();
+
+
+	//m_Shader->SetUniformMat4f("u_Model", modelMatrix);
 }
 
 scene::InstancingScene::~InstancingScene()
@@ -70,7 +94,7 @@ void scene::InstancingScene::OnRender()
 {
 	Renderer renderer;
 
-	renderer.DrawElements(*m_VAO, *m_Shader);
+	renderer.DrawElementsInstanced(*m_VAO, *m_Shader, NR_OBJECTS);
 
 	m_Camera->UpdateCameraVectors();
 }

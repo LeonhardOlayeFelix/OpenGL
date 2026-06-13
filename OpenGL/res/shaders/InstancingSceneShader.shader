@@ -3,13 +3,14 @@
         
 layout(location = 0) in vec4 a_Position;
 layout(location = 1) in vec4 a_Color;
+layout(location = 2) in vec4 a_Offset;
 
 out vec4 v_Color;
 
 void main()
 {
+    gl_Position = a_Position + a_Offset;
     v_Color = a_Color;
-    gl_Position = a_Position;
 };
 
 #shader fragment

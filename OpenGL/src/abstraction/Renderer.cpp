@@ -16,11 +16,25 @@ void Renderer::DrawElements(const VertexArray& vao, const ShaderProgram& shader)
 	GLCall(glDrawElements(GL_TRIANGLES, vao.GetIndexBufferCount(), GL_UNSIGNED_INT, nullptr));
 }
 
+void Renderer::DrawElementsInstanced(const VertexArray& vao, const ShaderProgram& shader, int nInstances) const
+{
+	shader.Bind();
+	vao.Bind();
+	GLCall(glDrawElementsInstanced(GL_TRIANGLES, vao.GetIndexBufferCount(), GL_UNSIGNED_INT, nullptr, nInstances));
+}
+
 void Renderer::DrawArray(const VertexArray& vao, const ShaderProgram& shader) const
 {
 	shader.Bind();
 	vao.Bind();
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, vao.GetVertexBufferSize() / vao.GetStride()));
+}
+
+void Renderer::DrawArrayInstanced(const VertexArray& vao, const ShaderProgram& shader, int nInstances) const
+{
+	shader.Bind();
+	vao.Bind();
+	GLCall(glDrawElementsInstanced(GL_TRIANGLES, vao.GetIndexBufferCount(), GL_UNSIGNED_INT, nullptr, nInstances));
 }
 
 
