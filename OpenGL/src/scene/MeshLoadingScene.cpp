@@ -44,20 +44,45 @@ void scene::MeshLoadingScene::OnRender()
 	Renderer renderer;
 	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
 	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
-	glm::mat4 lightModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0, 2.0, 2.0));
+	glm::mat4 lightModelMatrix = glm::translate(glm::mat4(1.0f), m_PointLightPosition);
 
-
-	m_Texture->Bind(0);
 	m_LightVAO->Bind();
 	m_LampShader->Bind();
 	m_LampShader->SetUniformMat4f("u_View", viewMatrix);
 	m_LampShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
 	m_LampShader->SetUniformMat4f("u_Model", lightModelMatrix);
-	m_LampShader->SetUniform3f("u_Diffuse", glm::vec3(1.0));
+	m_LampShader->SetUniform3f("u_Diffuse", m_PointLightDiffuse);
+	m_Texture->Bind(0);
 	m_LampShader->SetUniform1i("u_Texture", 0);
 	renderer.DrawArray(*m_LightVAO, *m_LampShader);
+
+	glm::mat4 bagModelMatrix = glm::mat4(1.0f);
+	glm::mat3 bagNormalMatrix = glm::mat3(glm::transpose(glm::inverse(bagModelMatrix)));
+
+	m_ObjectShader->Bind();
+	m_ObjectShader->SetUniformMat4f("u_View", viewMatrix);
+	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
+	m_ObjectShader->SetUniformMat4f("u_Model", bagModelMatrix);
+	m_ObjectShader->SetUniformMat3f("u_Normal", bagNormalMatrix);
+	m_ObjectShader->SetUniform3f("u_DirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
+	m_ObjectShader->SetUniform3f("u_DirLight.ambient", glm::vec3(0.1f));
+	m_ObjectShader->SetUniform3f("u_DirLight.diffuse", glm::vec3(0.3f));
+	m_ObjectShader->SetUniform3f("u_DirLight.specular", glm::vec3(0.5f));
+	m_ObjectShader->SetUniform3f("u_PointLight.position", m_PointLightPosition);
+	m_ObjectShader->SetUniform3f("u_PointLight.ambient", m_PointLightAmbient);
+	m_ObjectShader->SetUniform3f("u_PointLight.diffuse", m_PointLightDiffuse);
+	m_ObjectShader->SetUniform3f("u_PointLight.specular", m_PointLightSpecular);
+	m_ObjectShader->SetUniform1f("u_PointLight.Kc", m_PointLightKc);
+	m_ObjectShader->SetUniform1f("u_PointLight.Kl", m_PointLightKl);
+	m_ObjectShader->SetUniform1f("u_PointLight.Kq", m_PointLightKq);
 	
-  	m_Model->Draw(*m_LampShader);
+	
+	
+	
+	m_ObjectShader->SetUniform3f("u_ViewPosition", m_Camera->Position);
+	m_ObjectShader->SetUniform1f("u_Material.shininess", 32.0f);
+
+	m_Model->Draw(*m_ObjectShader);
 
 	m_Camera->UpdateCameraVectors();
 }
@@ -67,6 +92,16 @@ void scene::MeshLoadingScene::OnImGuiRender()
 	ImGui::SetNextWindowSizeConstraints(ImVec2(400.0f, 0.0f), ImVec2(FLT_MAX, FLT_MAX));
 	ImGuiIO& io = ImGui::GetIO();
 
+	if (ImGui::CollapsingHeader("Point Light"))
+	{
+		ImGui::SliderFloat3("Position", glm::value_ptr(m_PointLightPosition), -10.0f, 10.0f);
+		ImGui::SliderFloat3("Ambient", glm::value_ptr(m_PointLightAmbient), 0.0f, 1.0f);
+		ImGui::SliderFloat3("Diffuse", glm::value_ptr(m_PointLightDiffuse), 0.0f, 1.0f);
+		ImGui::SliderFloat3("Specular", glm::value_ptr(m_PointLightSpecular), 0.0f, 1.0f);
+		ImGui::SliderFloat("Kc", &m_PointLightKc, -1.0f, 1.0f);
+		ImGui::SliderFloat("Kl", &m_PointLightKl, -1.0f, 1.0f);
+		ImGui::SliderFloat("Kq", &m_PointLightKq, -1.0f, 1.0f);
+	}
 
 	ImGui::Separator();
 	ImGui::TextDisabled("Move camera: WASD");

@@ -3,6 +3,7 @@
 
 void Model::Draw(ShaderProgram& shader)
 {
+    shader.Bind();
     for (unsigned int i = 0; i < m_Meshes.size(); i++)
         m_Meshes[i].Draw(shader);
 }
@@ -127,6 +128,7 @@ std::vector<MeshTexture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureT
 unsigned int Model::TextureFromFile(const char* path, const std::string& directory)
 {
     std::string filename = directory + '/' + path;
+    std::cout << "Loading texture: " << filename << std::endl;
 
     unsigned int textureID;
     glGenTextures(1, &textureID);

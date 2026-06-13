@@ -36,6 +36,14 @@ namespace scene {
 		std::unique_ptr<Camera>        m_Camera;
 		std::unique_ptr<Model>		   m_Model;
 
+		glm::vec3 m_PointLightPosition = glm::vec3(3.0f);
+		glm::vec3 m_PointLightAmbient = glm::vec3(0.1f);
+		glm::vec3 m_PointLightDiffuse = glm::vec3(0.7f);
+		glm::vec3 m_PointLightSpecular = glm::vec3(1.0f);
+		float m_PointLightKc = 1.0f;
+		float m_PointLightKl = 0.09f;
+		float m_PointLightKq = 0.1f;
+
 		static constexpr int NR_POINT_LIGHTS = 4;
 
 		bool m_AutoMove = false;

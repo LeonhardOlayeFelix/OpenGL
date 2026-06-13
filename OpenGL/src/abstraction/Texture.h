@@ -12,14 +12,18 @@ private:
 
 public:
 	Texture(const std::string path);
-
 	~Texture();
+
+	Texture(Texture&& other) noexcept;
+	Texture& operator=(Texture&& other) noexcept;
+	Texture(const Texture&) = delete;
+	Texture& operator=(const Texture&) = delete;
 
 	void Bind(unsigned int slot = 0) const ;
 	void Unbind() const;
 
 	inline int GetWidth() { return m_Width; }
 	inline int GetHeight() { return m_Height; }
-
+	inline int GetId() { return m_RendererID; }
 };
 

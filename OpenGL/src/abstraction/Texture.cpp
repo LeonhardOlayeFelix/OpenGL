@@ -26,7 +26,32 @@ Texture::Texture(const std::string path) : m_RendererID(0), m_FilePath(path), m_
 
 Texture::~Texture()
 {
-	GLCall(glDeleteTextures(1, &m_RendererID));
+	if (m_RendererID != 0)
+		GLCall(glDeleteTextures(1, &m_RendererID));
+}
+
+Texture::Texture(Texture&& other) noexcept
+	: m_RendererID(other.m_RendererID), m_FilePath(other.m_FilePath),
+	m_Width(other.m_Width), m_Height(other.m_Height), m_BPP(other.m_BPP)
+{
+	other.m_RendererID = 0;
+}
+
+Texture& Texture::operator=(Texture&& other) noexcept
+{
+	if (this != &other) {
+		if (m_RendererID != 0)
+			glDeleteTextures(1, &m_RendererID);
+
+		m_RendererID = other.m_RendererID;
+		m_FilePath = other.m_FilePath;
+		m_Width = other.m_Width;
+		m_Height = other.m_Height;
+		m_BPP = other.m_BPP;
+
+		other.m_RendererID = 0;
+	}
+	return *this;
 }
 
 void Texture::Bind(unsigned int slot) const

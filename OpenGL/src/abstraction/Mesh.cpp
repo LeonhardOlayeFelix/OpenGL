@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <iostream>
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<MeshTexture> textures)
 {
@@ -14,6 +15,7 @@ void Mesh::Draw(ShaderProgram& shader)
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 
+
     for (unsigned int i = 0; i < Textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + i);
 
@@ -25,7 +27,8 @@ void Mesh::Draw(ShaderProgram& shader)
         else if (name == "texture_specular")
             number = std::to_string(specularNr++);
 
-        shader.SetUniform1i(("u_Material." + name + number).c_str(), i);
+        std::string uniformName = "u_Material." + name + number;
+        shader.SetUniform1i(uniformName.c_str(), i);
         glBindTexture(GL_TEXTURE_2D, Textures[i].id);
     }
     glActiveTexture(GL_TEXTURE0);
