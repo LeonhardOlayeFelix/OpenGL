@@ -143,6 +143,7 @@
     <ClCompile Include="src\abstraction\Mesh.cpp" />
     <ClCompile Include="src\abstraction\Model.cpp" />
     <ClCompile Include="src\scene\Camera3DScene.cpp" />
+    <ClCompile Include="src\scene\InstancingScene.cpp" />
     <ClCompile Include="src\scene\LightingScene.cpp" />
     <ClCompile Include="src\scene\MeshLoadingScene.cpp" />
     <ClCompile Include="src\scene\Transformations3DScene.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="src\abstraction\Mesh.h" />
     <ClInclude Include="src\abstraction\Model.h" />
     <ClInclude Include="src\scene\Camera3DScene.h" />
+    <ClInclude Include="src\scene\InstancingScene.h" />
     <ClInclude Include="src\scene\LightingScene.h" />
     <ClInclude Include="src\scene\MeshLoadingScene.h" />
     <ClInclude Include="src\scene\SceneIncludes.h" />

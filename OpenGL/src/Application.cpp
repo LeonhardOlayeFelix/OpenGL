@@ -37,8 +37,9 @@ void main(void)
     MenuScene->RegisterScene<scene::Camera3DScene>("Camera in 3D");
     MenuScene->RegisterScene<scene::LightingScene>("Lighting");
     MenuScene->RegisterScene<scene::MeshLoadingScene>("Assimp");
+    MenuScene->RegisterScene<scene::InstancingScene>("Instancing");
 
-    MenuScene->SetScene("Assimp");
+    MenuScene->SetScene("Instancing");
     
     Renderer renderer;
 
