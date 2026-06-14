@@ -10,3 +10,4 @@
 #include "scene/LightingScene.h"
 #include "scene/MeshLoadingScene.h"
 #include "scene/InstancingScene.h"
+#include "scene/AsteroidScene.h"

@@ -4,7 +4,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "Mesh.h"
-#include "ShaderProgram.h"
 #include "vendor/stb_image/stb_image.h"
 
 class Model

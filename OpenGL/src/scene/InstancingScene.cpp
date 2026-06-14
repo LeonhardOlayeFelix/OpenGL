@@ -55,9 +55,6 @@ scene::InstancingScene::InstancingScene()
 
 	m_Shader = std::make_unique<ShaderProgram>("res/shaders/InstancingSceneShader.shader");
 	m_Shader->Bind();
-
-
-	//m_Shader->SetUniformMat4f("u_Model", modelMatrix);
 }
 
 scene::InstancingScene::~InstancingScene()

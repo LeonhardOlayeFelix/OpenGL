@@ -15,16 +15,7 @@
 void main(void)
 {
     GLFWwindow* window = init();
-    float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
-    };
 
-    unsigned int indicies[] = {
-        0, 1, 2
-    };
-    
     scene::Scene* currentScene = nullptr;
 
     scene::MenuScene* MenuScene = new scene::MenuScene(currentScene);
@@ -38,8 +29,9 @@ void main(void)
     MenuScene->RegisterScene<scene::LightingScene>("Lighting");
     MenuScene->RegisterScene<scene::MeshLoadingScene>("Assimp");
     MenuScene->RegisterScene<scene::InstancingScene>("Instancing");
+    MenuScene->RegisterScene<scene::AsteroidScene>("Asteroid");
 
-    MenuScene->SetScene("Instancing");
+    MenuScene->SetScene("Asteroid");
     
     Renderer renderer;
 
