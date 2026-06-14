@@ -7,7 +7,7 @@ VertexArray::VertexArray() : m_IndexBuffer(nullptr), m_VBOSize(0), m_Stride(0)
 }
 VertexArray::VertexArray(VertexArray&& other) noexcept
 	: m_RendererID(other.m_RendererID), m_IndexBuffer(other.m_IndexBuffer),
-	m_VBOSize(other.m_VBOSize), m_Stride(other.m_Stride)
+	m_VBOSize(other.m_VBOSize), m_Stride(other.m_Stride), m_AttributeIndex(other.m_AttributeIndex)
 {
 	other.m_RendererID = 0;
 	other.m_IndexBuffer = nullptr;
@@ -21,6 +21,7 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 		m_IndexBuffer = other.m_IndexBuffer;
 		m_VBOSize = other.m_VBOSize;
 		m_Stride = other.m_Stride;
+		m_AttributeIndex = other.m_AttributeIndex;
 		other.m_RendererID = 0;
 		other.m_IndexBuffer = nullptr;
 	}

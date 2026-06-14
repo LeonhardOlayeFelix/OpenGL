@@ -8,6 +8,13 @@ void Model::Draw(ShaderProgram& shader)
         m_Meshes[i].Draw(shader);
 }
 
+void Model::DrawInstanced(ShaderProgram& shader, unsigned int count)
+{
+    shader.Bind();
+    for (unsigned int i = 0; i < m_Meshes.size(); i++)
+        m_Meshes[i].DrawInstanced(shader, count);
+}
+
 void Model::loadModel(std::string path)
 {
 

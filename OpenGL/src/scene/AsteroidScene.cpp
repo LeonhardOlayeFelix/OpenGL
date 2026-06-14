@@ -8,9 +8,35 @@ scene::AsteroidScene::AsteroidScene()
 
 	RandomiseModels();
 
-	m_Shader = std::make_unique<ShaderProgram>("res/shaders/AsteroidSceneRockShader.shader"); 
+	//This will store the per instance data needed to transform each asteroid in a buffer on the GPU
+	m_InstanceVBO = std::make_unique<VertexBuffer>(&m_ModelMatrices[0], sizeof(m_ModelMatrices));
+
+	m_Shader = std::make_unique<ShaderProgram>("res/shaders/AsteroidScenePlanetShader.shader"); 
+	m_Shader2 = std::make_unique<ShaderProgram>("res/shaders/AsteroidSceneRockShader.shader"); 
 	m_Planet = std::make_unique<Model>("res/models/planet/planet.obj");
 	m_Rock   = std::make_unique<Model>("res/models/rock/rock.obj"); 
+
+	//Each mesh has a corresponding vao that we need to access, bind to, and update to contain this instance buffer information.
+	//This is not very clean because we are modifying the Vao's state outside of the owner (mesh)
+
+	for (unsigned int i = 0; i < m_Rock->GetMeshes().size(); i++) {
+		VertexArray& vao = m_Rock->GetMeshes()[i].GetVAO();
+
+		vao.Bind();
+
+		VertexBufferLayout vbl;
+		vbl.Push<float>(4);
+		vbl.Push<float>(4);
+		vbl.Push<float>(4);
+		vbl.Push<float>(4);
+
+		vao.RecordVBOLayout(*m_InstanceVBO, vbl);
+
+		vao.SetAttribDivisor(3, 1);
+		vao.SetAttribDivisor(4, 1);
+		vao.SetAttribDivisor(5, 1);
+		vao.SetAttribDivisor(6, 1);
+	}
 }
 
 
@@ -51,7 +77,11 @@ void scene::AsteroidScene::OnRender()
 	glm::mat4 view = m_Camera->GetViewMatrix();
 	glm::mat4 proj = m_Camera->GetPerspectiveMatrix();
 
-	//renderer.DrawElementsInstanced(*m_VAO, *m_Shader, NR_OBJECTS);
+	m_Shader2->Bind();
+	m_Shader2->SetUniformMat4f("u_View", view);
+	m_Shader2->SetUniformMat4f("u_Proj", proj);
+
+	m_Rock->DrawInstanced(*m_Shader2, NR_ASTEROIDS);
 
 	glm::mat4 planetModel = glm::mat4(1.0);
 	glm::mat3 planetNormal = glm::mat3(glm::transpose(glm::inverse(planetModel)));
@@ -64,18 +94,7 @@ void scene::AsteroidScene::OnRender()
 
 	m_Planet->Draw(*m_Shader);
 
-	RandomiseModels();
 
-	for (unsigned int i = 0; i < NR_ASTEROIDS; i++) {
-
-		glm::mat4 rockModel = m_ModelMatrices[i];
-		glm::mat3 rockNormal = glm::mat3(glm::transpose(glm::inverse(rockModel)));
-
-		m_Shader->SetUniformMat4f("u_Model", rockModel);
-		m_Shader->SetUniformMat3f("u_Normal", rockNormal);
-
-		m_Rock->Draw(*m_Shader);
-	}
 
 	m_Camera->UpdateCameraVectors();
 }

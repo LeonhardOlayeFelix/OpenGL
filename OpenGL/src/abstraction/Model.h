@@ -14,6 +14,7 @@ public:
 		loadModel(path);
 	}
 	void Draw(ShaderProgram& shader);
+	void DrawInstanced(ShaderProgram& shader, unsigned int count);
 private:
 	std::vector<Mesh> m_Meshes;
 	std::string m_Directory;
@@ -24,5 +25,7 @@ private:
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 	std::vector<MeshTexture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 	unsigned int TextureFromFile(const char* path, const std::string& directory);
+public:
+	inline std::vector<Mesh>& GetMeshes() { return m_Meshes; }
 };
 

@@ -18,13 +18,14 @@ namespace scene{
 	private:
 
 		GLFWwindow* m_Window;
-		static constexpr int NR_ASTEROIDS = 1000;
+		static constexpr int NR_ASTEROIDS = 30000;
 
 		std::unique_ptr<VertexArray> m_VAO;
 		std::unique_ptr<VertexBuffer> m_VBO;
 		std::unique_ptr<VertexBuffer> m_InstanceVBO;
 		std::unique_ptr<IndexBuffer> m_IBO;
 		std::unique_ptr<ShaderProgram> m_Shader;
+		std::unique_ptr<ShaderProgram> m_Shader2;
 		std::unique_ptr<Camera>        m_Camera;
 
 		glm::mat4 m_ModelMatrices[NR_ASTEROIDS];
@@ -33,7 +34,7 @@ namespace scene{
 		std::unique_ptr<Model> m_Rock;
 
 		float m_Radius = 50.0f;
-		float m_Offset = 2.5f;
+		float m_Offset = 7.5f;
 
 
 	private:

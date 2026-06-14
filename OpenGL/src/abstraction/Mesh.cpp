@@ -38,6 +38,15 @@ void Mesh::Draw(ShaderProgram& shader)
     m_Vao->Unbind();
 }
 
+void Mesh::DrawInstanced(ShaderProgram& shader, unsigned int count)
+{
+    SetTextures(shader);
+
+    m_Vao->Bind();
+    glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, count);
+    m_Vao->Unbind();
+}
+
 void Mesh::setupMesh()
 {
     m_Vao.emplace();
@@ -58,4 +67,31 @@ void Mesh::setupMesh()
 
     m_Vao->Unbind();
 
+}
+
+/// <summary>
+/// Sets the texture slots needed for this mesh to be drawn with the correct texture.
+/// </summary>
+/// <param name="shader"></param>
+void Mesh::SetTextures(ShaderProgram& shader)
+{
+    unsigned int diffuseNr = 1;
+    unsigned int specularNr = 1;
+
+    for (unsigned int i = 0; i < Textures.size(); i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
+
+        std::string number;
+        std::string name = Textures[i].type;
+
+        if (name == "texture_diffuse")
+            number = std::to_string(diffuseNr++);
+        else if (name == "texture_specular")
+            number = std::to_string(specularNr++);
+
+        std::string uniformName = "u_Material." + name + number;
+        shader.SetUniform1i(uniformName.c_str(), i);
+        glBindTexture(GL_TEXTURE_2D, Textures[i].id);
+    }
+    glActiveTexture(GL_TEXTURE0);
 }
