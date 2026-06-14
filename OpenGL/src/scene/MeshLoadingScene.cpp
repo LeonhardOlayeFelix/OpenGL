@@ -6,7 +6,7 @@ scene::MeshLoadingScene::MeshLoadingScene()
 {
 	DoPreviousInit();
 
-	m_Model = std::make_unique<Model>("res/models/rock/rock.obj");
+	m_Model = std::make_unique<Model>("res/models/backpack/backpack.obj");
 }
 
 scene::MeshLoadingScene::~MeshLoadingScene()
