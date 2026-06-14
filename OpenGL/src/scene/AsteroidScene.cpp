@@ -8,26 +8,27 @@ scene::AsteroidScene::AsteroidScene()
 
 	RandomiseModels();
 
-	//This will store the per instance data needed to transform each asteroid in a buffer on the GPU
-	m_InstanceVBO = std::make_unique<VertexBuffer>(&m_ModelMatrices[0], sizeof(m_ModelMatrices));
 
 	m_Shader = std::make_unique<ShaderProgram>("res/shaders/AsteroidScenePlanetShader.shader"); 
 	m_Shader2 = std::make_unique<ShaderProgram>("res/shaders/AsteroidSceneRockShader.shader"); 
 	m_Planet = std::make_unique<Model>("res/models/planet/planet.obj");
 	m_Rock   = std::make_unique<Model>("res/models/rock/rock.obj"); 
 
+	//This will store the per instance data needed to transform each asteroid in a buffer on the GPU
+	m_InstanceVBO = std::make_unique<VertexBuffer>(&m_ModelMatrices[0], sizeof(m_ModelMatrices));
+
 	for (unsigned int i = 0; i < m_Rock->GetMeshes().size(); i++) {
+
+		/*Sets up the instance buffer for that mesh - this involves adding new attributes which correspond to the data stored in m_InstanceBuffer
+		and setting the divisor at the index of those attributes to 1. we use 'vbl' above to know the shape of the instance buffer which is needed when setting
+		the attributes. The function 'SetInstanceBuffer' determines which attributes need their divisors changing by looking at VertexArray.m_AttributeIndex
+		before and after the call to VertexArray.RecordVBOLayout().*/
 
 		VertexBufferLayout vbl;
 		vbl.Push<float>(4);
 		vbl.Push<float>(4);
 		vbl.Push<float>(4);
 		vbl.Push<float>(4);
-
-		//Sets up the instance buffer for that mesh - this involves adding new attributes which correspond to the data stored in m_InstanceBuffer
-		//and setting the divisor at the index of those attributes to 1. we use 'vbl' above to know the shape of the instance buffer which is needed when setting
-		//the attributes. The function 'SetInstanceBuffer' determines which attributes need their divisors changing by looking at VertexArray.m_AttributeIndex 
-		//before and after the call to VertexArray.RecordVBOLayout().
 
 		m_Rock->GetMeshes()[i].SetInstanceBuffer(*m_InstanceVBO, vbl);
 	}
@@ -98,6 +99,16 @@ void scene::AsteroidScene::OnImGuiRender()
 	ImGui::SetNextWindowSizeConstraints(ImVec2(400.0f, 0.0f), ImVec2(FLT_MAX, FLT_MAX));
 	ImGuiIO& io = ImGui::GetIO();
 
+	if (ImGui::CollapsingHeader("Properties"))
+	{
+		bool changed = false;
+		changed |= ImGui::SliderFloat("Radius", &m_Radius, 0.01, 200);
+		changed |= ImGui::SliderFloat("Offset", &m_Offset, 0.01, 50);
+
+		if (changed) RandomiseModels();
+
+		m_InstanceVBO->UpdateData(&m_ModelMatrices[0], sizeof(m_ModelMatrices));
+	}
 
 	ImGui::Separator();
 	ImGui::TextDisabled("Move camera: WASD");
@@ -107,12 +118,12 @@ void scene::AsteroidScene::OnImGuiRender()
 
 void scene::AsteroidScene::DoPreviousInit()
 {
-	m_Camera = std::make_unique<Camera>(glm::vec3(-0.75f, 3.91f, -5.22), glm::vec3(0.0f, 1.0f, 0.0f), 57.0f, -40.0f);
+	m_Camera = std::make_unique<Camera>(glm::vec3(0.0f, 100.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -90.0f);
+	m_Camera->Fov = 80;
 }
 
 void scene::AsteroidScene::RandomiseModels()
 {
-	srand(glfwGetTime() * 10);
 
 	for (unsigned int i = 0; i < NR_ASTEROIDS; i++) {
 		glm::mat4 model = glm::mat4(1.0f);

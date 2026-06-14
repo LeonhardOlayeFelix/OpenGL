@@ -18,7 +18,7 @@ namespace scene{
 	private:
 
 		GLFWwindow* m_Window;
-		static constexpr int NR_ASTEROIDS = 30000;
+		static constexpr int NR_ASTEROIDS = 1000;
 
 		std::unique_ptr<VertexArray> m_VAO;
 		std::unique_ptr<VertexBuffer> m_VBO;
@@ -34,7 +34,7 @@ namespace scene{
 		std::unique_ptr<Model> m_Rock;
 
 		float m_Radius = 50.0f;
-		float m_Offset = 7.5f;
+		float m_Offset = 10.0f;
 
 
 	private:
