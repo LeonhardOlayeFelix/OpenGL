@@ -40,11 +40,22 @@ void Mesh::Draw(ShaderProgram& shader)
 
 void Mesh::DrawInstanced(ShaderProgram& shader, unsigned int count)
 {
-    SetTextures(shader);
+    setTextures(shader);
 
     m_Vao->Bind();
     glDrawElementsInstanced(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0, count);
     m_Vao->Unbind();
+}
+
+void Mesh::SetInstanceBuffer(VertexBuffer& instanceVBO, VertexBufferLayout& vbl)
+{
+    m_Vao->Bind();
+    unsigned int startIndex = m_Vao->GetAttributeIndex();
+    m_Vao->RecordVBOLayout(instanceVBO, vbl);
+    unsigned int endIndex = m_Vao->GetAttributeIndex();
+
+    for (unsigned int i = startIndex; i < endIndex; i++)
+        m_Vao->SetAttribDivisor(i, 1);
 }
 
 void Mesh::setupMesh()
@@ -73,7 +84,7 @@ void Mesh::setupMesh()
 /// Sets the texture slots needed for this mesh to be drawn with the correct texture.
 /// </summary>
 /// <param name="shader"></param>
-void Mesh::SetTextures(ShaderProgram& shader)
+void Mesh::setTextures(ShaderProgram& shader)
 {
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;

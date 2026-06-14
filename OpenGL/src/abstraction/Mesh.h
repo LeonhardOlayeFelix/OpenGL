@@ -29,7 +29,7 @@ public:
 
     void Draw(ShaderProgram& shader);
     void DrawInstanced(ShaderProgram& shader, unsigned int count);
-    void SetTextures(ShaderProgram& shader);
+    void SetInstanceBuffer(VertexBuffer& instanceVBO, VertexBufferLayout& vbl);
 
 private:
     std::optional<VertexArray> m_Vao;
@@ -37,6 +37,7 @@ private:
     std::optional<IndexBuffer> m_Ibo;
 
     void setupMesh();
+    void setTextures(ShaderProgram& shader);
 public:
     inline VertexArray& GetVAO() { return m_Vao.value(); }
 };

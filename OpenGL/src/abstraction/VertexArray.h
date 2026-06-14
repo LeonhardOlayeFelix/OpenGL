@@ -26,6 +26,7 @@ public:
 	inline unsigned int GetIndexBufferCount() const { return m_IndexBuffer->GetCount(); };
 	inline size_t GetVertexBufferSize() const { return m_VBOSize; };
 	inline size_t GetStride() const { return m_Stride; };
+	inline unsigned int GetAttributeIndex() const { return m_AttributeIndex; }
 	void Bind() const;
 	void Unbind() const;
 };

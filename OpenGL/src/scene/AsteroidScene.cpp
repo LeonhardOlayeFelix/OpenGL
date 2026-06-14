@@ -16,13 +16,7 @@ scene::AsteroidScene::AsteroidScene()
 	m_Planet = std::make_unique<Model>("res/models/planet/planet.obj");
 	m_Rock   = std::make_unique<Model>("res/models/rock/rock.obj"); 
 
-	//Each mesh has a corresponding vao that we need to access, bind to, and update to contain this instance buffer information.
-	//This is not very clean because we are modifying the Vao's state outside of the owner (mesh)
-
 	for (unsigned int i = 0; i < m_Rock->GetMeshes().size(); i++) {
-		VertexArray& vao = m_Rock->GetMeshes()[i].GetVAO();
-
-		vao.Bind();
 
 		VertexBufferLayout vbl;
 		vbl.Push<float>(4);
@@ -30,12 +24,12 @@ scene::AsteroidScene::AsteroidScene()
 		vbl.Push<float>(4);
 		vbl.Push<float>(4);
 
-		vao.RecordVBOLayout(*m_InstanceVBO, vbl);
+		//Sets up the instance buffer for that mesh - this involves adding new attributes which correspond to the data stored in m_InstanceBuffer
+		//and setting the divisor at the index of those attributes to 1. we use 'vbl' above to know the shape of the instance buffer which is needed when setting
+		//the attributes. The function 'SetInstanceBuffer' determines which attributes need their divisors changing by looking at VertexArray.m_AttributeIndex 
+		//before and after the call to VertexArray.RecordVBOLayout().
 
-		vao.SetAttribDivisor(3, 1);
-		vao.SetAttribDivisor(4, 1);
-		vao.SetAttribDivisor(5, 1);
-		vao.SetAttribDivisor(6, 1);
+		m_Rock->GetMeshes()[i].SetInstanceBuffer(*m_InstanceVBO, vbl);
 	}
 }
 
