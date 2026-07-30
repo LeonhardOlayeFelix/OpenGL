@@ -30,8 +30,9 @@ void main(void)
     MenuScene->RegisterScene<scene::MeshLoadingScene>("Assimp");
     MenuScene->RegisterScene<scene::InstancingScene>("Instancing");
     MenuScene->RegisterScene<scene::AsteroidScene>("Asteroid");
+	MenuScene->RegisterScene<scene::DepthTestingScene>("Depth Testing");
 
-    MenuScene->SetScene("Asteroid");
+    MenuScene->SetScene("Depth Testing");
     
     Renderer renderer;
 
@@ -124,32 +125,4 @@ void processInput(GLFWwindow* window)
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
-}
-
-ShaderProgramSource ParseShaderProgram(const std::string& filepath) {
-    std::ifstream stream(filepath);
-
-    enum class ShaderType {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1,
-    };
-
-    ShaderType type = ShaderType::NONE;
-
-    std::string line;
-    std::stringstream ss[2];
-
-    while (getline(stream, line)) {
-        if (line.find("#shader") != std::string::npos) {
-
-            if (line.find("vertex") != std::string::npos)
-                type = ShaderType::VERTEX;
-            else if (line.find("fragment") != std::string::npos)
-                type = ShaderType::FRAGMENT;
-        }
-        else {
-            ss[(int)type] << line << "\n";
-        }
-    }
-
-    return { ss[0].str(), ss[1].str() };
 }

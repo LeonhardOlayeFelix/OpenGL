@@ -11,3 +11,4 @@
 #include "scene/MeshLoadingScene.h"
 #include "scene/InstancingScene.h"
 #include "scene/AsteroidScene.h"
+#include "scene/DepthTestingScene.h"

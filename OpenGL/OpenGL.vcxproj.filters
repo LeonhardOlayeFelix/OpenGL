@@ -117,6 +117,9 @@
     <ClCompile Include="src\scene\AsteroidScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\scene\DepthTestingScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\abstraction\Renderer.h">
@@ -1095,6 +1098,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\AsteroidScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene\DepthTestingScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
