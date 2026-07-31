@@ -19,6 +19,9 @@ const float PITCH = 0.0f;
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.2f;
 const float ZOOM = 45.0f;
+const float NEAR = 0.1f;
+const float FAR = 1000.0f;
+
 
 class Camera {
 public:
@@ -32,6 +35,8 @@ public:
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Fov;
+	float Near;
+	float Far;
 	Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 	void ProcessKeyboard(CameraMovement direction, double deltaTime);

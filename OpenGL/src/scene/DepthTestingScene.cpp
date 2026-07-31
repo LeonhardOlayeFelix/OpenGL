@@ -44,25 +44,56 @@ void scene::DepthTestingScene::OnRender()
 	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
 	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
 
-	m_ObjectShader->Bind();
-	m_ObjectShader->SetUniformMat4f("u_View", viewMatrix);
-	m_ObjectShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
+	glEnable(GL_STENCIL_TEST);
+	glStencilMask(0x00);
 
-	//Stone
-	glm::mat4 modelMatrixStone = glm::scale(glm::mat4(1), glm::vec3(4));
-	m_ObjectShader->SetUniformMat4f("u_Model", modelMatrixStone);
 	m_StoneTexture->Bind(0);
-	m_ObjectShader->SetUniform1i("u_Texture", 0);
-	renderer.DrawArray(*m_VAO, *m_ObjectShader);
-
-
-	//Lamp
-	glm::mat4 modelMatrixLamp = glm::translate(glm::mat4(1), glm::vec3(0, 2, 0));
-	m_ObjectShader->SetUniformMat4f("u_Model", modelMatrixLamp);
 	m_LampTexture->Bind(1);
-	m_ObjectShader->SetUniform1i("u_Texture", 1);
 
-	renderer.DrawArray(*m_VAO, *m_ObjectShader);
+
+	m_DepthShader->Bind();
+	m_DepthShader->SetUniformMat4f("u_View", viewMatrix);
+	m_DepthShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
+	m_DepthShader->SetUniform1f("u_Near", m_Camera->Near);
+	m_DepthShader->SetUniform1f("u_Far", m_Camera->Far);
+
+	//Stone floor
+	glm::mat4 modelMatrixStone = glm::scale(glm::mat4(1), glm::vec3(4));
+	m_DepthShader->SetUniformMat4f("u_Model", modelMatrixStone);
+	m_DepthShader->SetUniform1i("u_Texture", 0);
+	renderer.DrawArray(*m_VAO, *m_DepthShader);
+
+	//Lamp 1
+	glm::mat4 modelMatrixLamp1 = glm::translate(glm::mat4(1), glm::vec3(1, 2.5, -1));
+	m_DepthShader->SetUniformMat4f("u_Model", modelMatrixLamp1);
+	m_DepthShader->SetUniform1i("u_Texture", 1);
+	renderer.DrawArray(*m_VAO, *m_DepthShader);
+
+	//Lamp 2 - drawn with stencil test on
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+
+	glm::mat4 modelMatrixLamp2 = glm::translate(glm::mat4(1), glm::vec3(-1, 2.5, 1));
+	m_DepthShader->SetUniformMat4f("u_Model", modelMatrixLamp2);
+	m_DepthShader->SetUniform1i("u_Texture", 1);
+	renderer.DrawArray(*m_VAO, *m_DepthShader);
+
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+	glDisable(GL_DEPTH_TEST);
+
+	m_StencilShader->Bind();
+	glm::mat4 modelMatrixLampOutline = glm::scale(glm::translate(glm::mat4(1), glm::vec3(-1, 2.5, 1)), glm::vec3(1.05));
+	m_StencilShader->SetUniformMat4f("u_View", viewMatrix);
+	m_StencilShader->SetUniformMat4f("u_Proj", perspectiveMatrix);
+	m_StencilShader->SetUniformMat4f("u_Model", modelMatrixLampOutline);
+	renderer.DrawArray(*m_VAO, *m_StencilShader);
+
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glEnable(GL_DEPTH_TEST);
 
 	m_Camera->UpdateCameraVectors();
 }
@@ -146,7 +177,10 @@ void scene::DepthTestingScene::DoPreviousInit()
 	m_LampTexture = std::make_unique<Texture>("res/textures/MinecraftLamp.png");
 	m_LampTexture->Bind(1);
 
-	m_ObjectShader = std::make_unique<ShaderProgram>("res/shaders/DepthTestingSceneShader.shader");
+	m_DepthShader = std::make_unique<ShaderProgram>("res/shaders/DepthTestingSceneShader.shader");
+	m_StencilShader = std::make_unique<ShaderProgram>("res/shaders/StencilTestingSceneShader.shader");
 
-	m_Camera = std::make_unique<Camera>(glm::vec3(-0.75f, 3.91f, -5.22), glm::vec3(0.0f, 1.0f, 0.0f), 57.0f, -40.0f);
+	m_Camera = std::make_unique<Camera>(glm::vec3(2, 3, 2), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
+	m_Camera->Fov = 80;
+	m_Camera->Far = 10;
 }

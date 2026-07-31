@@ -27,14 +27,7 @@ uniform float u_Far;
 
 in vec2 v_TexCoords;
 
-float LineariseDepth(float depth) 
-{
-    float z = depth * 2.0 - 1.0;
-    return (2.0 * u_Near * u_Far / (u_Far + u_Near - z * (u_Far - u_Near)));	
-}
-
 void main()
 {
-    float depth = LineariseDepth(gl_FragCoord.z) / u_Far;
-    color = vec4(vec3(depth), 1.0);
+    color = vec4(0.04, 0.28, 0.26, 1.0);
 };
