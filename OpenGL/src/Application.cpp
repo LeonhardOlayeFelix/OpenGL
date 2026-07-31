@@ -31,8 +31,9 @@ void main(void)
     MenuScene->RegisterScene<scene::InstancingScene>("Instancing");
     MenuScene->RegisterScene<scene::AsteroidScene>("Asteroid");
 	MenuScene->RegisterScene<scene::DepthTestingScene>("Depth Testing");
+    MenuScene->RegisterScene<scene::BlendingScene>("Blending");
 
-    MenuScene->SetScene("Depth Testing");
+    MenuScene->SetScene("Blending");
     
     Renderer renderer;
 
