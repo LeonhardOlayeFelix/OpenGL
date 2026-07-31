@@ -6,31 +6,10 @@ scene::FramebufferScene::FramebufferScene()
 {
 	DoPreviousInit();
 
-	glGenFramebuffers(1, &m_FBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-
-	//Color buffer attachment
-	glGenTextures(1, &m_ColorBufferAttachment);
-	glBindTexture(GL_TEXTURE_2D, m_ColorBufferAttachment);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 960, 540, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorBufferAttachment, 0);
-
-
-	//Depth and Stencil buffer attachment
-	glGenRenderbuffers(1, &m_DepthAndStencilBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_DepthAndStencilBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 960, 540);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_DepthAndStencilBuffer);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+	m_FBO2 = std::make_unique<FrameBuffer>(960, 540);
+	m_FBO2->AddColorAttachment();
+	m_FBO2->AddDepthStencilAttachment();
+	m_FBO2->Validate();
 }
 
 scene::FramebufferScene::~FramebufferScene()
@@ -67,7 +46,7 @@ void scene::FramebufferScene::OnRender()
 {
 	Renderer renderer;
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+	m_FBO2->Bind();
 	renderer.Clear();
 	glEnable(GL_DEPTH_TEST);
 
@@ -102,13 +81,13 @@ void scene::FramebufferScene::OnRender()
 
 	m_Camera->UpdateCameraVectors();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_FBO2->Unbind();
 	renderer.Clear();
 	m_ScreenShader->Bind();
 	m_ScreenShader->SetUniform1f("u_Offset", m_KernelOffset);
 	m_ScreenShader->SetUniform1fv("u_Kernel", 9, m_Kernel);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_ColorBufferAttachment);
+	glBindTexture(GL_TEXTURE_2D, m_FBO2->ColorAttachmentID);
 	glDisable(GL_DEPTH_TEST);
 	renderer.DrawArray(*m_VAO2, *m_ScreenShader);
 

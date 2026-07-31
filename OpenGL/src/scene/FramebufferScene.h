@@ -37,6 +37,7 @@ namespace scene {
 		std::unique_ptr<Texture>       m_StoneTexture;
 		std::unique_ptr<Texture>       m_LampTexture;
 		std::unique_ptr<Camera>        m_Camera;
+		std::unique_ptr<FrameBuffer>   m_FBO2;
 		unsigned int				   m_FBO;
 		unsigned int				   m_ColorBufferAttachment;
 		unsigned int				   m_DepthAndStencilBuffer;
