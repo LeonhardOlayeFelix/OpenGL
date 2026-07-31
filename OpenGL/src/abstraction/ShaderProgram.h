@@ -28,6 +28,7 @@ public:
 	void SetUniform1f(const std::string& name, float value);
 	void SetUniformMat4f(const std::string& name, const glm::mat4& matrix);
 	void SetUniformMat3f(const std::string& name, const glm::mat3& matrix);
+	void SetUniform1fv(const std::string& name, int count, const float* values);
 	void Bind() const;
 	void Unbind() const;
 private:

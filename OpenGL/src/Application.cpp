@@ -33,8 +33,9 @@ void main(void)
 	MenuScene->RegisterScene<scene::DepthTestingScene>("Depth Testing");
     MenuScene->RegisterScene<scene::BlendingScene>("Blending");
     MenuScene->RegisterScene<scene::FaceCullingScene>("Face Culling");
+    MenuScene->RegisterScene<scene::FramebufferScene>("Frame Buffer");
 
-    MenuScene->SetScene("Face Culling");
+    MenuScene->SetScene("Frame Buffer");
     
     Renderer renderer;
 

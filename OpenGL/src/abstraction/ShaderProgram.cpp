@@ -129,6 +129,11 @@ void ShaderProgram::SetUniformMat3f(const std::string& name, const glm::mat3& ma
 {
     GLCall(glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
+void ShaderProgram::SetUniform1fv(const std::string& name, int count, const float* values)
+{
+    GLCall(glUniform1fv(GetUniformLocation(name), count, values))
+}
+
 void ShaderProgram::SetUniform3f(const std::string& name, const glm::vec3& vec) 
 {
     GLCall(glUniform3f(GetUniformLocation(name), vec.x, vec.y, vec.z));

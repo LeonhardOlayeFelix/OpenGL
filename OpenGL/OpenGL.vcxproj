@@ -147,6 +147,7 @@
     <ClCompile Include="src\scene\Camera3DScene.cpp" />
     <ClCompile Include="src\scene\DepthTestingScene.cpp" />
     <ClCompile Include="src\scene\FaceCullingScene.cpp" />
+    <ClCompile Include="src\scene\FramebufferScene.cpp" />
     <ClCompile Include="src\scene\InstancingScene.cpp" />
     <ClCompile Include="src\scene\LightingScene.cpp" />
     <ClCompile Include="src\scene\MeshLoadingScene.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="src\scene\Camera3DScene.h" />
     <ClInclude Include="src\scene\DepthTestingScene.h" />
     <ClInclude Include="src\scene\FaceCullingScene.h" />
+    <ClInclude Include="src\scene\FramebufferScene.h" />
     <ClInclude Include="src\scene\InstancingScene.h" />
     <ClInclude Include="src\scene\LightingScene.h" />
     <ClInclude Include="src\scene\MeshLoadingScene.h" />

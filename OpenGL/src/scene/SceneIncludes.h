@@ -14,3 +14,4 @@
 #include "scene/DepthTestingScene.h"
 #include "scene/BlendingScene.h"
 #include "scene/FaceCullingScene.h"
+#include "scene/FramebufferScene.h"
