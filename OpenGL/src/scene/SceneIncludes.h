@@ -13,3 +13,4 @@
 #include "scene/AsteroidScene.h"
 #include "scene/DepthTestingScene.h"
 #include "scene/BlendingScene.h"
+#include "scene/FaceCullingScene.h"
