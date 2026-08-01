@@ -1,32 +1,22 @@
 #include "UBOScene.h"
 #include "vendor/imgui/imgui.h"
 #include <iostream>
+#include <memory>
 
 scene::UBOScene::UBOScene()
 {
 	DoPreviousInit();
 
-	unsigned int uniformBlockIndexRed = glGetUniformBlockIndex(m_ShaderRed->GetID(), "Matrices");
-	unsigned int uniformBlockIndexGreen = glGetUniformBlockIndex(m_ShaderGreen->GetID(), "Matrices");
-	unsigned int uniformBlockIndexBlue = glGetUniformBlockIndex(m_ShaderBlue->GetID(), "Matrices");
-	unsigned int uniformBlockIndexYellow = glGetUniformBlockIndex(m_ShaderYellow->GetID(), "Matrices");
+	m_ShaderRed->SetUniformBlockBinding("Matrices", 0);
+	m_ShaderGreen->SetUniformBlockBinding("Matrices", 0);
+	m_ShaderBlue->SetUniformBlockBinding("Matrices", 0);
+	m_ShaderYellow->SetUniformBlockBinding("Matrices", 0);
 
-	glUniformBlockBinding(m_ShaderRed->GetID(), uniformBlockIndexRed, 0);
-	glUniformBlockBinding(m_ShaderGreen->GetID(), uniformBlockIndexGreen, 0);
-	glUniformBlockBinding(m_ShaderBlue->GetID(), uniformBlockIndexBlue, 0);
-	glUniformBlockBinding(m_ShaderYellow->GetID(), uniformBlockIndexYellow, 0);
-
-	glGenBuffers(1, &m_UBOMatrices);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
-	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_UBOMatrices, 0, 2 * sizeof(glm::mat4));
+	m_UBO = std::make_unique<UniformBuffer>(2 * sizeof(glm::mat4));
+	m_UBO->BindToPoint(0);
 
 	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
-	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(perspectiveMatrix));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	m_UBO->SetData(glm::value_ptr(perspectiveMatrix), sizeof(glm::mat4), 0);
 }
 
 scene::UBOScene::~UBOScene()
@@ -65,9 +55,7 @@ void scene::UBOScene::OnRender()
 	glm::mat4 model = glm::mat4(1.0);
 
 	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
-	glBindBuffer(GL_UNIFORM_BUFFER, m_UBOMatrices);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(viewMatrix));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	m_UBO->SetData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
 
 	model = glm::translate(glm::mat4(1.0), glm::vec3(-1, 1, 0));
 	m_ShaderRed->SetUniformMat4f("u_Model", model);

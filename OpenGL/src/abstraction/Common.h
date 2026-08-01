@@ -9,6 +9,7 @@
 #include "Renderer.h"
 #include "Camera.h"
 #include "FrameBuffer.h"
+#include "UniformBuffer.h"
 
 #include "vendor/glm/glm.hpp"
 #include "vendor/glm/gtc/matrix_transform.hpp"

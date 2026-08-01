@@ -179,6 +179,7 @@
     <ClCompile Include="src\scene\ClearColourScene.cpp" />
     <ClCompile Include="src\scene\TriangleScene.cpp" />
     <ClCompile Include="src\scene\TransformationsScene.cpp" />
+    <ClCompile Include="src\abstraction\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\abstraction\FrameBuffer.h" />
@@ -513,6 +514,7 @@
     <ClInclude Include="src\scene\ClearColourScene.h" />
     <ClInclude Include="src\scene\TriangleScene.h" />
     <ClInclude Include="src\scene\TransformationsScene.h" />
+    <ClInclude Include="src\abstraction\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\vendor\glm\detail\func_common.inl" />
