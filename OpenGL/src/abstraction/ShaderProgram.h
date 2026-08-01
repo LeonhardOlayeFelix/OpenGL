@@ -29,12 +29,15 @@ public:
 	void SetUniformMat4f(const std::string& name, const glm::mat4& matrix);
 	void SetUniformMat3f(const std::string& name, const glm::mat3& matrix);
 	void SetUniform1fv(const std::string& name, int count, const float* values);
+	void SetUniformBlockBinding(const std::string& name, int bindingPoint);
 	void Bind() const;
 	void Unbind() const;
+	inline int GetID() { return m_RendererID; }
 private:
 	ShaderProgramSource ParseShaderProgram(const std::string& filepath);
 	unsigned int CreateShaderProgram(const std::string& vertexShader, const std::string& fragmentShader);
 	unsigned int CompileShader(unsigned int type, const std::string& source);
 	int GetUniformLocation(const std::string& name);
+	int GetUniformBlockIndex(const std::string& name);
 };
 

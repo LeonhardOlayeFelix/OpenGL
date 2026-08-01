@@ -104,51 +104,56 @@ void ShaderProgram::Unbind() const
 }
 void ShaderProgram::SetUniform4f(const std::string& name, const glm::vec4& vec)
 {
-    GLCall(glUniform4f(GetUniformLocation(name), vec.x, vec.y, vec.z, vec.w));
+    GLCall(glProgramUniform4f(m_RendererID, GetUniformLocation(name), vec.x, vec.y, vec.z, vec.w));
 }
 void ShaderProgram::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
 {
-    GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+    GLCall(glProgramUniform4f(m_RendererID, GetUniformLocation(name), v0, v1, v2, v3));
 }
 
 void ShaderProgram::SetUniform1i(const std::string& name, int value)
 {
-    GLCall(glUniform1i(GetUniformLocation(name), value));
+    GLCall(glProgramUniform1i(m_RendererID, GetUniformLocation(name), value));
 }
 
 void ShaderProgram::SetUniform1f(const std::string& name, float value)
 {
-    GLCall(glUniform1f(GetUniformLocation(name), value));
+    GLCall(glProgramUniform1f(m_RendererID, GetUniformLocation(name), value));
 }
 
 void ShaderProgram::SetUniformMat4f(const std::string& name, const glm::mat4& matrix)
 {
-    GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+    GLCall(glProgramUniformMatrix4fv(m_RendererID, GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 void ShaderProgram::SetUniformMat3f(const std::string& name, const glm::mat3& matrix)
 {
-    GLCall(glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+    GLCall(glProgramUniformMatrix3fv(m_RendererID, GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 void ShaderProgram::SetUniform1fv(const std::string& name, int count, const float* values)
 {
-    GLCall(glUniform1fv(GetUniformLocation(name), count, values))
+    GLCall(glProgramUniform1fv(m_RendererID, GetUniformLocation(name), count, values))
+}
+
+void ShaderProgram::SetUniformBlockBinding(const std::string& name, int bindingPoint)
+{
+    GLCall(glUniformBlockBinding(m_RendererID, GetUniformBlockIndex(name), bindingPoint))
 }
 
 void ShaderProgram::SetUniform3f(const std::string& name, const glm::vec3& vec) 
 {
-    GLCall(glUniform3f(GetUniformLocation(name), vec.x, vec.y, vec.z));
+    GLCall(glProgramUniform3f(m_RendererID, GetUniformLocation(name), vec.x, vec.y, vec.z));
 }
 void ShaderProgram::SetUniform2f(const std::string& name, const glm::vec2& vec) 
 {
-    GLCall(glUniform2f(GetUniformLocation(name), vec.x, vec.y));
+    GLCall(glProgramUniform2f(m_RendererID, GetUniformLocation(name), vec.x, vec.y));
 }
 void ShaderProgram::SetUniform3f(const std::string& name, float v0, float v1, float v2) 
 {
-    GLCall(glUniform3f(GetUniformLocation(name), v0, v1, v2));
+    GLCall(glProgramUniform3f(m_RendererID, GetUniformLocation(name), v0, v1, v2));
 }
 void ShaderProgram::SetUniform2f(const std::string& name, float v0, float v1) 
 {
-    GLCall(glUniform2f(GetUniformLocation(name), v0, v1));
+    GLCall(glProgramUniform2f(m_RendererID, GetUniformLocation(name), v0, v1));
 }
 
 int ShaderProgram::GetUniformLocation(const std::string& name)
@@ -162,5 +167,14 @@ int ShaderProgram::GetUniformLocation(const std::string& name)
 
     m_UniformLocationCache[name] = location;
     return location;
+}
+
+int ShaderProgram::GetUniformBlockIndex(const std::string& name)
+{
+    int index = glGetUniformBlockIndex(m_RendererID, name.c_str());
+    if (index == -1)
+        std::cout << "Warning: Uniform block '" << name << "' doesn't exist!" << std::endl;
+
+    return index;
 }
 

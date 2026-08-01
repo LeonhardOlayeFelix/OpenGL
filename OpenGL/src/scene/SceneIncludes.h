@@ -15,3 +15,4 @@
 #include "scene/BlendingScene.h"
 #include "scene/FaceCullingScene.h"
 #include "scene/FramebufferScene.h"
+#include "scene/UBOScene.h"
