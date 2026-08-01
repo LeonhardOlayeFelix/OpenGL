@@ -1,4 +1,7 @@
 #pragma once
+#include <memory>
+#include "Texture.h"
+
 class FrameBuffer
 {
 	private:
@@ -6,8 +9,8 @@ class FrameBuffer
 		int m_Width, m_Height;
 
 	public:
-		unsigned int ColorAttachmentID;
 		unsigned int DepthAndStencilAttachmentID;
+		std::unique_ptr<Texture> ColorAttachmentTexture;
 
 	public:
 		FrameBuffer(int width, int height);

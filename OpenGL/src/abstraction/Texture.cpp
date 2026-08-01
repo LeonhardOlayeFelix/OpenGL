@@ -24,6 +24,23 @@ Texture::Texture(const std::string path) : m_RendererID(0), m_FilePath(path), m_
 		stbi_image_free(m_LocalBuffer);
 }
 
+Texture Texture::CreateEmpty(int width, int height) 
+{
+	Texture tex;
+	tex.m_Width = width;
+	tex.m_Height = height;
+	tex.m_LocalBuffer = nullptr;
+
+	GLCall(glGenTextures(1, &tex.m_RendererID));
+	GLCall(glBindTexture(GL_TEXTURE_2D, tex.m_RendererID));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+
+	return tex;
+}
+
 Texture::~Texture()
 {
 	if (m_RendererID != 0)

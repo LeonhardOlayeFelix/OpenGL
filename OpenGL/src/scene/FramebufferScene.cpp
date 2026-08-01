@@ -79,17 +79,19 @@ void scene::FramebufferScene::OnRender()
 	m_Shader->SetUniformMat4f("u_Model", modelMatrixLamp2);
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
-	m_Camera->UpdateCameraVectors();
-
+	m_FBO2->ColorAttachmentTexture->Bind();
 	m_FBO2->Unbind();
+
+	//Back to default frame buffer -> paste view texture onto screen quad
 	renderer.Clear();
 	m_ScreenShader->Bind();
 	m_ScreenShader->SetUniform1f("u_Offset", m_KernelOffset);
 	m_ScreenShader->SetUniform1fv("u_Kernel", 9, m_Kernel);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_FBO2->ColorAttachmentID);
 	glDisable(GL_DEPTH_TEST);
 	renderer.DrawArray(*m_VAO2, *m_ScreenShader);
+
+
+	m_Camera->UpdateCameraVectors();
 
 }
 
