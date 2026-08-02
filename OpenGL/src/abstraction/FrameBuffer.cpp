@@ -125,6 +125,6 @@ Texture* FrameBuffer::GetColorTexture(int colorIndex) const
 				return tex->get();
 		}
 	}
-
+	std::cout << "Error: Was not able to locate Color attachment " << colorIndex << " For framebuffer.";
 	return nullptr;
 }
