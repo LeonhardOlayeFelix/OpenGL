@@ -7,8 +7,8 @@ scene::FramebufferScene::FramebufferScene()
 	DoPreviousInit();
 
 	m_FBO2 = std::make_unique<FrameBuffer>(960, 540);
-	m_FBO2->AddColorAttachment();
-	m_FBO2->AddDepthStencilAttachment();
+	m_FBO2->AddAttachment(AttachmentTarget::Color, AttachmentStorage::Texture);
+	m_FBO2->AddAttachment(AttachmentTarget::DepthStencil, AttachmentStorage::RenderBuffer);
 	m_FBO2->Validate();
 }
 
@@ -79,7 +79,7 @@ void scene::FramebufferScene::OnRender()
 	m_Shader->SetUniformMat4f("u_Model", modelMatrixLamp2);
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
-	m_FBO2->ColorAttachment->Bind();
+	m_FBO2->GetColorTexture()->Bind();
 	m_FBO2->Unbind();
 
 	//Back to default frame buffer -> paste view texture onto screen quad

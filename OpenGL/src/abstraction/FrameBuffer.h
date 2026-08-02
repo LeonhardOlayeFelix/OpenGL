@@ -2,6 +2,15 @@
 #include <memory>
 #include "Texture.h"
 #include "RenderBuffer.h"
+#include <variant>
+#include <vector>
+
+enum class AttachmentTarget {
+	Color, Depth, Stencil, DepthStencil
+};
+enum class AttachmentStorage {
+	Texture, RenderBuffer
+};
 
 class FrameBuffer
 {
@@ -9,9 +18,15 @@ class FrameBuffer
 		unsigned int m_RendererID;
 		int m_Width, m_Height;
 
-	public:
-		std::unique_ptr<Texture> ColorAttachment;
-		std::unique_ptr<RenderBuffer> DepthAndStencilAttachment;
+		struct Attachment
+		{
+			AttachmentTarget target;
+			int colorIndex; // colorIndex only matters when target == Color
+			std::variant<std::unique_ptr<Texture>, std::unique_ptr<RenderBuffer>> storage;
+		};
+
+		std::vector<Attachment> m_Attachments;
+		std::vector<GLenum> m_DrawBuffers;
 
 	public:
 		FrameBuffer(int width, int height);
@@ -24,9 +39,9 @@ class FrameBuffer
 
 		void Bind() const;
 		void Unbind() const;
-		void AddColorAttachment();
-		void AddDepthStencilAttachment();
 		bool Validate();
 
+		void AddAttachment(AttachmentTarget target, AttachmentStorage storage, int colorIndex = 0); // colorIndex only matters when target == Color
+		Texture* GetColorTexture(int colorIndex = 0) const;
 };
 

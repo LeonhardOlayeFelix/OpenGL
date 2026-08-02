@@ -1,10 +1,10 @@
 #include "RenderBuffer.h"
 
-RenderBuffer::RenderBuffer(int width, int height) : m_RendererID(0), m_Width(width), m_Height(height)
+RenderBuffer::RenderBuffer(int width, int height, GLenum internalFormat) : m_RendererID(0), m_Width(width), m_Height(height)
 {
     GLCall(glGenRenderbuffers(1, &m_RendererID));
     GLCall(glBindRenderbuffer(GL_RENDERBUFFER, m_RendererID));
-    GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
+    GLCall(glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height));
     GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 }
 

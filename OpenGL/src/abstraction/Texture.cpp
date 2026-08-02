@@ -1,6 +1,5 @@
 #include "Texture.h"
 #include "ErrorHandling.h"
-#include <GL/glew.h>
 #include "vendor/stb_image/stb_image.h"
 
 Texture::Texture(const std::string path) : m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)
@@ -24,16 +23,34 @@ Texture::Texture(const std::string path) : m_RendererID(0), m_FilePath(path), m_
 		stbi_image_free(m_LocalBuffer);
 }
 
-Texture Texture::CreateEmpty(int width, int height) 
+Texture Texture::CreateEmpty(int width, int height, GLenum internalFormat) 
 {
 	Texture tex;
 	tex.m_Width = width;
 	tex.m_Height = height;
 	tex.m_LocalBuffer = nullptr;
 
+	GLenum format, type;
+	switch (internalFormat)
+	{
+		case GL_DEPTH_COMPONENT24:
+		case GL_DEPTH_COMPONENT32F:
+			format = GL_DEPTH_COMPONENT;
+			type = GL_FLOAT;
+			break;
+		case GL_DEPTH24_STENCIL8:
+			format = GL_DEPTH_STENCIL;
+			type = GL_UNSIGNED_INT_24_8;
+			break;
+		default:
+			format = GL_RGBA;
+			type = GL_UNSIGNED_BYTE;
+			break;
+	}
+
 	GLCall(glGenTextures(1, &tex.m_RendererID));
 	GLCall(glBindTexture(GL_TEXTURE_2D, tex.m_RendererID));
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, nullptr));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));

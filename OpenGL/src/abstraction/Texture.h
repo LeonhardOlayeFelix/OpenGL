@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "ErrorHandling.h"
+#include <GL/glew.h>
 
 class Texture
 {
@@ -13,7 +14,7 @@ private:
 
 public:
 	Texture(const std::string path);
-	static Texture CreateEmpty(int width, int height);
+	static Texture CreateEmpty(int width, int height, GLenum internalFormat);
 	~Texture();
 
 	Texture(Texture&& other) noexcept;
