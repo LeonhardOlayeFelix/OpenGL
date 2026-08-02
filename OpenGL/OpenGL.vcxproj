@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\abstraction\RenderBuffer.cpp" />
     <ClCompile Include="src\abstraction\FrameBuffer.cpp" />
     <ClCompile Include="src\abstraction\Camera.cpp" />
     <ClCompile Include="src\abstraction\Mesh.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="src\abstraction\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\abstraction\RenderBuffer.h" />
     <ClInclude Include="src\abstraction\FrameBuffer.h" />
     <ClInclude Include="src\abstraction\Camera.h" />
     <ClInclude Include="src\abstraction\Common.h" />

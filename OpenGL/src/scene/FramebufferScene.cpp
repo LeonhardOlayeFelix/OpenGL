@@ -79,7 +79,7 @@ void scene::FramebufferScene::OnRender()
 	m_Shader->SetUniformMat4f("u_Model", modelMatrixLamp2);
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
-	m_FBO2->ColorAttachmentTexture->Bind();
+	m_FBO2->ColorAttachment->Bind();
 	m_FBO2->Unbind();
 
 	//Back to default frame buffer -> paste view texture onto screen quad

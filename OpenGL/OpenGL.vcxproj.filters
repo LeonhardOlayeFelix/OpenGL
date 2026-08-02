@@ -138,6 +138,9 @@
     <ClCompile Include="src\abstraction\UniformBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\abstraction\RenderBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\abstraction\Renderer.h">
@@ -1137,6 +1140,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\abstraction\UniformBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\abstraction\RenderBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

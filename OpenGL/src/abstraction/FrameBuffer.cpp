@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-FrameBuffer::FrameBuffer(int width, int height) : m_Width(width), m_Height(height), DepthAndStencilAttachmentID(0)
+FrameBuffer::FrameBuffer(int width, int height) : m_Width(width), m_Height(height)
 {
 	GLCall(glGenFramebuffers(1, &m_RendererID));
 }
@@ -14,33 +14,29 @@ FrameBuffer::~FrameBuffer()
 {
 	if (m_RendererID != 0)
 		GLCall(glDeleteFramebuffers(1, &m_RendererID));
-	if (DepthAndStencilAttachmentID != 0)
-		GLCall(glDeleteRenderbuffers(1, &DepthAndStencilAttachmentID));
 }
 
 FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept
 	: m_RendererID(other.m_RendererID),
-	DepthAndStencilAttachmentID(other.DepthAndStencilAttachmentID),
-	ColorAttachmentTexture(std::move(other.ColorAttachmentTexture)),
+	ColorAttachment(std::move(other.ColorAttachment)),
+	DepthAndStencilAttachment(std::move(other.DepthAndStencilAttachment)),
 	m_Width(other.m_Width), m_Height(other.m_Height)
 {
 	other.m_RendererID = 0;
-	other.DepthAndStencilAttachmentID = 0;
 }
 
 FrameBuffer& FrameBuffer::operator=(FrameBuffer && other) noexcept
 {
 	if (this != &other) {
-		GLCall(glDeleteFramebuffers(1, &m_RendererID));
+		if (m_RendererID != 0)
+			GLCall(glDeleteFramebuffers(1, &m_RendererID));
 		m_RendererID = other.m_RendererID;
 		m_Width = other.m_Width;
 		m_Height = other.m_Height;
-		DepthAndStencilAttachmentID = other.DepthAndStencilAttachmentID;
-		ColorAttachmentTexture = std::move(other.ColorAttachmentTexture);
-
+		ColorAttachment = std::move(other.ColorAttachment);
+		DepthAndStencilAttachment = std::move(other.DepthAndStencilAttachment);
 
 		other.m_RendererID = 0;
-		other.DepthAndStencilAttachmentID = 0;
 	}
 
 	return *this;
@@ -59,19 +55,16 @@ void FrameBuffer::Unbind() const
 void FrameBuffer::AddColorAttachment()
 {
 	Bind();
-	ColorAttachmentTexture = std::make_unique<Texture>(Texture::CreateEmpty(m_Width, m_Height));
-	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ColorAttachmentTexture->GetId(), 0));
+	ColorAttachment = std::make_unique<Texture>(Texture::CreateEmpty(m_Width, m_Height));
+	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ColorAttachment->GetId(), 0));
 	Unbind();
 }
 
 void FrameBuffer::AddDepthStencilAttachment()
 {
 	Bind();
-	GLCall(glGenRenderbuffers(1, &DepthAndStencilAttachmentID));
-	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, DepthAndStencilAttachmentID));
-	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height));
-	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
-	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, DepthAndStencilAttachmentID));
+	DepthAndStencilAttachment = std::make_unique<RenderBuffer>(m_Width, m_Height);
+	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, DepthAndStencilAttachment->GetID()));
 	Unbind();
 }
 
