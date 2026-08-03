@@ -10,7 +10,7 @@ ShaderProgram::ShaderProgram(const std::string& filepath) : m_FilePath(filepath)
 
     ShaderProgramSource source = ParseShaderProgram(filepath);
 
-    m_RendererID = CreateShaderProgram(source.VertexSource, source.FragmentSource);
+    m_RendererID = CreateShaderProgram(source);
 }
 
 ShaderProgram::~ShaderProgram()
@@ -22,13 +22,13 @@ ShaderProgramSource ShaderProgram::ParseShaderProgram(const std::string& filepat
     std::ifstream stream(filepath);
 
     enum class ShaderType {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1,
+        NONE = -1, VERTEX = 0, FRAGMENT = 1, GEOMETRY = 2
     };
 
     ShaderType type = ShaderType::NONE;
 
     std::string line;
-    std::stringstream ss[2];
+    std::stringstream ss[3];
 
     while (getline(stream, line)) {
         if (line.find("#shader") != std::string::npos) {
@@ -37,23 +37,32 @@ ShaderProgramSource ShaderProgram::ParseShaderProgram(const std::string& filepat
                 type = ShaderType::VERTEX;
             else if (line.find("fragment") != std::string::npos)
                 type = ShaderType::FRAGMENT;
+            else if (line.find("geometry") != std::string::npos)
+                type = ShaderType::GEOMETRY;
         }
         else {
             ss[(int)type] << line << "\n";
         }
     }
 
-    return { ss[0].str(), ss[1].str() };
+    return { ss[0].str(), ss[1].str(), ss[2].str()};
 }
 
-unsigned int ShaderProgram::CreateShaderProgram(const std::string& vertexShader, const std::string& fragmentShader) {
+unsigned int ShaderProgram::CreateShaderProgram(const ShaderProgramSource& source) {
 
     unsigned int program = glCreateProgram();
-    unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+
+    unsigned int vs = CompileShader(GL_VERTEX_SHADER, source.VertexSource);
+    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, source.FragmentSource);
 
     glAttachShader(program, vs);
     glAttachShader(program, fs);
+
+    if (!source.GeometrySource.empty()) {
+        unsigned int gs = CompileShader(GL_GEOMETRY_SHADER, source.GeometrySource);
+        glAttachShader(program, gs);
+    }
+
     glLinkProgram(program);
     glValidateProgram(program);
 
@@ -71,7 +80,6 @@ unsigned int ShaderProgram::CompileShader(unsigned int type, const std::string& 
     glCompileShader(shader);
 
     int result;
-
 
     glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
 

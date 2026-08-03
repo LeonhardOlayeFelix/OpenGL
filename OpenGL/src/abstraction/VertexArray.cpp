@@ -3,7 +3,7 @@
 
 VertexArray::VertexArray() : m_IndexBuffer(nullptr), m_VBOSize(0), m_Stride(0)
 {
-	GLCall(glGenVertexArrays(1, &m_RendererID));
+	GLCall(glCreateVertexArrays(1, &m_RendererID));
 }
 VertexArray::VertexArray(VertexArray&& other) noexcept
 	: m_RendererID(other.m_RendererID), m_IndexBuffer(other.m_IndexBuffer),

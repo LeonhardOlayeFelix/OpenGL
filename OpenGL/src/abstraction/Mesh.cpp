@@ -15,10 +15,7 @@ void Mesh::Draw(ShaderProgram& shader)
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 
-
     for (unsigned int i = 0; i < Textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-
         std::string number;
         std::string name = Textures[i].type;
 
@@ -29,9 +26,8 @@ void Mesh::Draw(ShaderProgram& shader)
 
         std::string uniformName = "u_Material." + name + number;
         shader.SetUniform1i(uniformName.c_str(), i);
-        glBindTexture(GL_TEXTURE_2D, Textures[i].id);
+        glBindTextureUnit(i, Textures[i].id);
     }
-    glActiveTexture(GL_TEXTURE0);
 
     m_Vao->Bind();
     glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
@@ -90,8 +86,6 @@ void Mesh::setTextures(ShaderProgram& shader)
     unsigned int specularNr = 1;
 
     for (unsigned int i = 0; i < Textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-
         std::string number;
         std::string name = Textures[i].type;
 
@@ -102,7 +96,6 @@ void Mesh::setTextures(ShaderProgram& shader)
 
         std::string uniformName = "u_Material." + name + number;
         shader.SetUniform1i(uniformName.c_str(), i);
-        glBindTexture(GL_TEXTURE_2D, Textures[i].id);
+        glBindTextureUnit(i, Textures[i].id);
     }
-    glActiveTexture(GL_TEXTURE0);
 }

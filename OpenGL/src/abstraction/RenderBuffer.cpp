@@ -2,10 +2,8 @@
 
 RenderBuffer::RenderBuffer(int width, int height, GLenum internalFormat) : m_RendererID(0), m_Width(width), m_Height(height)
 {
-    GLCall(glGenRenderbuffers(1, &m_RendererID));
-    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, m_RendererID));
-    GLCall(glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, width, height));
-    GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+    GLCall(glCreateRenderbuffers(1, &m_RendererID));
+    GLCall(glNamedRenderbufferStorage(m_RendererID, internalFormat, width, height));
 }
 
 RenderBuffer::~RenderBuffer()

@@ -8,6 +8,7 @@ class VertexArray
 private:
 	unsigned int m_RendererID;
 	unsigned int m_AttributeIndex = 0; //To know which attribute should be set next
+	unsigned int m_BindingIndex = 0;
 	const IndexBuffer* m_IndexBuffer;
 	size_t m_VBOSize;
 	size_t m_Stride;

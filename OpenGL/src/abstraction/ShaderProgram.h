@@ -6,6 +6,7 @@
 struct ShaderProgramSource {
 	std::string VertexSource;
 	std::string FragmentSource;
+	std::string GeometrySource;
 };
 
 class ShaderProgram
@@ -35,7 +36,7 @@ public:
 	inline int GetID() { return m_RendererID; }
 private:
 	ShaderProgramSource ParseShaderProgram(const std::string& filepath);
-	unsigned int CreateShaderProgram(const std::string& vertexShader, const std::string& fragmentShader);
+	unsigned int CreateShaderProgram(const ShaderProgramSource&);
 	unsigned int CompileShader(unsigned int type, const std::string& source);
 	int GetUniformLocation(const std::string& name);
 	int GetUniformBlockIndex(const std::string& name);

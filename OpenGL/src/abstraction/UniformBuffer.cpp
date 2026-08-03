@@ -2,10 +2,8 @@
 
 UniformBuffer::UniformBuffer(size_t size) : m_Size(size)
 {
-	GLCall(glGenBuffers(1, &m_RendererID));
-	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID));
-	GLCall(glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	GLCall(glCreateBuffers(1, &m_RendererID));
+	GLCall(glNamedBufferData(m_RendererID, size, NULL, GL_STATIC_DRAW));
 }
 
 UniformBuffer::~UniformBuffer()
@@ -24,7 +22,8 @@ UniformBuffer::UniformBuffer(UniformBuffer&& other) noexcept
 UniformBuffer& UniformBuffer::operator=(UniformBuffer && other) noexcept
 {
 	if (this != &other) {
-		glDeleteBuffers(1, &m_RendererID);
+		if (m_RendererID != 0)
+			glDeleteBuffers(1, &m_RendererID);
 		m_RendererID = other.m_RendererID;
 		m_Size = other.m_Size;
 		other.m_RendererID = 0;
@@ -36,9 +35,7 @@ UniformBuffer& UniformBuffer::operator=(UniformBuffer && other) noexcept
 
 void UniformBuffer::SetData(const void* data, size_t size, size_t offset)
 {
-	glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID);
-	glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glNamedBufferSubData(m_RendererID, offset, size, data);
 }
 
 void UniformBuffer::BindToPoint(unsigned int bindingPoint, size_t offset, size_t size)

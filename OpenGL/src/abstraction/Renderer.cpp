@@ -1,6 +1,5 @@
 #include "Renderer.h"
-#include "ErrorHandling.h"
-#include <GL/glew.h>
+
 
 Renderer::Renderer()
 {
@@ -23,11 +22,11 @@ void Renderer::DrawElementsInstanced(const VertexArray& vao, const ShaderProgram
 	GLCall(glDrawElementsInstanced(GL_TRIANGLES, vao.GetIndexBufferCount(), GL_UNSIGNED_INT, nullptr, nInstances));
 }
 
-void Renderer::DrawArray(const VertexArray& vao, const ShaderProgram& shader) const
+void Renderer::DrawArray(const VertexArray& vao, const ShaderProgram& shader, GLenum mode) const
 {
 	shader.Bind();
 	vao.Bind();
-	GLCall(glDrawArrays(GL_TRIANGLES, 0, vao.GetVertexBufferSize() / vao.GetStride()));
+	GLCall(glDrawArrays(mode, 0, vao.GetVertexBufferSize() / vao.GetStride()));
 }
 
 void Renderer::DrawArrayInstanced(const VertexArray& vao, const ShaderProgram& shader, int nInstances) const

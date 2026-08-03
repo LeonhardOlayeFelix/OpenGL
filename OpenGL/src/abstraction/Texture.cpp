@@ -7,17 +7,16 @@ Texture::Texture(const std::string path) : m_RendererID(0), m_FilePath(path), m_
 	stbi_set_flip_vertically_on_load(1);
 	m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
 
-	GLCall(glGenTextures(1, &m_RendererID));
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+	GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID));
 
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT));
+	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT));
+	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT));
 
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
-	GLCall(glGenerateMipmap(GL_TEXTURE_2D));
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	GLCall(glTextureStorage2D(m_RendererID, 1, GL_RGBA8, m_Width, m_Height));
+	GLCall(glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
+	GLCall(glGenerateTextureMipmap(m_RendererID));
 
 	if (m_LocalBuffer)
 		stbi_image_free(m_LocalBuffer);
@@ -48,12 +47,10 @@ Texture Texture::CreateEmpty(int width, int height, GLenum internalFormat)
 			break;
 	}
 
-	GLCall(glGenTextures(1, &tex.m_RendererID));
-	GLCall(glBindTexture(GL_TEXTURE_2D, tex.m_RendererID));
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, nullptr));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &tex.m_RendererID));
+	GLCall(glTextureStorage2D(tex.m_RendererID, 1, internalFormat, width, height));
+	GLCall(glTextureParameteri(tex.m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTextureParameteri(tex.m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
 	return tex;
 }
@@ -90,8 +87,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
 void Texture::Bind(unsigned int slot) const
 {
-	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererID));
+	GLCall(glBindTextureUnit(slot, m_RendererID));
 }
 
 void Texture::Unbind() const

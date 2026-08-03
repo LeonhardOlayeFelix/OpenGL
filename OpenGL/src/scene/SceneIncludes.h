@@ -16,3 +16,4 @@
 #include "scene/FaceCullingScene.h"
 #include "scene/FramebufferScene.h"
 #include "scene/UBOScene.h"
+#include "scene/GeometryShaderScene.h"
