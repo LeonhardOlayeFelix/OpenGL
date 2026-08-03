@@ -29,10 +29,15 @@ namespace scene {
 
 		std::unique_ptr<VertexArray>   m_VAO;
 		std::unique_ptr<VertexBuffer>  m_VBO;
+		std::unique_ptr<UniformBuffer> m_UBO;
 		std::unique_ptr<IndexBuffer>   m_IBO;
+		std::unique_ptr<ShaderProgram> m_ExplosionShader;
 		std::unique_ptr<ShaderProgram> m_Shader;
+		std::unique_ptr<ShaderProgram> m_NormalShader;
 		std::unique_ptr<Camera>        m_Camera;
 		std::unique_ptr<Model>		   m_Model;
+
+		float						   m_Magnitude = 1;
 	private:
 		void DoPreviousInit();
 	};
