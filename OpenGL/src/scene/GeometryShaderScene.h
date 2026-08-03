@@ -37,7 +37,7 @@ namespace scene {
 		std::unique_ptr<Camera>        m_Camera;
 		std::unique_ptr<Model>		   m_Model;
 
-		float						   m_Magnitude = 1;
+		float						   m_Magnitude = 0;
 	private:
 		void DoPreviousInit();
 	};

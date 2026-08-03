@@ -53,16 +53,10 @@ void scene::GeometryShaderScene::OnRender()
 	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
 	m_UBO->SetData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
 
-	modelMatrix = glm::translate(glm::mat4(1.0), glm::vec3(-3, 0, 0));
 	m_ExplosionShader->SetUniformMat4f("u_Model", modelMatrix);
 	m_ExplosionShader->SetUniform1f("u_Magnitude", m_Magnitude);
 	m_Model->Draw(*m_ExplosionShader);
 	
-	modelMatrix = glm::translate(glm::mat4(1.0), glm::vec3(3, 0, 0));
-
-	m_Shader->SetUniformMat4f("u_Model", modelMatrix);
-	m_Model->Draw(*m_Shader);
-
 	m_NormalShader->SetUniformMat4f("u_Model", modelMatrix);
 	m_NormalShader->SetUniform1f("u_Magnitude", m_Magnitude);
 	m_Model->Draw(*m_NormalShader);
@@ -89,9 +83,6 @@ void scene::GeometryShaderScene::DoPreviousInit()
 
 	m_ExplosionShader = std::make_unique<ShaderProgram>("res/shaders/GeometryExplosionShader.shader");
 	m_ExplosionShader->SetUniformBlockBinding("Matrices", 0);
-
-	m_Shader = std::make_unique<ShaderProgram>("res/shaders/GeometryShader.shader");
-	m_Shader->SetUniformBlockBinding("Matrices", 0);
 
 	m_NormalShader = std::make_unique<ShaderProgram>("res/shaders/GeometryNormalShader.shader");
 	m_NormalShader->SetUniformBlockBinding("Matrices", 0);
