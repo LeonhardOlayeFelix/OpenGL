@@ -62,14 +62,15 @@ void scene::GeometryShaderScene::OnImGuiRender()
 void scene::GeometryShaderScene::DoPreviousInit()
 {
 	float points[] = {
-	-0.25f,  0.25f,
-	 0.25f,  0.25f,
-	 0.25f, -0.25f,
-	-0.25f, -0.25f 
+	-0.25f,  0.25f, 1.0f, 0.0f, 0.0f, // top-left
+	 0.25f,  0.25f, 0.0f, 1.0f, 0.0f, // top-right
+	 0.25f, -0.25f, 0.0f, 0.0f, 1.0f, // bottom-right
+	-0.25f, -0.25f, 1.0f, 1.0f, 0.0f  // bottom-left
 	};
 
 	VertexBufferLayout layout;
 	layout.Push<float>(2);
+	layout.Push<float>(3);
 
 	m_VAO = std::make_unique<VertexArray>();
 	m_VBO = std::make_unique<VertexBuffer>(points, sizeof(points));

@@ -52,15 +52,12 @@ unsigned int ShaderProgram::CreateShaderProgram(const ShaderProgramSource& sourc
 
     unsigned int program = glCreateProgram();
 
-    unsigned int vs = CompileShader(GL_VERTEX_SHADER, source.VertexSource);
-    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, source.FragmentSource);
+    unsigned int vs = AttachShaderToProgram(program, source.VertexSource, GL_VERTEX_SHADER);
+    unsigned int fs = AttachShaderToProgram(program, source.FragmentSource, GL_FRAGMENT_SHADER);
 
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
-
+    unsigned int gs = 0;
     if (!source.GeometrySource.empty()) {
-        unsigned int gs = CompileShader(GL_GEOMETRY_SHADER, source.GeometrySource);
-        glAttachShader(program, gs);
+        gs = AttachShaderToProgram(program, source.GeometrySource, GL_GEOMETRY_SHADER);
     }
 
     glLinkProgram(program);
@@ -69,7 +66,18 @@ unsigned int ShaderProgram::CreateShaderProgram(const ShaderProgramSource& sourc
     glDeleteShader(vs);
     glDeleteShader(fs);
 
+    if (gs != 0) {
+        glDeleteShader(gs);
+    }
+
     return program;
+}
+
+unsigned int ShaderProgram::AttachShaderToProgram(unsigned int program, const std::string& shaderSource, GLenum type)
+{
+    unsigned int compiledShader = CompileShader(type, shaderSource);
+    glAttachShader(program, compiledShader);
+    return compiledShader;
 }
 
 unsigned int ShaderProgram::CompileShader(unsigned int type, const std::string& source) {
