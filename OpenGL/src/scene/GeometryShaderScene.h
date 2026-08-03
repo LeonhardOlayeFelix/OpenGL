@@ -32,7 +32,7 @@ namespace scene {
 		std::unique_ptr<IndexBuffer>   m_IBO;
 		std::unique_ptr<ShaderProgram> m_Shader;
 		std::unique_ptr<Camera>        m_Camera;
-
+		std::unique_ptr<Model>		   m_Model;
 	private:
 		void DoPreviousInit();
 	};

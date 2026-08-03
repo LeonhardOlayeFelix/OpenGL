@@ -6,6 +6,8 @@ scene::GeometryShaderScene::GeometryShaderScene()
 {
 	DoPreviousInit();
 
+	m_Model = std::make_unique<Model>("res/models/backpack/backpack.obj");
+
 }
 
 scene::GeometryShaderScene::~GeometryShaderScene()
@@ -42,7 +44,16 @@ void scene::GeometryShaderScene::OnRender()
 {
 	Renderer renderer;
 
-	renderer.DrawArray(*m_VAO, *m_Shader, GL_POINTS);
+	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
+	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
+	glm::mat4 modelMatrix = glm::mat4(1.0);
+
+	m_Shader->Bind();
+	m_Shader->SetUniformMat4f("u_View", viewMatrix);
+	m_Shader->SetUniformMat4f("u_Proj", perspectiveMatrix);
+	m_Shader->SetUniformMat4f("u_Model", modelMatrix);
+
+	m_Model->Draw(*m_Shader);
 
 	m_Camera->UpdateCameraVectors();
 
@@ -61,22 +72,9 @@ void scene::GeometryShaderScene::OnImGuiRender()
 
 void scene::GeometryShaderScene::DoPreviousInit()
 {
-	float points[] = {
-	-0.25f,  0.25f, 1.0f, 0.0f, 0.0f, // top-left
-	 0.25f,  0.25f, 0.0f, 1.0f, 0.0f, // top-right
-	 0.25f, -0.25f, 0.0f, 0.0f, 1.0f, // bottom-right
-	-0.25f, -0.25f, 1.0f, 1.0f, 0.0f  // bottom-left
-	};
-
-	VertexBufferLayout layout;
-	layout.Push<float>(2);
-	layout.Push<float>(3);
-
-	m_VAO = std::make_unique<VertexArray>();
-	m_VBO = std::make_unique<VertexBuffer>(points, sizeof(points));
-	m_VAO->RecordVBOLayout(*m_VBO, layout);
 
 	m_Shader = std::make_unique<ShaderProgram>("res/shaders/GeometryShader.shader");
+
 
 	m_Camera = std::make_unique<Camera>(glm::vec3(2, 3, 2), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
 	m_Camera->Fov = 80;
