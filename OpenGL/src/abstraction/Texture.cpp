@@ -22,7 +22,7 @@ Texture::Texture(const std::string path) : m_RendererID(0), m_FilePath(path), m_
 		stbi_image_free(m_LocalBuffer);
 }
 
-Texture Texture::CreateEmpty(int width, int height, GLenum internalFormat) 
+Texture Texture::CreateEmpty(int width, int height, GLenum internalFormat, int samples)
 {
 	Texture tex;
 	tex.m_Width = width;
@@ -47,10 +47,18 @@ Texture Texture::CreateEmpty(int width, int height, GLenum internalFormat)
 			break;
 	}
 
-	GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &tex.m_RendererID));
-	GLCall(glTextureStorage2D(tex.m_RendererID, 1, internalFormat, width, height));
-	GLCall(glTextureParameteri(tex.m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	GLCall(glTextureParameteri(tex.m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	if (samples > 1)
+	{
+		GLCall(glCreateTextures(GL_TEXTURE_2D_MULTISAMPLE, 1, &tex.m_RendererID));
+		GLCall(glTextureStorage2DMultisample(tex.m_RendererID, samples, internalFormat, width, height, GL_TRUE));
+	}
+	else
+	{
+		GLCall(glCreateTextures(GL_TEXTURE_2D, 1, &tex.m_RendererID));
+		GLCall(glTextureStorage2D(tex.m_RendererID, 1, internalFormat, width, height));
+		GLCall(glTextureParameteri(tex.m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		GLCall(glTextureParameteri(tex.m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	}
 
 	return tex;
 }

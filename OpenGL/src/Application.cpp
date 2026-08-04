@@ -37,7 +37,7 @@ void main(void)
     MenuScene->RegisterScene<scene::UBOScene>("UBO Scene");
     MenuScene->RegisterScene<scene::GeometryShaderScene>("Geometry Shader");
 
-    MenuScene->SetScene("Geometry Shader");
+    MenuScene->SetScene("Frame Buffer");
     
     Renderer renderer;
 

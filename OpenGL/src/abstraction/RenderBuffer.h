@@ -6,7 +6,7 @@
 class RenderBuffer
 {
 public:
-    RenderBuffer(int width, int height, GLenum internalFormat = GL_DEPTH24_STENCIL8);
+    RenderBuffer(int width, int height, GLenum internalFormat = GL_DEPTH24_STENCIL8, int samples = 1);
     ~RenderBuffer();
 
     RenderBuffer(const RenderBuffer&) = delete;

@@ -5,11 +5,14 @@
 scene::FramebufferScene::FramebufferScene()
 {
 	DoPreviousInit();
+	m_ResolveFBO = std::make_unique<FrameBuffer>(960, 540);
+	m_ResolveFBO->AddAttachment(AttachmentTarget::Color, AttachmentStorage::Texture);
+	m_ResolveFBO->Validate();
 
-	m_FBO2 = std::make_unique<FrameBuffer>(960, 540);
-	m_FBO2->AddAttachment(AttachmentTarget::Color, AttachmentStorage::Texture);
-	m_FBO2->AddAttachment(AttachmentTarget::DepthStencil, AttachmentStorage::RenderBuffer);
-	m_FBO2->Validate();
+	m_MultisampleFBO = std::make_unique<FrameBuffer>(960, 540, 4);
+	m_MultisampleFBO->AddAttachment(AttachmentTarget::Color, AttachmentStorage::Texture);
+	m_MultisampleFBO->AddAttachment(AttachmentTarget::DepthStencil, AttachmentStorage::RenderBuffer);
+	m_MultisampleFBO->Validate();
 }
 
 scene::FramebufferScene::~FramebufferScene()
@@ -46,45 +49,34 @@ void scene::FramebufferScene::OnRender()
 {
 	Renderer renderer;
 
-	m_FBO2->Bind();
+	m_MultisampleFBO->Bind();
 	renderer.Clear();
 	glEnable(GL_DEPTH_TEST);
 
 	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
 	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
 
-	m_StoneTexture->Bind(0);
-	m_LampTexture->Bind(1);
-
-	m_Shader->Bind();
 	m_Shader->SetUniformMat4f("u_View", viewMatrix);
 	m_Shader->SetUniformMat4f("u_Proj", perspectiveMatrix);
 
-	//Stone floor
+	m_StoneTexture->Bind(0);
+	m_LampTexture->Bind(1);
+
 	m_Shader->SetUniform1i("u_Texture", 0);
-
-	glm::mat4 modelMatrixStone = glm::scale(glm::mat4(1), glm::vec3(4));
-	m_Shader->SetUniformMat4f("u_Model", modelMatrixStone);
+	m_Shader->SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(4)));
 	renderer.DrawArray(*m_VAO, *m_Shader);
-
-	//Lamp 1
 	m_Shader->SetUniform1i("u_Texture", 1);
-
-	glm::mat4 modelMatrixLamp1 = glm::translate(glm::mat4(1), glm::vec3(1, 2.5, -1));
-	m_Shader->SetUniformMat4f("u_Model", modelMatrixLamp1);
+	m_Shader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1), glm::vec3(1, 2.5, -1)));
+	renderer.DrawArray(*m_VAO, *m_Shader);
+	m_Shader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1), glm::vec3(-1, 2.5, 1)));
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
-	//Lamp 2
-	glm::mat4 modelMatrixLamp2 = glm::translate(glm::mat4(1), glm::vec3(-1, 2.5, 1));
-	m_Shader->SetUniformMat4f("u_Model", modelMatrixLamp2);
-	renderer.DrawArray(*m_VAO, *m_Shader);
+	//Blit the Multi sampled frame buffer onto the single sampled frame buffer using resolve.
+	m_MultisampleFBO->Blit(*m_ResolveFBO);
+	m_MultisampleFBO->Unbind();
 
-	m_FBO2->GetColorTexture()->Bind();
-	m_FBO2->Unbind();
-
-	//Back to default frame buffer -> paste view texture onto screen quad
 	renderer.Clear();
-	m_ScreenShader->Bind();
+	m_ResolveFBO->GetColorTexture()->Bind(); //Get texture of resolve fbo
 	m_ScreenShader->SetUniform1f("u_Offset", m_KernelOffset);
 	m_ScreenShader->SetUniform1fv("u_Kernel", 9, m_Kernel);
 	glDisable(GL_DEPTH_TEST);

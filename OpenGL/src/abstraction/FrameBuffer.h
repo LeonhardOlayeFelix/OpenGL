@@ -16,7 +16,7 @@ class FrameBuffer
 {
 	private:
 		unsigned int m_RendererID;
-		int m_Width, m_Height;
+		int m_Width, m_Height, m_MSAASamples;
 
 		struct Attachment
 		{
@@ -29,7 +29,7 @@ class FrameBuffer
 		std::vector<GLenum> m_DrawBuffers;
 
 	public:
-		FrameBuffer(int width, int height);
+		FrameBuffer(int width, int height, int samples = 1);
 		~FrameBuffer();
 
 		FrameBuffer(const FrameBuffer&) = delete;
@@ -40,6 +40,11 @@ class FrameBuffer
 		void Bind() const;
 		void Unbind() const;
 		bool Validate();
+		void Blit(const FrameBuffer& fbo) const;
+
+		inline unsigned int GetID() const { return m_RendererID; };
+		inline unsigned int GetWidth() const { return m_Width; };
+		inline unsigned int GetHeight() const { return m_Height; };
 
 		void AddAttachment(AttachmentTarget target, AttachmentStorage storage, int colorIndex = 0); // colorIndex only matters when target == Color
 		Texture* GetColorTexture(int colorIndex = 0) const;

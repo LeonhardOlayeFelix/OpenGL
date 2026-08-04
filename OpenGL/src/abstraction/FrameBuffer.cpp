@@ -30,7 +30,7 @@ namespace {
 	}
 }
 
-FrameBuffer::FrameBuffer(int width, int height) : m_Width(width), m_Height(height)
+FrameBuffer::FrameBuffer(int width, int height, int samples) : m_Width(width), m_Height(height), m_MSAASamples(samples)
 {
 	GLCall(glGenFramebuffers(1, &m_RendererID));
 }
@@ -84,6 +84,14 @@ bool FrameBuffer::Validate()
 	return isComplete;
 }
 
+void FrameBuffer::Blit(const FrameBuffer& target) const
+{
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_RendererID);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, target.GetID());
+	glBlitFramebuffer(0, 0, m_Width, m_Height, 0, 0, m_Width, m_Height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+}
+
 void FrameBuffer::AddAttachment(AttachmentTarget target, AttachmentStorage storage, int colorIndex)
 {
 	Bind();
@@ -93,14 +101,14 @@ void FrameBuffer::AddAttachment(AttachmentTarget target, AttachmentStorage stora
 
 	if (storage == AttachmentStorage::Texture) 
 	{
-		std::unique_ptr<Texture> tex = std::make_unique<Texture>(Texture::CreateEmpty(m_Width, m_Height, ToGLInternalFormat(target)));
-		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, tex->GetId(), 0));
+		std::unique_ptr<Texture> tex = std::make_unique<Texture>(Texture::CreateEmpty(m_Width, m_Height,ToGLInternalFormat(target), m_MSAASamples));
+		GLCall(glNamedFramebufferTexture(m_RendererID, attachPoint, tex->GetId(), 0));
 		attachment.storage = std::move(tex);
 	}
 	else 
 	{
-		std::unique_ptr<RenderBuffer> rbo = std::make_unique<RenderBuffer>(m_Width, m_Height, ToGLInternalFormat(target));
-		GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachPoint, GL_RENDERBUFFER, rbo->GetID()));
+		std::unique_ptr<RenderBuffer> rbo = std::make_unique<RenderBuffer>(m_Width, m_Height, ToGLInternalFormat(target), m_MSAASamples);
+		GLCall(glNamedFramebufferRenderbuffer(m_RendererID, attachPoint, GL_RENDERBUFFER, rbo->GetID()));
 		attachment.storage = std::move(rbo);
 	}
 

@@ -37,10 +37,8 @@ namespace scene {
 		std::unique_ptr<Texture>       m_StoneTexture;
 		std::unique_ptr<Texture>       m_LampTexture;
 		std::unique_ptr<Camera>        m_Camera;
-		std::unique_ptr<FrameBuffer>   m_FBO2;
-		unsigned int				   m_FBO;
-		unsigned int				   m_ColorBufferAttachment;
-		unsigned int				   m_DepthAndStencilBuffer;
+		std::unique_ptr<FrameBuffer>   m_MultisampleFBO;
+		std::unique_ptr<FrameBuffer>   m_ResolveFBO;
 		float						   m_KernelOffset = 1.0f / 300.0f;
 		float						   m_Kernel[9] = { -1, -1, -1,
 													   -1,  9, -1,

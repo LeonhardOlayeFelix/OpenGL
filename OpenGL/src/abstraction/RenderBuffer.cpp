@@ -1,9 +1,16 @@
 #include "RenderBuffer.h"
 
-RenderBuffer::RenderBuffer(int width, int height, GLenum internalFormat) : m_RendererID(0), m_Width(width), m_Height(height)
+RenderBuffer::RenderBuffer(int width, int height, GLenum internalFormat, int samples) : m_RendererID(0), m_Width(width), m_Height(height)
 {
     GLCall(glCreateRenderbuffers(1, &m_RendererID));
-    GLCall(glNamedRenderbufferStorage(m_RendererID, internalFormat, width, height));
+
+    if (samples > 1) {
+        GLCall(glNamedRenderbufferStorageMultisample(m_RendererID, samples, internalFormat, width, height));
+    }
+    else {
+        GLCall(glNamedRenderbufferStorage(m_RendererID, internalFormat, width, height));
+    }
+
 }
 
 RenderBuffer::~RenderBuffer()

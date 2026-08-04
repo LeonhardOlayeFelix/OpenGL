@@ -14,7 +14,7 @@ private:
 
 public:
 	Texture(const std::string path);
-	static Texture CreateEmpty(int width, int height, GLenum internalFormat);
+	static Texture CreateEmpty(int width, int height, GLenum internalFormat, int samples = 1);
 	~Texture();
 
 	Texture(Texture&& other) noexcept;
