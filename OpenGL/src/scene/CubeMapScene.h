@@ -33,8 +33,8 @@ namespace scene {
 		std::unique_ptr<UniformBuffer> m_UBO;
 		std::unique_ptr<IndexBuffer>   m_IBO;
 		std::unique_ptr<ShaderProgram> m_Shader;
-		std::unique_ptr<ShaderProgram> m_TextureShader;
-		std::unique_ptr<ShaderProgram> m_CubeMapShader;
+		std::unique_ptr<ShaderProgram> m_ReflectionShader;
+		std::unique_ptr<ShaderProgram> m_SkyboxShader;
 		std::unique_ptr<Camera>        m_Camera;
 		std::unique_ptr<CubeMap>	   m_CubeMap;
 		std::unique_ptr<Texture>	   m_Texture;

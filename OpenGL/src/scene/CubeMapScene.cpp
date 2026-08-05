@@ -36,23 +36,29 @@ void scene::CubeMapScene::OnUpdate(double deltaTime, GLFWwindow* window)
 		m_Camera->ProcessMouseMovement(0, 500 * deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_K))
 		m_Camera->ProcessMouseMovement(0, -500 * deltaTime);
-}
+}   
 
 void scene::CubeMapScene::OnRender()
 {
 	Renderer renderer;
-	m_UBO->SetData(glm::value_ptr(m_Camera->GetViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
+	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
+	m_UBO->SetData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
+
+	
 
 	m_Texture->Bind(1);
-	m_TextureShader->SetUniform1i("u_Texture", 1);
-	m_TextureShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0), glm::vec3(2, 0, 0)));
-	renderer.DrawArray(*m_VAO, *m_TextureShader);
+	m_ReflectionShader->SetUniform1i("u_Texture", 1);
+	m_ReflectionShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0), glm::vec3(2, 0, 0)));
+	renderer.DrawArray(*m_VAO, *m_ReflectionShader);
 
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_FALSE);
 	m_CubeMap->Bind(0);
-	m_CubeMapShader->SetUniform1i("u_Skybox", 0);
-	renderer.DrawArray(*m_VAO2, *m_CubeMapShader);
-
+	m_SkyboxShader->SetUniform1i("u_Skybox", 0);
+	m_SkyboxShader->SetUniformMat4f("u_ViewNoTranslation", glm::mat4(glm::mat3(viewMatrix)));
+	renderer.DrawArray(*m_VAO2, *m_SkyboxShader);
+	glDepthMask(GL_TRUE);
 
 	m_Camera->UpdateCameraVectors();
 }
@@ -177,14 +183,14 @@ void scene::CubeMapScene::DoPreviousInit()
 	m_Camera = std::make_unique<Camera>(glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
 	m_Camera->Fov = 80;
 
-	m_Shader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneShader1.shader");
-	m_Shader->SetUniformBlockBinding("Matrices", 0);
+	//m_Shader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneShader1.shader");
+	//m_Shader->SetUniformBlockBinding("Matrices", 0);
 
-	m_CubeMapShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneShader2.shader");
-	m_CubeMapShader->SetUniformBlockBinding("Matrices", 0);
+	m_SkyboxShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneSkyboxShader.shader");
+	m_SkyboxShader->SetUniformBlockBinding("Matrices", 0);
 
-	m_TextureShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneShader3.shader");
-	m_TextureShader->SetUniformBlockBinding("Matrices", 0);
+	m_ReflectionShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneReflectionShader.shader");
+	m_ReflectionShader->SetUniformBlockBinding("Matrices", 0);
 
 
 
