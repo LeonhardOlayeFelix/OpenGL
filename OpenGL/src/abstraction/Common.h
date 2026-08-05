@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "FrameBuffer.h"
 #include "UniformBuffer.h"
+#include "CubeMap.h"
 
 #include "vendor/glm/glm.hpp"
 #include "vendor/glm/gtc/matrix_transform.hpp"

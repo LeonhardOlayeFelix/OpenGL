@@ -36,8 +36,9 @@ void main(void)
     MenuScene->RegisterScene<scene::FramebufferScene>("Frame Buffer");
     MenuScene->RegisterScene<scene::UBOScene>("UBO Scene");
     MenuScene->RegisterScene<scene::GeometryShaderScene>("Geometry Shader");
+    MenuScene->RegisterScene<scene::CubeMapScene>("Cube Map");
 
-    MenuScene->SetScene("Frame Buffer");
+    MenuScene->SetScene("Cube Map");
     
     Renderer renderer;
 

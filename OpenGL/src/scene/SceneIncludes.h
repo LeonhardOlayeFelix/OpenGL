@@ -17,3 +17,4 @@
 #include "scene/FramebufferScene.h"
 #include "scene/UBOScene.h"
 #include "scene/GeometryShaderScene.h"
+#include "scene/CubeMapScene.h"

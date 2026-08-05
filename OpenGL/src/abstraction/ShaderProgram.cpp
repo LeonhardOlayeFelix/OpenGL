@@ -44,8 +44,8 @@ ShaderProgramSource ShaderProgram::ParseShaderProgram(const std::string& filepat
             ss[(int)type] << line << "\n";
         }
     }
-
     return { ss[0].str(), ss[1].str(), ss[2].str()};
+    
 }
 
 unsigned int ShaderProgram::CreateShaderProgram(const ShaderProgramSource& source) {

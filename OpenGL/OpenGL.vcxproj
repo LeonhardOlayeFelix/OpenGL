@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\abstraction\CubeMap.cpp" />
     <ClCompile Include="src\abstraction\RenderBuffer.cpp" />
     <ClCompile Include="src\abstraction\FrameBuffer.cpp" />
     <ClCompile Include="src\abstraction\Camera.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="src\scene\AsteroidScene.cpp" />
     <ClCompile Include="src\scene\BlendingScene.cpp" />
     <ClCompile Include="src\scene\Camera3DScene.cpp" />
+    <ClCompile Include="src\scene\CubeMapScene.cpp" />
     <ClCompile Include="src\scene\DepthTestingScene.cpp" />
     <ClCompile Include="src\scene\FaceCullingScene.cpp" />
     <ClCompile Include="src\scene\FramebufferScene.cpp" />
@@ -184,6 +186,7 @@
     <ClCompile Include="src\abstraction\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\abstraction\CubeMap.h" />
     <ClInclude Include="src\abstraction\RenderBuffer.h" />
     <ClInclude Include="src\abstraction\FrameBuffer.h" />
     <ClInclude Include="src\abstraction\Camera.h" />
@@ -193,6 +196,7 @@
     <ClInclude Include="src\scene\AsteroidScene.h" />
     <ClInclude Include="src\scene\BlendingScene.h" />
     <ClInclude Include="src\scene\Camera3DScene.h" />
+    <ClInclude Include="src\scene\CubeMapScene.h" />
     <ClInclude Include="src\scene\DepthTestingScene.h" />
     <ClInclude Include="src\scene\FaceCullingScene.h" />
     <ClInclude Include="src\scene\FramebufferScene.h" />
