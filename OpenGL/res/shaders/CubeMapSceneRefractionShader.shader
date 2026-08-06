@@ -36,7 +36,8 @@ uniform samplerCube u_Skybox;
 
 void main()
 {
+    float ratio = 1.00 / 1.52;
     vec3 dir = normalize(v_WorldPosition - u_CameraPosition);
-    vec3 reflected = reflect(dir, normalize(v_Normal));
-    color = vec4(texture(u_Skybox, reflected).rgb, 1.0);
+    vec3 refracted = refract(dir, normalize(v_Normal), ratio);
+    color = vec4(texture(u_Skybox, refracted).rgb, 1.0);
 };

@@ -6,6 +6,7 @@ scene::CubeMapScene::CubeMapScene()
 {
 	DoPreviousInit();
 
+	m_Model = std::make_unique<Model>("res/models/backpack/backpack.obj");
 }
 
 scene::CubeMapScene::~CubeMapScene()
@@ -45,17 +46,18 @@ void scene::CubeMapScene::OnRender()
 	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
 	m_UBO->SetData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
 
-	
+	m_SkyboxShader->SetUniform1i("u_Skybox", 0);
 
-	m_Texture->Bind(1);
-	m_ReflectionShader->SetUniform1i("u_Texture", 1);
 	m_ReflectionShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0), glm::vec3(2, 0, 0)));
-	renderer.DrawArray(*m_VAO, *m_ReflectionShader);
+	m_ReflectionShader->SetUniform3f("u_CameraPosition", m_Camera->Position);
+	m_Model->Draw(*m_ReflectionShader);
+
+	m_RefractionShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0), glm::vec3(-2, 0, 0)));
+	m_RefractionShader->SetUniform3f("u_CameraPosition", m_Camera->Position);
+	m_Model->Draw(*m_RefractionShader);
 
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_FALSE);
-	m_CubeMap->Bind(0);
-	m_SkyboxShader->SetUniform1i("u_Skybox", 0);
 	m_SkyboxShader->SetUniformMat4f("u_ViewNoTranslation", glm::mat4(glm::mat3(viewMatrix)));
 	renderer.DrawArray(*m_VAO2, *m_SkyboxShader);
 	glDepthMask(GL_TRUE);
@@ -82,47 +84,47 @@ void scene::CubeMapScene::OnImGuiRender()
 void scene::CubeMapScene::DoPreviousInit()
 {
 	float vertices[] = {
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-					   
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-					   
-	-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-					   
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-					   
-	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-					   
-	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 	float skyboxVertices[] = {
 	-1.0f,  1.0f, -1.0f,
@@ -171,7 +173,7 @@ void scene::CubeMapScene::DoPreviousInit()
 	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
-	layout.Push<float>(2);
+	layout.Push<float>(3);
 	m_VAO->RecordVBOLayout(*m_VBO, layout);
 
 	m_VAO2 = std::make_unique<VertexArray>();
@@ -180,7 +182,7 @@ void scene::CubeMapScene::DoPreviousInit()
 	layout2.Push<float>(3);
 	m_VAO2->RecordVBOLayout(*m_VBO2, layout2);
 
-	m_Camera = std::make_unique<Camera>(glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
+	m_Camera = std::make_unique<Camera>(glm::vec3(0, 0, 3), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
 	m_Camera->Fov = 80;
 
 	//m_Shader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneShader1.shader");
@@ -191,6 +193,9 @@ void scene::CubeMapScene::DoPreviousInit()
 
 	m_ReflectionShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneReflectionShader.shader");
 	m_ReflectionShader->SetUniformBlockBinding("Matrices", 0);
+
+	m_RefractionShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneRefractionShader.shader");
+	m_RefractionShader->SetUniformBlockBinding("Matrices", 0);
 
 
 
