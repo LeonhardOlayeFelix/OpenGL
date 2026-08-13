@@ -1,11 +1,11 @@
 #include "AdvancedLightingScene.h"
 #include "vendor/imgui/imgui.h"
 
-
 scene::AdvancedLightingScene::AdvancedLightingScene()
 {
 	DoPreviousInit();
-
+	PointLight light{};
+	//m_Shader->SetUniformPointLight("u_PointLight", light);
 }
 
 scene::AdvancedLightingScene::~AdvancedLightingScene()
@@ -48,7 +48,8 @@ void scene::AdvancedLightingScene::OnRender()
 	m_Shader->SetUniform3f("u_ViewPosition", m_Camera->Position);
 	m_Shader->SetUniform1i("u_WoodMaterial.texture_diffuse1", 0);
 	m_Shader->SetUniform1i("u_WoodMaterial.texture_specular1", 1);
-	m_Shader->SetUniform1f("u_WoodMaterial.shininess", 1);
+	m_Shader->SetUniform1f("u_WoodMaterial.shininess", m_Shininess);
+	m_Shader->SetUniform1f("u_IsBlinn", m_IsBlinn);
 	m_Shader->SetUniform3f("u_PointLight.position", glm::vec3(0, 1, 0));
 	m_Shader->SetUniform3f("u_PointLight.ambient", glm::vec3(0.0));
 	m_Shader->SetUniform3f("u_PointLight.diffuse", glm::vec3(0.4));
@@ -69,7 +70,8 @@ void scene::AdvancedLightingScene::OnImGuiRender()
 
 	if (ImGui::CollapsingHeader("Light Settings"))
 	{
-
+		ImGui::SliderFloat("Shininess", &m_Shininess, 1, 32);
+		ImGui::Checkbox("Use blinn", &m_IsBlinn);
 	}
 
 	ImGui::Separator();

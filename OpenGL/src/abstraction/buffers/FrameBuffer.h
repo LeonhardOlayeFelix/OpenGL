@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "Texture.h"
+#include "textures/Texture.h"
 #include "RenderBuffer.h"
 #include <variant>
 #include <vector>

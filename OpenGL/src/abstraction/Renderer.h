@@ -1,6 +1,5 @@
 #pragma once
-#include "VertexArray.h"
-#include "ShaderProgram.h"
+#include "Common.h"
 #include "ErrorHandling.h"
 #include <GL/glew.h>
 

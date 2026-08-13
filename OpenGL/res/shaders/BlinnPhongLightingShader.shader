@@ -59,6 +59,8 @@ uniform Material u_WoodMaterial;
 
 uniform vec3 u_ViewPosition;
 
+uniform bool u_IsBlinn;
+
 in VS_OUT 
 {
     vec3 Normal;
@@ -82,11 +84,22 @@ void main()
 vec3 CalcPointLight(PointLight light, Material material, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoord){
     vec3 lightDir   = normalize(light.position - fragPos);
     normal = normalize(normal);
-    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float specularDot = 0.0;
+
+    if (u_IsBlinn)
+    {
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+        specularDot = dot(normal, halfwayDir);
+    }
+    else
+    {
+        vec3 reflectDir = reflect(-lightDir, normal);
+        specularDot = dot(viewDir, reflectDir);
+    }
 
     vec3 ambient  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.ambient;
     vec3 diffuse  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.diffuse  * max(dot(normal, lightDir), 0.0);
-    vec3 specular = vec3(texture(material.texture_specular1, texCoord)) * light.specular * pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+    vec3 specular = vec3(texture(material.texture_specular1, texCoord)) * light.specular * pow(max(specularDot, 0.0), material.shininess);
 
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.Kc + light.Kl * distance + light.Kq * distance * distance);

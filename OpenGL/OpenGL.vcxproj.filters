@@ -21,16 +21,16 @@
     <ClCompile Include="src\abstraction\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\VertexBuffer.cpp">
+    <ClCompile Include="src\abstraction\buffers\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\IndexBuffer.cpp">
+    <ClCompile Include="src\abstraction\buffers\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\VertexArray.cpp">
+    <ClCompile Include="src\abstraction\buffers\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\VertexBufferLayout.cpp">
+    <ClCompile Include="src\abstraction\buffers\VertexBufferLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\abstraction\ShaderProgram.cpp">
@@ -42,7 +42,7 @@
     <ClCompile Include="src\vendor\stb_image\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\Texture.cpp">
+    <ClCompile Include="src\abstraction\textures\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\glm\detail\glm.cpp">
@@ -129,22 +129,22 @@
     <ClCompile Include="src\scene\FramebufferScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\FrameBuffer.cpp">
+    <ClCompile Include="src\abstraction\buffers\FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\UBOScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\UniformBuffer.cpp">
+    <ClCompile Include="src\abstraction\buffers\UniformBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\RenderBuffer.cpp">
+    <ClCompile Include="src\abstraction\buffers\RenderBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\GeometryShaderScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\abstraction\CubeMap.cpp">
+    <ClCompile Include="src\abstraction\textures\CubeMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\CubeMapScene.cpp">
@@ -153,21 +153,39 @@
     <ClCompile Include="src\scene\AdvancedLightingScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\abstraction\lights\LightBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\abstraction\lights\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\abstraction\lights\Attenuated.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\abstraction\lights\SpotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\abstraction\lights\Directional.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\abstraction\lights\Positional.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\abstraction\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\VertexBuffer.h">
+    <ClInclude Include="src\abstraction\buffers\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\IndexBuffer.h">
+    <ClInclude Include="src\abstraction\buffers\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\VertexArray.h">
+    <ClInclude Include="src\abstraction\buffers\VertexArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\VertexBufferLayout.h">
+    <ClInclude Include="src\abstraction\buffers\VertexBufferLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\abstraction\ShaderProgram.h">
@@ -179,7 +197,7 @@
     <ClInclude Include="src\vendor\stb_image\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\Texture.h">
+    <ClInclude Include="src\abstraction\textures\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Application.h">
@@ -1145,28 +1163,46 @@
     <ClInclude Include="src\scene\FramebufferScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\FrameBuffer.h">
+    <ClInclude Include="src\abstraction\buffers\FrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\UBOScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\UniformBuffer.h">
+    <ClInclude Include="src\abstraction\buffers\UniformBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\RenderBuffer.h">
+    <ClInclude Include="src\abstraction\buffers\RenderBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\GeometryShaderScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\abstraction\CubeMap.h">
+    <ClInclude Include="src\abstraction\textures\CubeMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\CubeMapScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\AdvancedLightingScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\abstraction\lights\LightBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\abstraction\lights\PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\abstraction\lights\Attenuated.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\abstraction\lights\SpotLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\abstraction\lights\Directional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\abstraction\lights\Positional.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
