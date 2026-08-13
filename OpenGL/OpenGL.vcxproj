@@ -145,6 +145,7 @@
     <ClCompile Include="src\abstraction\Camera.cpp" />
     <ClCompile Include="src\abstraction\Mesh.cpp" />
     <ClCompile Include="src\abstraction\Model.cpp" />
+    <ClCompile Include="src\scene\AdvancedLightingScene.cpp" />
     <ClCompile Include="src\scene\AsteroidScene.cpp" />
     <ClCompile Include="src\scene\BlendingScene.cpp" />
     <ClCompile Include="src\scene\Camera3DScene.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="src\abstraction\Common.h" />
     <ClInclude Include="src\abstraction\Mesh.h" />
     <ClInclude Include="src\abstraction\Model.h" />
+    <ClInclude Include="src\scene\AdvancedLightingScene.h" />
     <ClInclude Include="src\scene\AsteroidScene.h" />
     <ClInclude Include="src\scene\BlendingScene.h" />
     <ClInclude Include="src\scene\Camera3DScene.h" />

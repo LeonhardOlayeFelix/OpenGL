@@ -37,8 +37,9 @@ void main(void)
     MenuScene->RegisterScene<scene::UBOScene>("UBO Scene");
     MenuScene->RegisterScene<scene::GeometryShaderScene>("Geometry Shader");
     MenuScene->RegisterScene<scene::CubeMapScene>("Cube Map");
+    MenuScene->RegisterScene<scene::AdvancedLightingScene>("Advanced lighting");
 
-    MenuScene->SetScene("Cube Map");
+    MenuScene->SetScene("Advanced lighting");
     
     Renderer renderer;
 

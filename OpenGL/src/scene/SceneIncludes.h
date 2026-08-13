@@ -18,3 +18,4 @@
 #include "scene/UBOScene.h"
 #include "scene/GeometryShaderScene.h"
 #include "scene/CubeMapScene.h"
+#include "scene/AdvancedLightingScene.h"
