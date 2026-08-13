@@ -4,8 +4,9 @@
 scene::AdvancedLightingScene::AdvancedLightingScene()
 {
 	DoPreviousInit();
-	PointLight light{};
-	//m_Shader->SetUniformPointLight("u_PointLight", light);
+	m_PointLight = PointLight(glm::vec3(0.0), glm::vec3(0.4), glm::vec3(1), glm::vec3(0, 1, 0), 1, 0.09f, 0.1f);
+	m_DirectionalLight = DirectionalLight(glm::vec3(0.0), glm::vec3(0.4), glm::vec3(1), glm::vec3(-1, -1, -1));
+	m_SpotLight = SpotLight(glm::vec3(0.0), glm::vec3(1), glm::vec3(0.0), m_Camera->Position, m_Camera->Front, 1, 0.09f, 0.1f, 12.5, 17.5);
 }
 
 scene::AdvancedLightingScene::~AdvancedLightingScene()
@@ -49,14 +50,12 @@ void scene::AdvancedLightingScene::OnRender()
 	m_Shader->SetUniform1i("u_WoodMaterial.texture_diffuse1", 0);
 	m_Shader->SetUniform1i("u_WoodMaterial.texture_specular1", 1);
 	m_Shader->SetUniform1f("u_WoodMaterial.shininess", m_Shininess);
-	m_Shader->SetUniform1f("u_IsBlinn", m_IsBlinn);
-	m_Shader->SetUniform3f("u_PointLight.position", glm::vec3(0, 1, 0));
-	m_Shader->SetUniform3f("u_PointLight.ambient", glm::vec3(0.0));
-	m_Shader->SetUniform3f("u_PointLight.diffuse", glm::vec3(0.4));
-	m_Shader->SetUniform3f("u_PointLight.specular", glm::vec3(1));
-	m_Shader->SetUniform1f("u_PointLight.Kc", 1);
-	m_Shader->SetUniform1f("u_PointLight.Kl", 0.09f);
-	m_Shader->SetUniform1f("u_PointLight.Kq", 0.1f);
+	m_Shader->SetUniform1f("u_WoodMaterial.blinn", m_IsBlinn);
+
+	m_Shader->SetUniform1PointLight("u_PointLight", m_PointLight);
+	m_Shader->SetUniform1DirectionalLight("u_DirectionalLight", m_DirectionalLight);
+	m_Shader->SetUniform1SpotLight("u_SpotLight", m_SpotLight);
+
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
 

@@ -2,6 +2,9 @@
 #include <string>
 #include <unordered_map>
 #include "vendor/glm/glm.hpp"
+#include "lights/PointLight.h"
+#include "lights/DirectionalLight.h"
+#include "lights/SpotLight.h"
 
 struct ShaderProgramSource {
 	std::string VertexSource;
@@ -30,6 +33,9 @@ public:
 	void SetUniformMat4f(const std::string& name, const glm::mat4& matrix);
 	void SetUniformMat3f(const std::string& name, const glm::mat3& matrix);
 	void SetUniform1fv(const std::string& name, int count, const float* values);
+	void SetUniform1PointLight(const std::string& name, const PointLight& pointLight);
+	void SetUniform1DirectionalLight(const std::string& name, const DirectionalLight& directionalLight);
+	void SetUniform1SpotLight(const std::string& name, const SpotLight& spotLight);
 	void SetUniformBlockBinding(const std::string& name, int bindingPoint);
 	void Bind() const;
 	void Unbind() const;

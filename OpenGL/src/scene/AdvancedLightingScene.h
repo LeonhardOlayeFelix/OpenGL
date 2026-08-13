@@ -34,6 +34,9 @@ namespace scene {
 		std::unique_ptr<Camera>        m_Camera;
 		std::unique_ptr<Texture>	   m_WoodDiffuse;
 		std::unique_ptr<Texture>	   m_WoodSpecular;
+		PointLight					   m_PointLight{};
+		DirectionalLight			   m_DirectionalLight{};
+		SpotLight					   m_SpotLight{};
 		float						   m_Shininess = 1;
 		bool						   m_IsBlinn = false;
 

@@ -12,5 +12,7 @@
 #include "Renderer.h"
 #include "Camera.h"
 #include "lights/PointLight.h"
+#include "lights/DirectionalLight.h"
+#include "lights/SpotLight.h"
 #include "vendor/glm/glm.hpp"
 #include "vendor/glm/gtc/matrix_transform.hpp"

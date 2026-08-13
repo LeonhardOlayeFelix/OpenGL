@@ -9,8 +9,8 @@ class Attenuated
 protected:
 	Attenuated() = default;
 	Attenuated(float kc, float kl, float kq) : Kc(kc), Kl(kl), Kq(kq) {};
-
+	
 public:
-	float Kc{ 1.0f }, Kl{ 0.09f }, Kq{ 0.032f };
+	float Kc{ 1.0f }, Kl{ 0.09f }, Kq{ 0.1f };
 };
 

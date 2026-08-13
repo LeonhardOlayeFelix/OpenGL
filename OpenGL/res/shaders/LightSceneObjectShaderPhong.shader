@@ -113,7 +113,6 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir){
 
     return ambient + diffuse + specular;
 }
-
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
     vec3 lightDir   = normalize(light.position - fragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
@@ -127,7 +126,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
 
     return ambient + attenuation * (diffuse + specular);
 }
-
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
     vec3 lightDir   = normalize(light.position - fragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
