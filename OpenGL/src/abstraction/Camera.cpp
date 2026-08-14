@@ -27,7 +27,7 @@ glm::mat4 Camera::GetViewMatrix()
 
 glm::mat4 Camera::GetPerspectiveMatrix()
 {
-    return glm::perspective(glm::radians(Fov), 960.0f / 540.0f, Near, Far);
+    return glm::perspective(glm::radians(Fov), 1920.0f / 1080.0f, Near, Far);
 }
 
 void Camera::ProcessKeyboard(CameraMovement direction, double deltaTime)

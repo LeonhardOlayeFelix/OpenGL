@@ -47,6 +47,8 @@ class FrameBuffer
 		inline unsigned int GetHeight() const { return m_Height; };
 
 		void AddAttachment(AttachmentTarget target, AttachmentStorage storage, int colorIndex = 0); // colorIndex only matters when target == Color
+		void MarkAsNoColorBuffer();
 		Texture* GetColorTexture(int colorIndex = 0) const;
+		Texture* GetDepthTexture() const;
 };
 

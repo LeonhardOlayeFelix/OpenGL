@@ -5,11 +5,11 @@
 scene::FramebufferScene::FramebufferScene()
 {
 	DoPreviousInit();
-	m_ResolveFBO = std::make_unique<FrameBuffer>(960, 540);
+	m_ResolveFBO = std::make_unique<FrameBuffer>(1920, 1080);
 	m_ResolveFBO->AddAttachment(AttachmentTarget::Color, AttachmentStorage::Texture);
 	m_ResolveFBO->Validate();
 
-	m_MultisampleFBO = std::make_unique<FrameBuffer>(960, 540, 4);
+	m_MultisampleFBO = std::make_unique<FrameBuffer>(1920, 1080, 4);
 	m_MultisampleFBO->AddAttachment(AttachmentTarget::Color, AttachmentStorage::Texture);
 	m_MultisampleFBO->AddAttachment(AttachmentTarget::DepthStencil, AttachmentStorage::RenderBuffer);
 	m_MultisampleFBO->Validate();

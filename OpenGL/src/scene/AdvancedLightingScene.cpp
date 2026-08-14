@@ -4,10 +4,11 @@
 scene::AdvancedLightingScene::AdvancedLightingScene()
 {
 	DoPreviousInit();
-	m_PointLight = PointLight(glm::vec3(0.0), glm::vec3(0.05), glm::vec3(0.1), glm::vec3(-5, 1, 0), 1, 0.09f, 0.1f);
-	m_PointLight2 = PointLight(glm::vec3(0.0), glm::vec3(0.1), glm::vec3(0.2), glm::vec3(0, 1, 0), 1, 0.09f, 0.1f);
+	m_DirectionalLight = DirectionalLight(glm::vec3(0.01), glm::vec3(0.5), glm::vec3(0.1), glm::vec3(1, -1, -1));
+	m_PointLight = PointLight(glm::vec3(0.01), glm::vec3(0.5), glm::vec3(0.1), glm::vec3(0, 5, 0), 1, 0.09f, 0.1f);
+	/*m_PointLight2 = PointLight(glm::vec3(0.0), glm::vec3(0.1), glm::vec3(0.2), glm::vec3(0, 1, 0), 1, 0.09f, 0.1f);
 	m_PointLight3 = PointLight(glm::vec3(0.0), glm::vec3(0.2), glm::vec3(0.3), glm::vec3(5, 1, 0), 1, 0.09f, 0.1f);
-	m_PointLight4 = PointLight(glm::vec3(0.0), glm::vec3(0.4), glm::vec3(0.4), glm::vec3(10, 1, 0), 1, 0.09f, 0.1f);
+	m_PointLight4 = PointLight(glm::vec3(0.0), glm::vec3(0.4), glm::vec3(0.4), glm::vec3(10, 1, 0), 1, 0.09f, 0.1f);*/
 }
 
 scene::AdvancedLightingScene::~AdvancedLightingScene()
@@ -45,21 +46,49 @@ void scene::AdvancedLightingScene::OnRender()
 	Renderer renderer;
 	m_UBO->SetData(glm::value_ptr(m_Camera->GetViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
+	glViewport(0, 0, 1024, 1024);
+	m_ShadowFramebuffer->Bind();
+	renderer.Clear();
+	glCullFace(GL_FRONT);
+	m_DepthShader->SetUniformMat4f("u_LightSpaceMatrix", m_DirectionalLight.GetLightSpaceMatrix());
+	m_DepthShader->SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(10, 1, 10)));
+	renderer.DrawArray(*m_VAO, *m_DepthShader);
+	m_DepthShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1), glm::vec3(0, 1, -2)));
+	renderer.DrawArray(*m_VAO, *m_DepthShader);
+	m_DepthShader->SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 2)), glm::vec3(2)));
+	renderer.DrawArray(*m_VAO, *m_DepthShader);
+	Texture* tex = m_ShadowFramebuffer->GetDepthTexture();
+	GLCall(glTextureParameteri(tex->GetId(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
+	GLCall(glTextureParameteri(tex->GetId(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLCall(glTextureParameterfv(tex->GetId(), GL_TEXTURE_BORDER_COLOR, borderColor));
+	tex->Bind(2);
+	glCullFace(GL_BACK);
+	m_ShadowFramebuffer->Unbind();
+	glViewport(0, 0, 1920, 1080);
 
-	m_Shader->SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(50, 1, 50)));
+
+
+	
+
+	m_Shader->SetUniform1DirectionalLight("u_DirectionalLight", m_DirectionalLight);
+	m_Shader->SetUniformMat4f("u_LightSpaceMatrix", m_DirectionalLight.GetLightSpaceMatrix());
+	m_Shader->SetUniform1i("u_DirectionalLightShadowMap", 2);
 	m_Shader->SetUniform3f("u_ViewPosition", m_Camera->Position);
 	m_Shader->SetUniform1i("u_WoodMaterial.texture_diffuse1", 0);
 	m_Shader->SetUniform1i("u_WoodMaterial.texture_specular1", 1);
 	m_Shader->SetUniform1f("u_WoodMaterial.shininess", m_Shininess);
 	m_Shader->SetUniform1f("u_WoodMaterial.blinn", m_IsBlinn);
-
-	m_Shader->SetUniform1PointLight("u_PointLight", m_PointLight);
-	m_Shader->SetUniform1PointLight("u_PointLight2", m_PointLight2);
-	m_Shader->SetUniform1PointLight("u_PointLight3", m_PointLight3);
-	m_Shader->SetUniform1PointLight("u_PointLight4", m_PointLight4);
-
+	m_Shader->SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(10, 1, 10)));
+	renderer.DrawArray(*m_VAO, *m_Shader);
+	m_Shader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1), glm::vec3(0, 1, -2)));
+	renderer.DrawArray(*m_VAO, *m_Shader);
+	m_Shader->SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 2)), glm::vec3(2)));
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
+
+	m_QuadShader->SetUniform1i("u_DepthTexture", 2);
+	renderer.DrawArray(*m_VAO2, *m_QuadShader);
 
 	m_Camera->UpdateCameraVectors();
 }
@@ -76,10 +105,7 @@ void scene::AdvancedLightingScene::OnImGuiRender()
 	}
 	if (ImGui::CollapsingHeader("Light Settings"))
 	{
-		ImGui::SliderFloat("X1", &m_PointLight.Position.x, -10, 10);
-		ImGui::SliderFloat("X2", &m_PointLight2.Position.x, -10, 10);
-		ImGui::SliderFloat("X3", &m_PointLight3.Position.x, -10, 10);
-		ImGui::SliderFloat("X4", &m_PointLight4.Position.x, -10, 10);
+		ImGui::SliderFloat3("Light Direction", glm::value_ptr(m_DirectionalLight.Direction), -1, 1);
 	}
 
 	ImGui::Separator();
@@ -92,47 +118,57 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 {
 	float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 15.0, 0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 15.0, 15.0,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 15.0, 15.0,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 15.0,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0, 1.0,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0, 1.0,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0,
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
 
 	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  15.0, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  15.0, 15.0,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  15.0, 15.0,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 15.0,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0, 1.0,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0, 1.0,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 1.0,
 	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
 
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 15.0, 0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 15.0, 15.0,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 15.0,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 15.0,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0, 1.0,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0,
 	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 15.0, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0, 0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 15.0, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 15.0, 15.0,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 15.0,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 15.0,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0, 1.0,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0,
 	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 15.0, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 15.0,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 15.0, 15.0,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 15.0, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 15.0, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0, 1.0,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0, 0.0f,
 	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 15.0,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0,
 
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 15.0,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 15.0, 15.0,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 15.0, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 15.0, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0, 1.0,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0, 0.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 15.0
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0
 	};
+	float quadVertices[] = {
+	0.55f, 0.95f,   0.0f, 1.0f,
+	0.55f, 0.55f,   0.0f, 0.0f,
+	0.95f, 0.55f,   1.0f, 0.0f,
+
+	0.55f, 0.95f,   0.0f, 1.0f,
+	0.95f, 0.55f,   1.0f, 0.0f,
+	0.95f, 0.95f,   1.0f, 1.0f
+	};
+
 
 	m_VAO = std::make_unique<VertexArray>();
 	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
@@ -142,7 +178,14 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 	layout.Push<float>(2);
 	m_VAO->RecordVBOLayout(*m_VBO, layout);
 
-	m_Camera = std::make_unique<Camera>(glm::vec3(3, 2, 3), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
+	m_VAO2 = std::make_unique<VertexArray>();
+	m_VBO2 = std::make_unique<VertexBuffer>(quadVertices, sizeof(quadVertices));
+	VertexBufferLayout layout2;
+	layout2.Push<float>(2);
+	layout2.Push<float>(2);
+	m_VAO2->RecordVBOLayout(*m_VBO2, layout2);
+
+	m_Camera = std::make_unique<Camera>(glm::vec3(-6.35, 5.2, -8.1), glm::vec3(0, 1, 0), 60, -26.0f);
 	m_Camera->Fov = 80;
 
 	m_WoodDiffuse = std::make_unique<Texture>("res/textures/WoodTiles.jpg", GL_SRGB8_ALPHA8);
@@ -151,10 +194,16 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 	m_WoodSpecular = std::make_unique<Texture>("res/textures/White.jpg");
 	m_WoodSpecular->Bind(1);
 
-	
+	m_ShadowFramebuffer = std::make_unique<FrameBuffer>(1024, 1024);
+	m_ShadowFramebuffer->AddAttachment(AttachmentTarget::Depth, AttachmentStorage::Texture);
+	m_ShadowFramebuffer->MarkAsNoColorBuffer();
 
 	m_Shader = std::make_unique<ShaderProgram>("res/shaders/BlinnPhongLightingShader.shader");
 	m_Shader->SetUniformBlockBinding("Matrices", 0);
+
+	m_QuadShader = std::make_unique<ShaderProgram>("res/shaders/QuadShader.shader");
+
+	m_DepthShader = std::make_unique<ShaderProgram>("res/shaders/SimpleDepthShader.shader");
 
 	m_UBO = std::make_unique<UniformBuffer>(2 * sizeof(glm::mat4));
 	m_UBO->BindToPoint(0);

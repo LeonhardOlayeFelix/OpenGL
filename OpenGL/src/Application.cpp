@@ -93,7 +93,7 @@ GLFWwindow* init() {
         return 0;
 
     glfwWindowHint(GLFW_SAMPLES, 4);
-    window = glfwCreateWindow(960, 540, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(1920, 1080, "LearnOpenGL", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -117,7 +117,7 @@ GLFWwindow* init() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
 
-    glViewport(0, 0, 960, 540);
+    glViewport(0, 0, 1920, 1080);
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
