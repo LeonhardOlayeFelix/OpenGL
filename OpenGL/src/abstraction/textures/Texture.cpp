@@ -2,7 +2,7 @@
 #include "ErrorHandling.h"
 #include "vendor/stb_image/stb_image.h"
 
-Texture::Texture(const std::string path) : m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)
+Texture::Texture(const std::string path, GLenum internalFormat) : m_RendererID(0), m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)
 {
 	stbi_set_flip_vertically_on_load(1);
 	m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
@@ -11,10 +11,10 @@ Texture::Texture(const std::string path) : m_RendererID(0), m_FilePath(path), m_
 
 	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
 	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT));
-	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT));
+	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	GLCall(glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
-	GLCall(glTextureStorage2D(m_RendererID, 1, GL_RGBA8, m_Width, m_Height));
+	GLCall(glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height));
 	GLCall(glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
 	GLCall(glGenerateTextureMipmap(m_RendererID));
 

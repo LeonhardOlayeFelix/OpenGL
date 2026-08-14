@@ -76,6 +76,9 @@ struct Material
 };
 
 uniform PointLight u_PointLight;
+uniform PointLight u_PointLight2;
+uniform PointLight u_PointLight3;
+uniform PointLight u_PointLight4;
 uniform DirectionalLight u_DirectionalLight;
 uniform SpotLight u_SpotLight;
 
@@ -97,12 +100,14 @@ vec3 CalcSpotLight(SpotLight light, Material material, vec3 normal, vec3 fragPos
 
 void main()
 {
-    color = vec4(0.0, 0.0, 0.0, 0.0);
     vec3 viewDir = normalize(u_ViewPosition - fs_in.FragPos);
 
     color = vec4(CalcPointLight(u_PointLight, u_WoodMaterial, fs_in.Normal, fs_in.FragPos, viewDir, fs_in.TexCoord), 1.0);
-    color = vec4(CalcDirectionalLight(u_DirectionalLight, u_WoodMaterial, fs_in.Normal, viewDir, fs_in.TexCoord), 1.0);
-    color = vec4(CalcSpotLight(u_SpotLight, u_WoodMaterial, fs_in.Normal, fs_in.FragPos, viewDir, fs_in.TexCoord), 1.0);
+    color += vec4(CalcPointLight(u_PointLight2, u_WoodMaterial, fs_in.Normal, fs_in.FragPos, viewDir, fs_in.TexCoord), 1.0);
+    color += vec4(CalcPointLight(u_PointLight3, u_WoodMaterial, fs_in.Normal, fs_in.FragPos, viewDir, fs_in.TexCoord), 1.0);
+    color += vec4(CalcPointLight(u_PointLight4, u_WoodMaterial, fs_in.Normal, fs_in.FragPos, viewDir, fs_in.TexCoord), 1.0);
+
+    color.rgb = pow(color.rgb, vec3(1.0/2.2)); //gamma correction
 
     //color = texture(u_WoodMaterial.texture_diffuse1, fs_in.TexCoord);
 };

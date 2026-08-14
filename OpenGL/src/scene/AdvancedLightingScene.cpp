@@ -4,9 +4,10 @@
 scene::AdvancedLightingScene::AdvancedLightingScene()
 {
 	DoPreviousInit();
-	m_PointLight = PointLight(glm::vec3(0.0), glm::vec3(0.4), glm::vec3(1), glm::vec3(0, 1, 0), 1, 0.09f, 0.1f);
-	m_DirectionalLight = DirectionalLight(glm::vec3(0.0), glm::vec3(0.4), glm::vec3(1), glm::vec3(-1, -1, -1));
-	m_SpotLight = SpotLight(glm::vec3(0.0), glm::vec3(1), glm::vec3(0.0), m_Camera->Position, m_Camera->Front, 1, 0.09f, 0.1f, 12.5, 17.5);
+	m_PointLight = PointLight(glm::vec3(0.0), glm::vec3(0.05), glm::vec3(0.1), glm::vec3(-5, 1, 0), 1, 0.09f, 0.1f);
+	m_PointLight2 = PointLight(glm::vec3(0.0), glm::vec3(0.1), glm::vec3(0.2), glm::vec3(0, 1, 0), 1, 0.09f, 0.1f);
+	m_PointLight3 = PointLight(glm::vec3(0.0), glm::vec3(0.2), glm::vec3(0.3), glm::vec3(5, 1, 0), 1, 0.09f, 0.1f);
+	m_PointLight4 = PointLight(glm::vec3(0.0), glm::vec3(0.4), glm::vec3(0.4), glm::vec3(10, 1, 0), 1, 0.09f, 0.1f);
 }
 
 scene::AdvancedLightingScene::~AdvancedLightingScene()
@@ -45,7 +46,7 @@ void scene::AdvancedLightingScene::OnRender()
 	m_UBO->SetData(glm::value_ptr(m_Camera->GetViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 
 
-	m_Shader->SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(5, 1, 5)));
+	m_Shader->SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(50, 1, 50)));
 	m_Shader->SetUniform3f("u_ViewPosition", m_Camera->Position);
 	m_Shader->SetUniform1i("u_WoodMaterial.texture_diffuse1", 0);
 	m_Shader->SetUniform1i("u_WoodMaterial.texture_specular1", 1);
@@ -53,8 +54,9 @@ void scene::AdvancedLightingScene::OnRender()
 	m_Shader->SetUniform1f("u_WoodMaterial.blinn", m_IsBlinn);
 
 	m_Shader->SetUniform1PointLight("u_PointLight", m_PointLight);
-	m_Shader->SetUniform1DirectionalLight("u_DirectionalLight", m_DirectionalLight);
-	m_Shader->SetUniform1SpotLight("u_SpotLight", m_SpotLight);
+	m_Shader->SetUniform1PointLight("u_PointLight2", m_PointLight2);
+	m_Shader->SetUniform1PointLight("u_PointLight3", m_PointLight3);
+	m_Shader->SetUniform1PointLight("u_PointLight4", m_PointLight4);
 
 	renderer.DrawArray(*m_VAO, *m_Shader);
 
@@ -67,10 +69,17 @@ void scene::AdvancedLightingScene::OnImGuiRender()
 	ImGui::SetNextWindowSizeConstraints(ImVec2(400.0f, 0.0f), ImVec2(FLT_MAX, FLT_MAX));
 	ImGuiIO& io = ImGui::GetIO();
 
+	if (ImGui::CollapsingHeader("Material Settings"))
+	{
+		ImGui::SliderFloat("Shininess", &m_Shininess, 1, 512);
+		ImGui::Checkbox("Use blinn", &m_IsBlinn);
+	}
 	if (ImGui::CollapsingHeader("Light Settings"))
 	{
-		ImGui::SliderFloat("Shininess", &m_Shininess, 1, 32);
-		ImGui::Checkbox("Use blinn", &m_IsBlinn);
+		ImGui::SliderFloat("X1", &m_PointLight.Position.x, -10, 10);
+		ImGui::SliderFloat("X2", &m_PointLight2.Position.x, -10, 10);
+		ImGui::SliderFloat("X3", &m_PointLight3.Position.x, -10, 10);
+		ImGui::SliderFloat("X4", &m_PointLight4.Position.x, -10, 10);
 	}
 
 	ImGui::Separator();
@@ -83,46 +92,46 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 {
 	float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 15.0, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 15.0, 15.0,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 15.0, 15.0,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 15.0,
 	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
 
 	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  15.0, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  15.0, 15.0,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  15.0, 15.0,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 15.0,
 	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
 
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 15.0, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 15.0, 15.0,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 15.0,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 15.0,
 	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 15.0, 0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 15.0, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 15.0, 15.0,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 15.0,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 15.0,
 	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 15.0, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 15.0,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 15.0, 15.0,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 15.0, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 15.0, 0.0f,
 	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 15.0,
 
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 15.0,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 15.0, 15.0,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 15.0, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 15.0, 0.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 15.0
 	};
 
 	m_VAO = std::make_unique<VertexArray>();
@@ -136,7 +145,7 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 	m_Camera = std::make_unique<Camera>(glm::vec3(3, 2, 3), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
 	m_Camera->Fov = 80;
 
-	m_WoodDiffuse = std::make_unique<Texture>("res/textures/WoodTiles.jpg");
+	m_WoodDiffuse = std::make_unique<Texture>("res/textures/WoodTiles.jpg", GL_SRGB8_ALPHA8);
 	m_WoodDiffuse->Bind(0);
 
 	m_WoodSpecular = std::make_unique<Texture>("res/textures/White.jpg");

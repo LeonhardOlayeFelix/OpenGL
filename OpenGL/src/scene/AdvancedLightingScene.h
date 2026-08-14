@@ -35,10 +35,13 @@ namespace scene {
 		std::unique_ptr<Texture>	   m_WoodDiffuse;
 		std::unique_ptr<Texture>	   m_WoodSpecular;
 		PointLight					   m_PointLight{};
+		PointLight					   m_PointLight2{};
+		PointLight					   m_PointLight3{};
+		PointLight					   m_PointLight4{};
 		DirectionalLight			   m_DirectionalLight{};
 		SpotLight					   m_SpotLight{};
-		float						   m_Shininess = 1;
-		bool						   m_IsBlinn = false;
+		float						   m_Shininess = 256;
+		bool						   m_IsBlinn = true;
 
 	private:
 		void DoPreviousInit();
