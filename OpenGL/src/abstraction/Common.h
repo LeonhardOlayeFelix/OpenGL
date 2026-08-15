@@ -7,6 +7,7 @@
 #include "buffers/UniformBuffer.h"
 #include "textures/Texture.h"
 #include "textures/CubeMap.h"
+#include "model/Primitives.h"
 #include "ShaderProgram.h"
 #include "ShaderProgram.h"
 #include "Renderer.h"

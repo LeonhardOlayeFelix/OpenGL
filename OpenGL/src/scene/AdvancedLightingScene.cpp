@@ -45,12 +45,12 @@ void scene::AdvancedLightingScene::OnRender()
 {
 	Renderer renderer;
 	m_UBO.SetData(glm::value_ptr(m_Camera.GetViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
+	m_UBO.SetData(glm::value_ptr(m_DirectionalLight.GetLightSpaceMatrix()), sizeof(glm::mat4), 2 * sizeof(glm::mat4));
 
-	glViewport(0, 0, 1024, 1024);
+	glViewport(0, 0, 2048, 2048);
 	m_ShadowFramebuffer.Bind();
 	renderer.Clear();
 	glCullFace(GL_FRONT);
-	m_DepthShader.SetUniformMat4f("u_LightSpaceMatrix", m_DirectionalLight.GetLightSpaceMatrix());
 	m_DepthShader.SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(10, 1, 10)));
 	renderer.DrawArray(m_VAO, m_DepthShader);
 	m_DepthShader.SetUniformMat4f("u_Model", glm::translate(glm::mat4(1), glm::vec3(0, 1, -2)));
@@ -72,7 +72,6 @@ void scene::AdvancedLightingScene::OnRender()
 	
 
 	m_Shader.SetUniform1DirectionalLight("u_DirectionalLight", m_DirectionalLight);
-	m_Shader.SetUniformMat4f("u_LightSpaceMatrix", m_DirectionalLight.GetLightSpaceMatrix());
 	m_Shader.SetUniform1i("u_DirectionalLightShadowMap", 2);
 	m_Shader.SetUniform3f("u_ViewPosition", m_Camera.Position);
 	m_Shader.SetUniform1i("u_WoodMaterial.texture_diffuse1", 0);
@@ -88,6 +87,7 @@ void scene::AdvancedLightingScene::OnRender()
 
 
 	m_QuadShader.SetUniform1i("u_DepthTexture", 2);
+	m_QuadShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0.70, 0.70, 0)), glm::vec3(0.25)));
 	renderer.DrawArray(m_VAO2, m_QuadShader);
 
 	m_Camera.UpdateCameraVectors();
@@ -116,75 +116,15 @@ void scene::AdvancedLightingScene::OnImGuiRender()
 
 void scene::AdvancedLightingScene::DoPreviousInit()
 {
-	float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0, 0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0, 1.0,
-	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0, 1.0,
-	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0,
-	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0, 1.0,
-	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  1.0, 1.0,
-	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 1.0,
-	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,  0.0f, 0.0f,
-
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0, 0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 1.0, 1.0,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0,
-	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0,
-	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0, 0.0f,
-
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0, 1.0,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0,
-	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0,
-	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 1.0, 0.0f,
-
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0,
-	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0, 1.0,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0,
-
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0,
-	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0, 1.0,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0
-	};
-	float quadVertices[] = {
-	0.55f, 0.95f,   0.0f, 1.0f,
-	0.55f, 0.55f,   0.0f, 0.0f,
-	0.95f, 0.55f,   1.0f, 0.0f,
-
-	0.55f, 0.95f,   0.0f, 1.0f,
-	0.95f, 0.55f,   1.0f, 0.0f,
-	0.95f, 0.95f,   1.0f, 1.0f
-	};
-
-
-	m_VBO = VertexBuffer(vertices, sizeof(vertices));
-	VertexBufferLayout layout;
-	layout.Push<float>(3);
-	layout.Push<float>(3);
-	layout.Push<float>(2);
+	m_VBO = VertexBuffer(Primitives::CubePNT());
+	VertexBufferLayout layout{ 3, 3, 2 };
 	m_VAO.RecordVBOLayout(m_VBO, layout);
 
-	m_VBO2 = VertexBuffer(quadVertices, sizeof(quadVertices));
-	VertexBufferLayout layout2;
-	layout2.Push<float>(2);
-	layout2.Push<float>(2);
+	m_VBO2 = VertexBuffer(Primitives::NDCQuad());
+	VertexBufferLayout layout2{ 2, 2 };
 	m_VAO2.RecordVBOLayout(m_VBO2, layout2);
 
 	m_Camera = Camera(glm::vec3(-6.35, 5.2, -8.1), glm::vec3(0, 1, 0), 60, -26.0f);
-	m_Camera.Fov = 80;
 
 	m_WoodDiffuse = Texture("res/textures/WoodTiles.jpg", GL_SRGB8_ALPHA8);
 	m_WoodDiffuse.Bind(0);
@@ -192,18 +132,19 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 	m_WoodSpecular = Texture("res/textures/White.jpg");
 	m_WoodSpecular.Bind(1);
 
-	m_ShadowFramebuffer = FrameBuffer(1024, 1024);
+	m_ShadowFramebuffer = FrameBuffer(2048, 2048);
 	m_ShadowFramebuffer.AddAttachment(AttachmentTarget::Depth, AttachmentStorage::Texture);
 	m_ShadowFramebuffer.MarkAsNoColorBuffer();
 
 	m_Shader = ShaderProgram("res/shaders/BlinnPhongLightingShader.shader");
 	m_Shader.SetUniformBlockBinding("Matrices", 0);
 
+	m_DepthShader = ShaderProgram("res/shaders/SimpleDepthShader.shader");
+	m_DepthShader.SetUniformBlockBinding("Matrices", 0);
+
 	m_QuadShader = ShaderProgram("res/shaders/QuadShader.shader");
 
-	m_DepthShader = ShaderProgram("res/shaders/SimpleDepthShader.shader");
-
-	m_UBO = UniformBuffer(2 * sizeof(glm::mat4));
+	m_UBO = UniformBuffer(3 * sizeof(glm::mat4));
 	m_UBO.BindToPoint(0);
 	m_UBO.SetData(glm::value_ptr(m_Camera.GetPerspectiveMatrix()), sizeof(glm::mat4), 0);
 }

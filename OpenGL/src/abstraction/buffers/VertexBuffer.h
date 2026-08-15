@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 class VertexBuffer {
 private:
 	unsigned int m_RendererID{};
@@ -6,6 +7,8 @@ private:
 public:
 	VertexBuffer() = default;
 	VertexBuffer(const void* data, size_t size);
+	template<size_t N>
+	VertexBuffer(const std::array<float, N>& data) : VertexBuffer(data.data(), N * sizeof(float)) {};
 	~VertexBuffer();
 
 	VertexBuffer(const VertexBuffer&) = delete;

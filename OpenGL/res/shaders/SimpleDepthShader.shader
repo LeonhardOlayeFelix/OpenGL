@@ -3,7 +3,13 @@
         
 layout(location = 0) in vec3 a_Position;
 
-uniform mat4 u_LightSpaceMatrix;
+layout (std140) uniform Matrices
+{
+    mat4 u_Proj;
+    mat4 u_View;
+    mat4 u_LightSpaceMatrix;
+};
+
 uniform mat4 u_Model;
 
 void main()

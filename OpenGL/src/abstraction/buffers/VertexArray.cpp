@@ -64,6 +64,11 @@ void VertexArray::RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLay
 
 }
 
+void VertexArray::RecordVBOLayout(const VertexBuffer& vbo, std::initializer_list<int> floatCounts)
+{
+	RecordVBOLayout(vbo, VertexBufferLayout(floatCounts));
+}
+
 void VertexArray::RecordIndexBuffer(const IndexBuffer& ibo)
 {
 	Bind();

@@ -26,6 +26,7 @@ private:
 	unsigned int m_Stride;
 
 public:
+	VertexBufferLayout(std::initializer_list<int> nums);
 	VertexBufferLayout() : m_Stride(0) {}
 
 	template<typename T>

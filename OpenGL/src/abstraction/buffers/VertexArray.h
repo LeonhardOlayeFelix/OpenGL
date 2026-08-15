@@ -22,6 +22,7 @@ public:
 	VertexArray& operator=(VertexArray&& other) noexcept;
 
 	void RecordVBOLayout(const VertexBuffer& vbo, const VertexBufferLayout& vbl);
+	void RecordVBOLayout(const VertexBuffer& vbo, std::initializer_list<int> floatCounts);
 	void RecordIndexBuffer(const IndexBuffer& ibo);
 	void SetAttribDivisor(unsigned int index, unsigned int divisor);
 	inline unsigned int GetIndexBufferCount() const { return m_IndexBuffer->GetCount(); };
