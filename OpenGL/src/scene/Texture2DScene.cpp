@@ -19,33 +19,33 @@ scene::Texture2DScene::Texture2DScene()
 		0, 2, 3
 	};
 
-	m_VAO = std::make_unique<VertexArray>();
-	m_VAO->Bind();
+	m_VAO = VertexArray();
+	m_VAO.Bind();
 
-	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
+	m_VBO = VertexBuffer(vertices, sizeof(vertices));
 
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(4);
 	layout.Push<float>(2);
 
-	m_VAO->RecordVBOLayout(*m_VBO, layout);
+	m_VAO.RecordVBOLayout(m_VBO, layout);
 
-	m_IBO = std::make_unique<IndexBuffer>(indicies, sizeof(indicies)/sizeof(unsigned int));
+	m_IBO = IndexBuffer(indicies, sizeof(indicies)/sizeof(unsigned int));
 
-	m_VAO->RecordIndexBuffer(*m_IBO);
+	m_VAO.RecordIndexBuffer(m_IBO);
 
-	m_Shader = std::make_unique<ShaderProgram>("res/shaders/Texture2DSceneShader.shader");
-	m_Shader->Bind();
-	m_Shader->SetUniform1i("u_Texture", 0);
-	m_Shader->SetUniform1i("u_Texture2", 1);
-	m_Shader->SetUniform1f("u_Float", m_float2);
+	m_Shader = ShaderProgram("res/shaders/Texture2DSceneShader.shader");
+	m_Shader.Bind();
+	m_Shader.SetUniform1i("u_Texture", 0);
+	m_Shader.SetUniform1i("u_Texture2", 1);
+	m_Shader.SetUniform1f("u_Float", m_float2);
 
-	m_Texture = std::make_unique<Texture>("res/textures/container.jpg");
-	m_Texture->Bind(0);
+	m_Texture = Texture("res/textures/container.jpg");
+	m_Texture.Bind(0);
 
-	m_Texture2 = std::make_unique<Texture>("res/textures/awesomeface.png");
-	m_Texture2->Bind(1);
+	m_Texture2 = Texture("res/textures/awesomeface.png");
+	m_Texture2.Bind(1);
 
 }
 
@@ -61,10 +61,10 @@ void scene::Texture2DScene::OnRender()
 {
 	Renderer renderer;
 
-	m_Shader->Bind();
-	m_Texture->Bind(0);
-	m_Texture2->Bind(1);
-	renderer.DrawElements(*m_VAO, *m_Shader);
+	m_Shader.Bind();
+	m_Texture.Bind(0);
+	m_Texture2.Bind(1);
+	renderer.DrawElements(m_VAO, m_Shader);
 }
 
 void scene::Texture2DScene::OnImGuiRender()
@@ -78,10 +78,10 @@ void scene::Texture2DScene::OnImGuiRender()
 			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,   0.0f,    m_float
 		};
 
-		m_VBO->Bind();
-		m_VBO->UpdateData(vertices, sizeof(vertices));
+		m_VBO.Bind();
+		m_VBO.UpdateData(vertices, sizeof(vertices));
 	}
 	if (ImGui::SliderFloat("Float 2", &m_float2, 0.0f, 1.0f)) {
-		m_Shader->SetUniform1f("u_Float", m_float2);
+		m_Shader.SetUniform1f("u_Float", m_float2);
 	}
 }

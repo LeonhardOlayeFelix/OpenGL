@@ -6,6 +6,7 @@
 class UniformBuffer
 {
 public:
+	UniformBuffer() = default;
 	UniformBuffer(size_t size);
 	~UniformBuffer();
 
@@ -21,8 +22,8 @@ public:
 	inline int GetID() const { return m_RendererID; }
 
 private:
-	unsigned int m_RendererID;
-	size_t m_Size;
+	unsigned int m_RendererID{};
+	size_t m_Size{};
 
 };
 

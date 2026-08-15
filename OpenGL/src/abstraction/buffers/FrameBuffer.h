@@ -15,8 +15,8 @@ enum class AttachmentStorage {
 class FrameBuffer
 {
 	private:
-		unsigned int m_RendererID;
-		int m_Width, m_Height, m_MSAASamples;
+		unsigned int m_RendererID{};
+		int m_Width{}, m_Height{}, m_MSAASamples{};
 
 		struct Attachment
 		{
@@ -25,10 +25,11 @@ class FrameBuffer
 			std::variant<std::unique_ptr<Texture>, std::unique_ptr<RenderBuffer>> storage;
 		};
 
-		std::vector<Attachment> m_Attachments;
-		std::vector<GLenum> m_DrawBuffers;
+		std::vector<Attachment> m_Attachments{};
+		std::vector<GLenum> m_DrawBuffers{};
 
 	public:
+		FrameBuffer() = default;
 		FrameBuffer(int width, int height, int samples = 1);
 		~FrameBuffer();
 
@@ -48,7 +49,7 @@ class FrameBuffer
 
 		void AddAttachment(AttachmentTarget target, AttachmentStorage storage, int colorIndex = 0); // colorIndex only matters when target == Color
 		void MarkAsNoColorBuffer();
-		Texture* GetColorTexture(int colorIndex = 0) const;
-		Texture* GetDepthTexture() const;
+		Texture& GetColorTexture(int colorIndex = 0) const;
+		Texture& GetDepthTexture() const;
 };
 

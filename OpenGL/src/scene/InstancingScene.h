@@ -20,12 +20,12 @@ namespace scene{
 
 		GLFWwindow* m_Window;
 
-		std::unique_ptr<VertexArray> m_VAO;
-		std::unique_ptr<VertexBuffer> m_VBO;
-		std::unique_ptr<VertexBuffer> m_InstanceVBO;
-		std::unique_ptr<IndexBuffer> m_IBO;
-		std::unique_ptr<ShaderProgram> m_Shader;
-		std::unique_ptr<Camera>        m_Camera;
+		VertexArray m_VAO{};
+		VertexBuffer m_VBO{};
+		VertexBuffer m_InstanceVBO{};
+		IndexBuffer m_IBO{};
+		ShaderProgram m_Shader{};
+		Camera m_Camera{};
 
 		glm::vec3 translations[NR_OBJECTS];
 

@@ -71,33 +71,33 @@ scene::Transformations3DScene::Transformations3DScene()
 	};
 
 
-	m_VAO = std::make_unique<VertexArray>();
-	m_VAO->Bind();
+	m_VAO = VertexArray();
+	m_VAO.Bind();
 
-	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
+	m_VBO = VertexBuffer(vertices, sizeof(vertices));
 
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(2);
 
-	m_VAO->RecordVBOLayout(*m_VBO, layout);
+	m_VAO.RecordVBOLayout(m_VBO, layout);
 
-	m_Shader = std::make_unique<ShaderProgram>("res/shaders/Transformations3DSceneShader.shader");
-	m_Shader->Bind();
-	m_Shader->SetUniform1i("u_Texture", 0);
-	m_Shader->SetUniform1i("u_Texture2", 1);
+	m_Shader = ShaderProgram("res/shaders/Transformations3DSceneShader.shader");
+	m_Shader.Bind();
+	m_Shader.SetUniform1i("u_Texture", 0);
+	m_Shader.SetUniform1i("u_Texture2", 1);
 
-	m_Texture = std::make_unique<Texture>("res/textures/container.jpg");
-	m_Texture->Bind(0);
+	m_Texture = Texture("res/textures/container.jpg");
+	m_Texture.Bind(0);
 
-	m_Texture2 = std::make_unique<Texture>("res/textures/awesomeface.png");
-	m_Texture2->Bind(1);
+	m_Texture2 = Texture("res/textures/awesomeface.png");
+	m_Texture2.Bind(1);
 
 	m_ViewTransform = glm::mat4(1.0f);
 	m_ViewTransform = glm::translate(m_ViewTransform, glm::vec3(0.0f, 0.0f, -3.0f));
 
 
-	m_Shader->SetUniformMat4f("u_View", m_ViewTransform);
+	m_Shader.SetUniformMat4f("u_View", m_ViewTransform);
 
 
 
@@ -119,9 +119,9 @@ void scene::Transformations3DScene::OnRender()
 void scene::Transformations3DScene::OnImGuiRender()
 {
 	Renderer renderer;
-	m_Shader->Bind();
-	m_Texture->Bind(0);
-	m_Texture2->Bind(1);
+	m_Shader.Bind();
+	m_Texture.Bind(0);
+	m_Texture2.Bind(1);
 
 	ImGui::SliderFloat("Translation X", &m_TranslateX, -2.0f, 2.0f);
 	ImGui::SliderFloat("Translation Y", &m_TranslateY, -2.0f, 2.0f);
@@ -136,20 +136,20 @@ void scene::Transformations3DScene::OnImGuiRender()
 	m_ModelTransform = glm::translate(m_ModelTransform, glm::vec3(m_TranslateX, m_TranslateY, m_TranslateZ));
 	m_ModelTransform = glm::rotate(m_ModelTransform, glm::degrees(m_Angle / 180.0f * 3.14f), glm::vec3(1.0, 1.0, -1.0));
 	m_ModelTransform = glm::scale(m_ModelTransform, glm::vec3(m_ScaleX, m_ScaleY, m_ScaleZ));
-	m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
+	m_Shader.SetUniformMat4f("u_Model", m_ModelTransform);
 
 	m_ProjTransform = glm::perspective(glm::radians(m_Fov), 800.0f / 600.0f, 0.1f, 100.0f);
-	m_Shader->SetUniformMat4f("u_Proj", m_ProjTransform);
+	m_Shader.SetUniformMat4f("u_Proj", m_ProjTransform);
 
 
-	renderer.DrawArray(*m_VAO, *m_Shader);
+	renderer.DrawArray(m_VAO, m_Shader);
 
 	for (unsigned int i = 0; i < 10; i++){
 		m_ModelTransform = glm::mat4(1.0f);
 		m_ModelTransform = glm::translate(m_ModelTransform, m_CubePositions[i]);
 		m_ModelTransform = glm::rotate(m_ModelTransform, glm::degrees(i * m_Angle / 180.0f * 3.14f), glm::vec3(1.0, 1.0, -1.0));
-		m_Shader->SetUniformMat4f("u_Model", m_ModelTransform);
-		renderer.DrawArray(*m_VAO, *m_Shader);
+		m_Shader.SetUniformMat4f("u_Model", m_ModelTransform);
+		renderer.DrawArray(m_VAO, m_Shader);
 	}
 
 

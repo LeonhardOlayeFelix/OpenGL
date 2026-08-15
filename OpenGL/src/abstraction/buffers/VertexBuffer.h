@@ -1,9 +1,10 @@
 #pragma once
 class VertexBuffer {
 private:
-	unsigned int m_RendererID;
-	unsigned int m_count;
+	unsigned int m_RendererID{};
+	unsigned int m_count{};
 public:
+	VertexBuffer() = default;
 	VertexBuffer(const void* data, size_t size);
 	~VertexBuffer();
 

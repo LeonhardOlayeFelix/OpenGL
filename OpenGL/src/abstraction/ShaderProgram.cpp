@@ -15,7 +15,8 @@ ShaderProgram::ShaderProgram(const std::string& filepath) : m_FilePath(filepath)
 
 ShaderProgram::~ShaderProgram()
 {
-    GLCall(glDeleteProgram(m_RendererID));
+    if (m_RendererID != 0)
+        GLCall(glDeleteProgram(m_RendererID));
 }
 
 ShaderProgramSource ShaderProgram::ParseShaderProgram(const std::string& filepath) {
@@ -117,6 +118,27 @@ void ShaderProgram::Bind() const
 void ShaderProgram::Unbind() const
 {
     GLCall(glUseProgram(0));
+}
+ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
+    : m_FilePath(std::move(other.m_FilePath)),
+    m_RendererID(other.m_RendererID),
+    m_UniformLocationCache(std::move(other.m_UniformLocationCache))
+{
+    other.m_RendererID = 0;
+}
+ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
+{
+    if (this != &other)
+    {
+        glDeleteProgram(m_RendererID);
+
+        m_FilePath = std::move(other.m_FilePath);
+        m_RendererID = other.m_RendererID;
+        m_UniformLocationCache = std::move(other.m_UniformLocationCache);
+
+        other.m_RendererID = 0;
+    }
+    return *this;
 }
 void ShaderProgram::SetUniform4f(const std::string& name, const glm::vec4& vec)
 {

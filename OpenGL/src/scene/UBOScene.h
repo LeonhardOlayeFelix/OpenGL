@@ -27,15 +27,15 @@ namespace scene {
 	private:
 		GLFWwindow* m_Window;
 
-		std::unique_ptr<VertexArray>   m_VAO;
-		std::unique_ptr<VertexBuffer>  m_VBO;
-		std::unique_ptr<IndexBuffer>   m_IBO;
-		std::unique_ptr<UniformBuffer> m_UBO;
-		std::unique_ptr<ShaderProgram> m_ShaderRed;
-		std::unique_ptr<ShaderProgram> m_ShaderBlue;
-		std::unique_ptr<ShaderProgram> m_ShaderYellow;
-		std::unique_ptr<ShaderProgram> m_ShaderGreen;
-		std::unique_ptr<Camera>        m_Camera;
+		VertexArray m_VAO{};
+		VertexBuffer m_VBO{};
+		IndexBuffer m_IBO{};
+		UniformBuffer m_UBO{};
+		ShaderProgram m_ShaderRed{};
+		ShaderProgram m_ShaderBlue{};
+		ShaderProgram m_ShaderYellow{};
+		ShaderProgram m_ShaderGreen{};
+		Camera m_Camera{};
 
 		unsigned int m_UBOMatrices;
 

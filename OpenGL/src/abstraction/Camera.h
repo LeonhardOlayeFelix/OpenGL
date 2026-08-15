@@ -24,28 +24,31 @@ const float FAR = 1000.0f;
 
 
 class Camera {
+
 public:
-	glm::vec3 Position;
-	glm::vec3 Front;
-	glm::vec3 Up;
-	glm::vec3 Right;
-	glm::vec3 WorldUp;
-	float Yaw;
-	float Pitch;
-	float MovementSpeed;
-	float MouseSensitivity;
-	float Fov;
-	float Near;
-	float Far;
+	glm::vec3 Position{};
+	glm::vec3 Front{};
+	glm::vec3 Up{};
+	glm::vec3 Right{};
+	glm::vec3 WorldUp{};
+	float Yaw{};
+	float Pitch{};
+	float MovementSpeed{};
+	float MouseSensitivity{};
+	float Fov{};
+	float Near{};
+	float Far{};
+
+public:
+	Camera() = default;
 	Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch);
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 	void ProcessKeyboard(CameraMovement direction, double deltaTime);
 	void ProcessMouseMovement(float xoffset, float yoffset);
 	void ProcessMouseScroll(float yoffset);
+	void UpdateCameraVectors();
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetPerspectiveMatrix();
 
-public:
-	void UpdateCameraVectors();
 };
 

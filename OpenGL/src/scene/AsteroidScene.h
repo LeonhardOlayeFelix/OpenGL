@@ -20,18 +20,18 @@ namespace scene{
 		GLFWwindow* m_Window;
 		static constexpr int NR_ASTEROIDS = 1000;
 
-		std::unique_ptr<VertexArray> m_VAO;
-		std::unique_ptr<VertexBuffer> m_VBO;
-		std::unique_ptr<VertexBuffer> m_InstanceVBO;
-		std::unique_ptr<IndexBuffer> m_IBO;
-		std::unique_ptr<ShaderProgram> m_Shader;
-		std::unique_ptr<ShaderProgram> m_Shader2;
-		std::unique_ptr<Camera>        m_Camera;
+		VertexArray   m_VAO;
+		VertexBuffer  m_VBO;
+		VertexBuffer  m_InstanceVBO;
+		IndexBuffer   m_IBO;
+		ShaderProgram m_Shader;
+		ShaderProgram m_Shader2;
+		Camera        m_Camera;
 
 		glm::mat4 m_ModelMatrices[NR_ASTEROIDS];
 		
-		std::unique_ptr<Model> m_Planet;
-		std::unique_ptr<Model> m_Rock;
+		Model m_Planet;
+		Model m_Rock;
 
 		float m_Radius = 50.0f;
 		float m_Offset = 10.0f;

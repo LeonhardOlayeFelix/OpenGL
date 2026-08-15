@@ -17,10 +17,17 @@ struct MeshTexture {
 class Mesh
 {
 public:
-    std::vector<Vertex>       Vertices;
-    std::vector<unsigned int> Indices;
-    std::vector<MeshTexture>  Textures;
+    std::vector<Vertex>       Vertices{};
+    std::vector<unsigned int> Indices{};
+    std::vector<MeshTexture>  Textures{};
 
+private:
+    std::optional<VertexArray> m_Vao{};
+    std::optional<VertexBuffer> m_Vbo{};
+    std::optional<IndexBuffer> m_Ibo{};
+
+public:
+    Mesh() = default;
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<MeshTexture> textures);
     Mesh(const Mesh&) = delete;
     Mesh& operator=(const Mesh&) = delete;
@@ -30,15 +37,10 @@ public:
     void Draw(ShaderProgram& shader);
     void DrawInstanced(ShaderProgram& shader, unsigned int count);
     void SetInstanceBuffer(VertexBuffer& instanceVBO, VertexBufferLayout& vbl);
+    inline VertexArray& GetVAO() { return m_Vao.value(); }
 
 private:
-    std::optional<VertexArray> m_Vao;
-    std::optional<VertexBuffer> m_Vbo;
-    std::optional<IndexBuffer> m_Ibo;
-
     void setupMesh();
     void setTextures(ShaderProgram& shader);
-public:
-    inline VertexArray& GetVAO() { return m_Vao.value(); }
 };
 

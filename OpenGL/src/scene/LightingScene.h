@@ -67,16 +67,16 @@ namespace scene {
 	private:
 		GLFWwindow* m_Window;
 
-		std::unique_ptr<VertexArray>   m_VAO;
-		std::unique_ptr<VertexArray>   m_LightVAO;
-		std::unique_ptr<VertexBuffer>  m_VBO;
-		std::unique_ptr<IndexBuffer>   m_IBO;
-		std::unique_ptr<ShaderProgram> m_ObjectShader;
-		std::unique_ptr<ShaderProgram> m_LampShader;
-		std::unique_ptr<Texture>       m_Texture;
-		std::unique_ptr<Texture>       m_Texture2;
-		std::unique_ptr<Texture>       m_Texture3;
-		std::unique_ptr<Camera>        m_Camera;
+		VertexArray m_VAO{};
+		VertexArray m_LightVAO{};
+		VertexBuffer m_VBO{};
+		IndexBuffer m_IBO{};
+		ShaderProgram m_ObjectShader{};
+		ShaderProgram m_LampShader{};
+		Texture m_Texture{};
+		Texture m_Texture2{};
+		Texture m_Texture3{};
+		Camera m_Camera{};
 
 		static constexpr int NR_POINT_LIGHTS = 4;
 

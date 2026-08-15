@@ -131,30 +131,20 @@ void FrameBuffer::MarkAsNoColorBuffer()
 	Unbind();
 }
 
-Texture* FrameBuffer::GetColorTexture(int colorIndex) const
+Texture& FrameBuffer::GetColorTexture(int colorIndex) const
 {
 	for (const Attachment& a : m_Attachments) 
-	{
 		if (a.target == AttachmentTarget::Color && a.colorIndex == colorIndex)
-		{
 			if (auto* tex = std::get_if<std::unique_ptr<Texture>>(&a.storage))
-				return tex->get();
-		}
-	}
-	std::cout << "Error: Was not able to locate Color attachment " << colorIndex << " For framebuffer.";
-	return nullptr;
+				return **tex;
+	throw std::runtime_error("Was not able to locate Color attachment for framebuffer.");
 }
 
-Texture* FrameBuffer::GetDepthTexture() const
+Texture& FrameBuffer::GetDepthTexture() const
 {
 	for (const Attachment& a : m_Attachments)
-	{
 		if (a.target == AttachmentTarget::Depth)
-		{
 			if (auto* tex = std::get_if<std::unique_ptr<Texture>>(&a.storage))
-				return tex->get();
-		}
-	}
-	std::cout << "Error: Was not able to locate depth attachment For framebuffer.";
-	return nullptr;
+				return **tex;
+	throw std::runtime_error("Was not able to locate depth attachment for framebuffer.");
 }

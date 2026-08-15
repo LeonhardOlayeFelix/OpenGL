@@ -30,31 +30,31 @@ scene::InstancingScene::InstancingScene()
 		}
 	}
 
-	m_VAO = std::make_unique<VertexArray>();
-	m_VAO->Bind();
+	m_VAO = VertexArray();
+	m_VAO.Bind();
 
-	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
+	m_VBO = VertexBuffer(vertices, sizeof(vertices));
 	
 	VertexBufferLayout vbl;
 	vbl.Push<float>(3);
 	vbl.Push<float>(3);
 
-	m_VAO->RecordVBOLayout(*m_VBO, vbl);
+	m_VAO.RecordVBOLayout(m_VBO, vbl);
 
-	m_InstanceVBO = std::make_unique<VertexBuffer>(&translations[0], sizeof(translations));
+	m_InstanceVBO = VertexBuffer(&translations[0], sizeof(translations));
 
 	VertexBufferLayout vbl2;
 	vbl2.Push<float>(3);
 
-	m_VAO->RecordVBOLayout(*m_InstanceVBO, vbl2);
-	m_VAO->SetAttribDivisor(2, 1);
+	m_VAO.RecordVBOLayout(m_InstanceVBO, vbl2);
+	m_VAO.SetAttribDivisor(2, 1);
 
-	m_IBO = std::make_unique<IndexBuffer>(indicies, sizeof(indicies) / sizeof(unsigned int));
+	m_IBO = IndexBuffer(indicies, sizeof(indicies) / sizeof(unsigned int));
 
-	m_VAO->RecordIndexBuffer(*m_IBO);
+	m_VAO.RecordIndexBuffer(m_IBO);
 
-	m_Shader = std::make_unique<ShaderProgram>("res/shaders/InstancingSceneShader.shader");
-	m_Shader->Bind();
+	m_Shader = ShaderProgram("res/shaders/InstancingSceneShader.shader");
+	m_Shader.Bind();
 }
 
 scene::InstancingScene::~InstancingScene()
@@ -66,34 +66,34 @@ void scene::InstancingScene::OnUpdate(double deltaTime, GLFWwindow* window)
 	m_Window = window;
 
 	if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::LEFT, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::LEFT, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::UP, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::UP, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::DOWN, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::DOWN, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_J))
-		m_Camera->ProcessMouseMovement(-500 * deltaTime, 0);
+		m_Camera.ProcessMouseMovement(-500 * deltaTime, 0);
 	if (glfwGetKey(m_Window, GLFW_KEY_L))
-		m_Camera->ProcessMouseMovement(500 * deltaTime, 0);
+		m_Camera.ProcessMouseMovement(500 * deltaTime, 0);
 	if (glfwGetKey(m_Window, GLFW_KEY_I))
-		m_Camera->ProcessMouseMovement(0, 500 * deltaTime);
+		m_Camera.ProcessMouseMovement(0, 500 * deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_K))
-		m_Camera->ProcessMouseMovement(0, -500 * deltaTime);
+		m_Camera.ProcessMouseMovement(0, -500 * deltaTime);
 }
 
 void scene::InstancingScene::OnRender()
 {
 	Renderer renderer;
 
-	renderer.DrawElementsInstanced(*m_VAO, *m_Shader, NR_OBJECTS);
+	renderer.DrawElementsInstanced(m_VAO, m_Shader, NR_OBJECTS);
 
-	m_Camera->UpdateCameraVectors();
+	m_Camera.UpdateCameraVectors();
 }
 
 void scene::InstancingScene::OnImGuiRender()
@@ -110,5 +110,5 @@ void scene::InstancingScene::OnImGuiRender()
 
 void scene::InstancingScene::DoPreviousInit()
 {
-	m_Camera = std::make_unique<Camera>(glm::vec3(-0.75f, 3.91f, -5.22), glm::vec3(0.0f, 1.0f, 0.0f), 57.0f, -40.0f);
+	m_Camera = Camera(glm::vec3(-0.75f, 3.91f, -5.22), glm::vec3(0.0f, 1.0f, 0.0f), 57.0f, -40.0f);
 }

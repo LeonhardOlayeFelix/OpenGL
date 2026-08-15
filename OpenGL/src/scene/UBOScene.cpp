@@ -7,16 +7,16 @@ scene::UBOScene::UBOScene()
 {
 	DoPreviousInit();
 
-	m_ShaderRed->SetUniformBlockBinding("Matrices", 0);
-	m_ShaderGreen->SetUniformBlockBinding("Matrices", 0);
-	m_ShaderBlue->SetUniformBlockBinding("Matrices", 0);
-	m_ShaderYellow->SetUniformBlockBinding("Matrices", 0);
+	m_ShaderRed.SetUniformBlockBinding("Matrices", 0);
+	m_ShaderGreen.SetUniformBlockBinding("Matrices", 0);
+	m_ShaderBlue.SetUniformBlockBinding("Matrices", 0);
+	m_ShaderYellow.SetUniformBlockBinding("Matrices", 0);
 
-	m_UBO = std::make_unique<UniformBuffer>(2 * sizeof(glm::mat4));
-	m_UBO->BindToPoint(0);
+	m_UBO = UniformBuffer(2 * sizeof(glm::mat4));
+	m_UBO.BindToPoint(0);
 
-	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
-	m_UBO->SetData(glm::value_ptr(perspectiveMatrix), sizeof(glm::mat4), 0);
+	glm::mat4 perspectiveMatrix = m_Camera.GetPerspectiveMatrix();
+	m_UBO.SetData(glm::value_ptr(perspectiveMatrix), sizeof(glm::mat4), 0);
 }
 
 scene::UBOScene::~UBOScene()
@@ -28,25 +28,25 @@ void scene::UBOScene::OnUpdate(double deltaTime, GLFWwindow* window)
 	m_Window = window;
 
 	if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::LEFT, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::LEFT, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::UP, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::UP, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::DOWN, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::DOWN, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_J))
-		m_Camera->ProcessMouseMovement(-500 * deltaTime, 0);
+		m_Camera.ProcessMouseMovement(-500 * deltaTime, 0);
 	if (glfwGetKey(m_Window, GLFW_KEY_L))
-		m_Camera->ProcessMouseMovement(500 * deltaTime, 0);
+		m_Camera.ProcessMouseMovement(500 * deltaTime, 0);
 	if (glfwGetKey(m_Window, GLFW_KEY_I))
-		m_Camera->ProcessMouseMovement(0, 500 * deltaTime);
+		m_Camera.ProcessMouseMovement(0, 500 * deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_K))
-		m_Camera->ProcessMouseMovement(0, -500 * deltaTime);
+		m_Camera.ProcessMouseMovement(0, -500 * deltaTime);
 }
 
 void scene::UBOScene::OnRender()
@@ -54,27 +54,27 @@ void scene::UBOScene::OnRender()
 	Renderer renderer;
 	glm::mat4 model = glm::mat4(1.0);
 
-	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
-	m_UBO->SetData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
+	glm::mat4 viewMatrix = m_Camera.GetViewMatrix();
+	m_UBO.SetData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
 
 	model = glm::translate(glm::mat4(1.0), glm::vec3(-1, 1, 0));
-	m_ShaderRed->SetUniformMat4f("u_Model", model);
-	renderer.DrawArray(*m_VAO, *m_ShaderRed);
+	m_ShaderRed.SetUniformMat4f("u_Model", model);
+	renderer.DrawArray(m_VAO, m_ShaderRed);
 
 	model = glm::translate(glm::mat4(1.0), glm::vec3(-1, -1, 0));
-	m_ShaderBlue->SetUniformMat4f("u_Model", model);
-	renderer.DrawArray(*m_VAO, *m_ShaderBlue);
+	m_ShaderBlue.SetUniformMat4f("u_Model", model);
+	renderer.DrawArray(m_VAO, m_ShaderBlue);
 
 	model = glm::translate(glm::mat4(1.0), glm::vec3(1, -1, 0));
-	m_ShaderYellow->SetUniformMat4f("u_Model", model);
-	renderer.DrawArray(*m_VAO, *m_ShaderYellow);
+	m_ShaderYellow.SetUniformMat4f("u_Model", model);
+	renderer.DrawArray(m_VAO, m_ShaderYellow);
 
 	model = glm::translate(glm::mat4(1.0), glm::vec3(1, 1, 0));
-	m_ShaderGreen->SetUniformMat4f("u_Model", model);
-	renderer.DrawArray(*m_VAO, *m_ShaderGreen);
+	m_ShaderGreen.SetUniformMat4f("u_Model", model);
+	renderer.DrawArray(m_VAO, m_ShaderGreen);
 
 
-	m_Camera->UpdateCameraVectors();
+	m_Camera.UpdateCameraVectors();
 
 }
 
@@ -155,19 +155,19 @@ void scene::UBOScene::DoPreviousInit()
 	layout2.Push<float>(2);
 
 
-	m_VAO = std::make_unique<VertexArray>();
-	m_VAO->Bind();
-	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
-	m_VAO->RecordVBOLayout(*m_VBO, layout);
-	m_VAO->Unbind();
+	m_VAO = VertexArray();
+	m_VAO.Bind();
+	m_VBO = VertexBuffer(vertices, sizeof(vertices));
+	m_VAO.RecordVBOLayout(m_VBO, layout);
+	m_VAO.Unbind();
 
-	m_ShaderGreen = std::make_unique<ShaderProgram>("res/shaders/UBOSceneShaderGreen.shader");
-	m_ShaderRed = std::make_unique<ShaderProgram>("res/shaders/UBOSceneShaderRed.shader");
-	m_ShaderBlue = std::make_unique<ShaderProgram>("res/shaders/UBOSceneShaderBlue.shader");
-	m_ShaderYellow = std::make_unique<ShaderProgram>("res/shaders/UBOSceneShaderYellow.shader");
+	m_ShaderGreen = ShaderProgram("res/shaders/UBOSceneShaderGreen.shader");
+	m_ShaderRed = ShaderProgram("res/shaders/UBOSceneShaderRed.shader");
+	m_ShaderBlue = ShaderProgram("res/shaders/UBOSceneShaderBlue.shader");
+	m_ShaderYellow = ShaderProgram("res/shaders/UBOSceneShaderYellow.shader");
 
 
 
-	m_Camera = std::make_unique<Camera>(glm::vec3(2, 3, 2), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
-	m_Camera->Fov = 80;
+	m_Camera = Camera(glm::vec3(2, 3, 2), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
+	m_Camera.Fov = 80;
 }

@@ -27,18 +27,18 @@ namespace scene {
 	private:
 		GLFWwindow* m_Window;
 
-		std::unique_ptr<VertexArray>   m_VAO;
-		std::unique_ptr<VertexArray>   m_VAO2;
-		std::unique_ptr<VertexBuffer>  m_VBO;
-		std::unique_ptr<VertexBuffer>  m_VBO2;
-		std::unique_ptr<IndexBuffer>   m_IBO;
-		std::unique_ptr<ShaderProgram> m_Shader;
-		std::unique_ptr<ShaderProgram> m_ScreenShader;
-		std::unique_ptr<Texture>       m_StoneTexture;
-		std::unique_ptr<Texture>       m_LampTexture;
-		std::unique_ptr<Camera>        m_Camera;
-		std::unique_ptr<FrameBuffer>   m_MultisampleFBO;
-		std::unique_ptr<FrameBuffer>   m_ResolveFBO;
+		VertexArray m_VAO{};
+		VertexArray m_VAO2{};
+		VertexBuffer m_VBO{};
+		VertexBuffer m_VBO2{};
+		IndexBuffer m_IBO{};
+		ShaderProgram m_Shader{};
+		ShaderProgram m_ScreenShader{};
+		Texture m_StoneTexture{};
+		Texture m_LampTexture{};
+		Camera m_Camera{};
+		FrameBuffer m_MultisampleFBO{};
+		FrameBuffer m_ResolveFBO{};
 		float						   m_KernelOffset = 1.0f / 300.0f;
 		float						   m_Kernel[9] = { -1, -1, -1,
 													   -1,  9, -1,

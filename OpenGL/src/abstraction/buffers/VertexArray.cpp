@@ -1,7 +1,7 @@
 #include "VertexArray.h"
 #include "ErrorHandling.h"
 
-VertexArray::VertexArray() : m_IndexBuffer(nullptr), m_VBOSize(0), m_Stride(0)
+VertexArray::VertexArray() : m_VBOSize(0), m_Stride(0)
 {
 	GLCall(glCreateVertexArrays(1, &m_RendererID));
 }

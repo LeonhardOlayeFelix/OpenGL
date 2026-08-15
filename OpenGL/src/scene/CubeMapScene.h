@@ -26,20 +26,20 @@ namespace scene {
 	private:
 		GLFWwindow* m_Window;
 		 
-		std::unique_ptr<VertexArray>   m_VAO;
-		std::unique_ptr<VertexArray>   m_VAO2;
-		std::unique_ptr<VertexBuffer>  m_VBO;
-		std::unique_ptr<VertexBuffer>  m_VBO2;
-		std::unique_ptr<UniformBuffer> m_UBO;
-		std::unique_ptr<IndexBuffer>   m_IBO;
-		std::unique_ptr<ShaderProgram> m_Shader;
-		std::unique_ptr<ShaderProgram> m_ReflectionShader;
-		std::unique_ptr<ShaderProgram> m_RefractionShader;
-		std::unique_ptr<ShaderProgram> m_SkyboxShader;
-		std::unique_ptr<Model>		   m_Model;
-		std::unique_ptr<Camera>        m_Camera;
-		std::unique_ptr<CubeMap>	   m_CubeMap;
-		std::unique_ptr<Texture>	   m_Texture;
+		VertexArray m_VAO{};
+		VertexArray m_VAO2{};
+		VertexBuffer m_VBO{};
+		VertexBuffer m_VBO2{};
+		UniformBuffer m_UBO{};
+		IndexBuffer m_IBO{};
+		ShaderProgram m_Shader{};
+		ShaderProgram m_ReflectionShader{};
+		ShaderProgram m_RefractionShader{};
+		ShaderProgram m_SkyboxShader{};
+		Model m_Model{};
+		Camera m_Camera{};
+		CubeMap m_CubeMap{};
+		Texture m_Texture{};
 
 	private:
 		void DoPreviousInit();

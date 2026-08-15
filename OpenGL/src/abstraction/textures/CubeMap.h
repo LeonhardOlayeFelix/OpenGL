@@ -9,13 +9,13 @@ enum CubemapFace { RIGHT, LEFT, TOP, BOTTOM, FRONT, BACK };
 class CubeMap
 {
 private:
-	CubeMap() = default;
-	unsigned int m_RendererID;
-	std::array<std::string, 6> m_FilePaths;
-	unsigned char* m_LocalBuffer;
-	int m_Width, m_Height, m_BPP;
+	unsigned int m_RendererID{};
+	std::array<std::string, 6> m_FilePaths{};
+	unsigned char* m_LocalBuffer{};
+	int m_Width{}, m_Height{}, m_BPP{};
 
 public:
+	CubeMap() = default;
 	CubeMap(const std::string& path);
 	CubeMap(const std::array<std::string, 6>& paths);
 	~CubeMap();

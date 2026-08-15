@@ -20,12 +20,12 @@ namespace scene {
 		void OnRender() override;
 		void OnImGuiRender() override;
 	private:
-		std::unique_ptr<VertexArray> m_VAO;
-		std::unique_ptr<VertexBuffer> m_VBO;
-		std::unique_ptr<IndexBuffer> m_IBO;
-		std::unique_ptr<ShaderProgram> m_Shader;
-		std::unique_ptr<Texture> m_Texture;
-		std::unique_ptr<Texture> m_Texture2;
+		VertexArray m_VAO{};
+		VertexBuffer m_VBO{};
+		IndexBuffer m_IBO{};
+		ShaderProgram m_Shader{};
+		Texture m_Texture{};
+		Texture m_Texture2{};
 		glm::mat4 m_ModelTransform;
 		glm::mat4 m_ViewTransform;
 		glm::mat4 m_ProjTransform;

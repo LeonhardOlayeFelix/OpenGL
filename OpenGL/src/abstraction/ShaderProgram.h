@@ -15,12 +15,19 @@ struct ShaderProgramSource {
 class ShaderProgram
 {
 private:
-	std::string m_FilePath;
-	unsigned int m_RendererID;
-	std::unordered_map<std::string, int> m_UniformLocationCache;
+	std::string m_FilePath{};
+	unsigned int m_RendererID{};
+	std::unordered_map<std::string, int> m_UniformLocationCache{};
 public:
+	ShaderProgram() = default;
 	ShaderProgram(const std::string& filename);
 	~ShaderProgram();
+
+	ShaderProgram(const ShaderProgram& other) = delete;
+	ShaderProgram& operator=(const ShaderProgram& other) = delete;
+	ShaderProgram(ShaderProgram&& other) noexcept;
+	ShaderProgram& operator=(ShaderProgram&& other) noexcept;
+
 
 	void SetUniform4f(const std::string& name, const glm::vec4& vec);
 	void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);

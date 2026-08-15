@@ -6,7 +6,7 @@ scene::CubeMapScene::CubeMapScene()
 {
 	DoPreviousInit();
 
-	m_Model = std::make_unique<Model>("res/models/backpack/backpack.obj");
+	m_Model = Model("res/models/backpack/backpack.obj");
 }
 
 scene::CubeMapScene::~CubeMapScene()
@@ -18,51 +18,51 @@ void scene::CubeMapScene::OnUpdate(double deltaTime, GLFWwindow* window)
 	m_Window = window;
 
 	if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::LEFT, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::LEFT, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::UP, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::UP, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		m_Camera->ProcessKeyboard(CameraMovement::DOWN, deltaTime);
+		m_Camera.ProcessKeyboard(CameraMovement::DOWN, deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_J))
-		m_Camera->ProcessMouseMovement(-500 * deltaTime, 0);
+		m_Camera.ProcessMouseMovement(-500 * deltaTime, 0);
 	if (glfwGetKey(m_Window, GLFW_KEY_L))
-		m_Camera->ProcessMouseMovement(500 * deltaTime, 0);
+		m_Camera.ProcessMouseMovement(500 * deltaTime, 0);
 	if (glfwGetKey(m_Window, GLFW_KEY_I))
-		m_Camera->ProcessMouseMovement(0, 500 * deltaTime);
+		m_Camera.ProcessMouseMovement(0, 500 * deltaTime);
 	if (glfwGetKey(m_Window, GLFW_KEY_K))
-		m_Camera->ProcessMouseMovement(0, -500 * deltaTime);
+		m_Camera.ProcessMouseMovement(0, -500 * deltaTime);
 }   
 
 void scene::CubeMapScene::OnRender()
 {
 	Renderer renderer;
 
-	glm::mat4 viewMatrix = m_Camera->GetViewMatrix();
-	m_UBO->SetData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
+	glm::mat4 viewMatrix = m_Camera.GetViewMatrix();
+	m_UBO.SetData(glm::value_ptr(viewMatrix), sizeof(glm::mat4), sizeof(glm::mat4));
 
-	m_SkyboxShader->SetUniform1i("u_Skybox", 0);
+	m_SkyboxShader.SetUniform1i("u_Skybox", 0);
 
-	m_ReflectionShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0), glm::vec3(2, 0, 0)));
-	m_ReflectionShader->SetUniform3f("u_CameraPosition", m_Camera->Position);
-	m_Model->Draw(*m_ReflectionShader);
+	m_ReflectionShader.SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0), glm::vec3(2, 0, 0)));
+	m_ReflectionShader.SetUniform3f("u_CameraPosition", m_Camera.Position);
+	m_Model.Draw(m_ReflectionShader);
 
-	m_RefractionShader->SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0), glm::vec3(-2, 0, 0)));
-	m_RefractionShader->SetUniform3f("u_CameraPosition", m_Camera->Position);
-	m_Model->Draw(*m_RefractionShader);
+	m_RefractionShader.SetUniformMat4f("u_Model", glm::translate(glm::mat4(1.0), glm::vec3(-2, 0, 0)));
+	m_RefractionShader.SetUniform3f("u_CameraPosition", m_Camera.Position);
+	m_Model.Draw(m_RefractionShader);
 
 	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_FALSE);
-	m_SkyboxShader->SetUniformMat4f("u_ViewNoTranslation", glm::mat4(glm::mat3(viewMatrix)));
-	renderer.DrawArray(*m_VAO2, *m_SkyboxShader);
+	m_SkyboxShader.SetUniformMat4f("u_ViewNoTranslation", glm::mat4(glm::mat3(viewMatrix)));
+	renderer.DrawArray(m_VAO2, m_SkyboxShader);
 	glDepthMask(GL_TRUE);
 
-	m_Camera->UpdateCameraVectors();
+	m_Camera.UpdateCameraVectors();
 }
 
 void scene::CubeMapScene::OnImGuiRender()
@@ -169,33 +169,33 @@ void scene::CubeMapScene::DoPreviousInit()
 	-1.0f, -1.0f,  1.0f,
 	 1.0f, -1.0f,  1.0f
 	};
-	m_VAO = std::make_unique<VertexArray>();
-	m_VBO = std::make_unique<VertexBuffer>(vertices, sizeof(vertices));
+	m_VAO = VertexArray();
+	m_VBO = VertexBuffer(vertices, sizeof(vertices));
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(3);
-	m_VAO->RecordVBOLayout(*m_VBO, layout);
+	m_VAO.RecordVBOLayout(m_VBO, layout);
 
-	m_VAO2 = std::make_unique<VertexArray>();
-	m_VBO2 = std::make_unique<VertexBuffer>(skyboxVertices, sizeof(skyboxVertices));
+	m_VAO2 = VertexArray();
+	m_VBO2 = VertexBuffer(skyboxVertices, sizeof(skyboxVertices));
 	VertexBufferLayout layout2;
 	layout2.Push<float>(3);
-	m_VAO2->RecordVBOLayout(*m_VBO2, layout2);
+	m_VAO2.RecordVBOLayout(m_VBO2, layout2);
 
-	m_Camera = std::make_unique<Camera>(glm::vec3(0, 0, 3), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
-	m_Camera->Fov = 80;
+	m_Camera = Camera(glm::vec3(0, 0, 3), glm::vec3(0.0f, 1.0f, 0.0f), -135.0f, -20.0f);
+	m_Camera.Fov = 80;
 
-	//m_Shader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneShader1.shader");
-	//m_Shader->SetUniformBlockBinding("Matrices", 0);
+	//m_Shader = ShaderProgram>("res/shaders/CubeMapSceneShader1.shader");
+	//m_Shader.SetUniformBlockBinding("Matrices", 0);
 
-	m_SkyboxShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneSkyboxShader.shader");
-	m_SkyboxShader->SetUniformBlockBinding("Matrices", 0);
+	m_SkyboxShader = ShaderProgram("res/shaders/CubeMapSceneSkyboxShader.shader");
+	m_SkyboxShader.SetUniformBlockBinding("Matrices", 0);
 
-	m_ReflectionShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneReflectionShader.shader");
-	m_ReflectionShader->SetUniformBlockBinding("Matrices", 0);
+	m_ReflectionShader = ShaderProgram("res/shaders/CubeMapSceneReflectionShader.shader");
+	m_ReflectionShader.SetUniformBlockBinding("Matrices", 0);
 
-	m_RefractionShader = std::make_unique<ShaderProgram>("res/shaders/CubeMapSceneRefractionShader.shader");
-	m_RefractionShader->SetUniformBlockBinding("Matrices", 0);
+	m_RefractionShader = ShaderProgram("res/shaders/CubeMapSceneRefractionShader.shader");
+	m_RefractionShader.SetUniformBlockBinding("Matrices", 0);
 
 
 
@@ -208,15 +208,15 @@ void scene::CubeMapScene::DoPreviousInit()
 	paths[TOP] = "res/textures/skybox/top.jpg";
 	paths[BOTTOM] = "res/textures/skybox/bottom.jpg";
 
-	m_CubeMap = std::make_unique<CubeMap>(paths);
-	m_CubeMap->Bind(0);
+	m_CubeMap = CubeMap(paths);
+	m_CubeMap.Bind(0);
 	
-	m_Texture = std::make_unique<Texture>("res/textures/skybox/front.jpg");
-	m_Texture->Bind(1);
+	m_Texture = Texture("res/textures/skybox/front.jpg");
+	m_Texture.Bind(1);
 
-	m_UBO = std::make_unique<UniformBuffer>(2 * sizeof(glm::mat4));
-	m_UBO->BindToPoint(0);
+	m_UBO = UniformBuffer(2 * sizeof(glm::mat4));
+	m_UBO.BindToPoint(0);
 
-	glm::mat4 perspectiveMatrix = m_Camera->GetPerspectiveMatrix();
-	m_UBO->SetData(glm::value_ptr(perspectiveMatrix), sizeof(glm::mat4), 0);
+	glm::mat4 perspectiveMatrix = m_Camera.GetPerspectiveMatrix();
+	m_UBO.SetData(glm::value_ptr(perspectiveMatrix), sizeof(glm::mat4), 0);
 }

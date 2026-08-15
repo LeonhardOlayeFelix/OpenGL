@@ -27,14 +27,14 @@ namespace scene {
 	private:
 		GLFWwindow* m_Window;
 
-		std::unique_ptr<VertexArray>   m_LightVAO;
-		std::unique_ptr<VertexBuffer>  m_VBO;
-		std::unique_ptr<IndexBuffer>   m_IBO;
-		std::unique_ptr<ShaderProgram> m_ObjectShader;
-		std::unique_ptr<ShaderProgram> m_LampShader;
-		std::unique_ptr<Texture>       m_Texture;
-		std::unique_ptr<Camera>        m_Camera;
-		std::unique_ptr<Model>		   m_Model;
+		VertexArray m_LightVAO{};
+		VertexBuffer m_VBO{};
+		IndexBuffer m_IBO{};
+		ShaderProgram m_ObjectShader{};
+		ShaderProgram m_LampShader{};
+		Texture m_Texture{};
+		Camera m_Camera{};
+		Model m_Model{};
 
 		glm::vec3 m_PointLightPosition = glm::vec3(3.0f);
 		glm::vec3 m_PointLightAmbient = glm::vec3(0.1f);
