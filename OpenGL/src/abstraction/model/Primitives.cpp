@@ -46,15 +46,15 @@ std::array<float, 288> Primitives::CubePNT()
 			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0 };
 }
 
-std::array<float, 24> Primitives::NDCQuad()
+std::array<float, 30> Primitives::NDCQuad()
 {
 	return {
-		-1.0f,  1.0f,     0.0f, 1.0f,
-		-1.0f, -1.0f,     0.0f, 0.0f,
-		 1.0f, -1.0f,     1.0f, 0.0f,
+		-1.0f,  1.0f, 0.0f,     0.0f, 1.0f,
+		-1.0f, -1.0f, 0.0f,     0.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,     1.0f, 0.0f,
 
-		-1.0f,  1.0f,     0.0f, 1.0f,
-		 1.0f, -1.0f,     1.0f, 0.0f,
-		 1.0f,  1.0f,     1.0f, 1.0f
+		-1.0f,  1.0f, 0.0f,     0.0f, 1.0f,
+		 1.0f, -1.0f, 0.0f,     1.0f, 0.0f,
+		 1.0f,  1.0f, 0.0f,     1.0f, 1.0f
 	};
 }

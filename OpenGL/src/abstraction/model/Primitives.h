@@ -8,7 +8,7 @@ public:
 	Primitives() = delete;
 
 	static std::array<float, 288> CubePNT();
-	static std::array<float, 24> NDCQuad();
+	static std::array<float, 30> NDCQuad();
 
 };
 

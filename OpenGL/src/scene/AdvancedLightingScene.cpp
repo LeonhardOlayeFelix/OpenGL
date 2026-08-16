@@ -87,7 +87,9 @@ void scene::AdvancedLightingScene::OnRender()
 
 
 	m_QuadShader.SetUniform1i("u_DepthTexture", 2);
-	m_QuadShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0.70, 0.70, 0)), glm::vec3(0.25)));
+	m_QuadShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(1.35, 0.6, 0)), glm::vec3(0.375)));
+	float aspect = 1920.0f / 1080.0f;
+	m_QuadShader.SetUniformMat4f("u_Proj", glm::ortho(-aspect, aspect, -1.0f, 1.0f));
 	renderer.DrawArray(m_VAO2, m_QuadShader);
 
 	m_Camera.UpdateCameraVectors();
@@ -121,7 +123,7 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 	m_VAO.RecordVBOLayout(m_VBO, layout);
 
 	m_VBO2 = VertexBuffer(Primitives::NDCQuad());
-	VertexBufferLayout layout2{ 2, 2 };
+	VertexBufferLayout layout2{ 3, 2 };
 	m_VAO2.RecordVBOLayout(m_VBO2, layout2);
 
 	m_Camera = Camera(glm::vec3(-6.35, 5.2, -8.1), glm::vec3(0, 1, 0), 60, -26.0f);
