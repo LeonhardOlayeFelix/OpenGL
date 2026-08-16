@@ -15,8 +15,6 @@ scene::AdvancedLightingScene::AdvancedLightingScene()
 	m_ShadowMap2DShader.SetUniformBlockBinding("Matrices", 0);
 
 	m_QuadShader = ShaderProgram("res/shaders/QuadShaderOrthographic.shader");
-	m_QuadShader.SetUniform1f("u_NearPlane", 0.1);
-	m_QuadShader.SetUniform1f("u_FarPlane", 5.0);
 
 	m_ShadowMap3DFramebuffer = FrameBuffer(2048, 2048);
 	m_ShadowMap3DFramebuffer.AddAttachment(AttachmentTarget::Depth, AttachmentStorage::CubeMap);
@@ -26,9 +24,6 @@ scene::AdvancedLightingScene::AdvancedLightingScene()
 	m_ShadowMap3DShader.SetUniformBlockBinding("Matrices", 0);
 
 	m_CubeMapShader = ShaderProgram("res/shaders/QuadShader3D.shader");
-	m_CubeMapShader.SetUniform1f("u_NearPlane", 0.1);
-	m_CubeMapShader.SetUniform1f("u_FarPlane", 5.0);
-
 }
 
 scene::AdvancedLightingScene::~AdvancedLightingScene()
@@ -66,7 +61,7 @@ void scene::AdvancedLightingScene::OnRender()
 	Renderer renderer;
 	m_UBO.SetData(glm::value_ptr(m_Camera.GetViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 	m_UBO.SetData(glm::value_ptr(m_DirectionalLight.GetLightSpaceMatrix()), sizeof(glm::mat4), 2 * sizeof(glm::mat4));
-	m_UBO.SetData(m_PointLight.GetLightSpaceMatrices(1).data(), 6 * sizeof(glm::mat4), 3 * sizeof(glm::mat4));
+	m_UBO.SetData(m_PointLight.GetLightSpaceMatrices().data(), 6 * sizeof(glm::mat4), 3 * sizeof(glm::mat4));
 
 	glViewport(0, 0, 2048, 2048);
 	m_ShadowMap2DFramebuffer.Bind();
@@ -94,7 +89,7 @@ void scene::AdvancedLightingScene::OnRender()
 	m_ShadowMap3DFramebuffer.Bind();
 	renderer.Clear();
 	glCullFace(GL_FRONT); 
-	m_ShadowMap3DShader.SetUniform1f("u_FarPlane", 20);
+	m_ShadowMap3DShader.SetUniform1f("u_FarPlane", m_PointLight.Far);
 	m_ShadowMap3DShader.SetUniform3f("u_LightPos", m_PointLight.Position);
 	m_ShadowMap3DShader.SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(10, 1, 10)));
 	renderer.DrawArray(m_VAO, m_ShadowMap3DShader);
@@ -112,7 +107,6 @@ void scene::AdvancedLightingScene::OnRender()
 
 	m_Shader.SetUniform1DirectionalLight("u_DirectionalLight", m_DirectionalLight);
 	m_Shader.SetUniform1PointLight("u_PointLight", m_PointLight);
-	m_Shader.SetUniform1f("u_FarPlane", 20);
 	m_Shader.SetUniform3f("u_ViewPos", m_Camera.Position);
 	m_Shader.SetUniform1i("u_DirectionalLightShadowMap", 2);
 	m_Shader.SetUniform1i("u_DepthTexture3D", 3);

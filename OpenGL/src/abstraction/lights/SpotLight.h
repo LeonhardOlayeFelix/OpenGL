@@ -13,6 +13,8 @@ struct SpotLight
     vec3 Ambient;
     vec3 Diffuse;
     vec3 Specular;
+    float Near;
+    float Far;
     vec3 Position;
     vec3 Direction;
     float CutOff;

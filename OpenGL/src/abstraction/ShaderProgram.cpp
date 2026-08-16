@@ -177,6 +177,8 @@ void ShaderProgram::SetUniform1PointLight(const std::string& name, const PointLi
     SetUniform3f(name + ".Ambient", pointLight.Ambient);
     SetUniform3f(name + ".Diffuse", pointLight.Diffuse);
     SetUniform3f(name + ".Specular", pointLight.Specular);
+    SetUniform1f(name + ".Near", pointLight.Near);
+    SetUniform1f(name + ".Far", pointLight.Far);
     SetUniform3f(name + ".Position", pointLight.Position);
     SetUniform1f(name + ".Kc", pointLight.Kc);
     SetUniform1f(name + ".Kl", pointLight.Kl);
@@ -188,6 +190,8 @@ void ShaderProgram::SetUniform1DirectionalLight(const std::string& name, const D
     SetUniform3f(name + ".Ambient", directionalLight.Ambient);
     SetUniform3f(name + ".Diffuse", directionalLight.Diffuse);
     SetUniform3f(name + ".Specular", directionalLight.Specular);
+    SetUniform1f(name + ".Near", directionalLight.Near);
+    SetUniform1f(name + ".Far", directionalLight.Far);
     SetUniform3f(name + ".Direction", directionalLight.Direction);
 }
 
@@ -196,6 +200,8 @@ void ShaderProgram::SetUniform1SpotLight(const std::string& name, const SpotLigh
     SetUniform3f(name + ".Ambient", spotLight.Ambient);
     SetUniform3f(name + ".Diffuse", spotLight.Diffuse);
     SetUniform3f(name + ".Specular", spotLight.Specular);
+    SetUniform1f(name + ".Near", spotLight.Near);
+    SetUniform1f(name + ".Far", spotLight.Far);
     SetUniform3f(name + ".Position", spotLight.Position);
     SetUniform3f(name + ".Direction", spotLight.Direction);
     SetUniform1f(name + ".Kc", spotLight.Kc);

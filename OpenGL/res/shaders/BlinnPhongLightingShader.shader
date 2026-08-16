@@ -42,6 +42,8 @@ struct PointLight
     vec3 Ambient;
     vec3 Diffuse;
     vec3 Specular;
+    float Near;
+    float Far;
     vec3 Position;
     float Kc;
     float Kl;
@@ -52,6 +54,8 @@ struct DirectionalLight
     vec3 Ambient;
     vec3 Diffuse;
     vec3 Specular;
+    float Near;
+    float Far;
     vec3 Direction;
 };
 struct SpotLight
@@ -59,6 +63,8 @@ struct SpotLight
     vec3 Ambient;
     vec3 Diffuse;
     vec3 Specular;
+    float Near;
+    float Far;
     vec3 Position;
     vec3 Direction;
     float CutOff;
@@ -66,7 +72,6 @@ struct SpotLight
     float Kc;
     float Kl;
     float Kq;
-
 };
 struct Material 
 {
@@ -92,7 +97,6 @@ uniform vec3 u_ViewPosition;
 
 uniform sampler2D u_DirectionalLightShadowMap;
 uniform samplerCube u_DepthTexture3D;
-uniform float u_FarPlane;
 uniform vec3 u_ViewPos;
 
 in VS_OUT 
@@ -210,7 +214,7 @@ vec3 CalcPointLight(PointLight light, Material material, vec3 normal, vec3 fragP
     vec3 diffuse  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Diffuse  * max(dot(normal, lightDir), 0.0);
     vec3 specular = vec3(texture(material.texture_specular1, texCoord)) * light.Specular * pow(max(specularDot, 0.0), material.shininess);
 
-    float shadow = CalcShadow3D(fragPos, light.Position, u_FarPlane, max(0.05 * (1.0 - dot(normal, lightDir)), 0.005));;
+    float shadow = CalcShadow3D(fragPos, light.Position, light.Far, max(0.05 * (1.0 - dot(normal, lightDir)), 0.005));;
     float distance    = length(light.Position - fragPos);
     float attenuation = 1.0 / (light.Kc + light.Kl * distance + light.Kq * distance * distance);
     

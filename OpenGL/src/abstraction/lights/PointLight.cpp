@@ -1,8 +1,8 @@
 #include "PointLight.h"
 
-glm::mat4 PointLight::GetProjectionMatrix(float aspect, float near, float far)
+glm::mat4 PointLight::GetProjectionMatrix(float aspect)
 {
-   return glm::perspective(glm::radians(90.0f), aspect, near, far);
+   return glm::perspective(glm::radians(90.0f), aspect, Near, Far);
 }
 
 std::array<glm::mat4, 6> PointLight::GetViewMatrices()
