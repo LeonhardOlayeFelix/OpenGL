@@ -25,11 +25,12 @@ public:
 	CubeMap(const CubeMap&) = delete;
 	CubeMap& operator=(const CubeMap&) = delete;
 
+	static CubeMap CreateEmpty(int width, int height, GLenum internalFormat = GL_DEPTH_COMPONENT);
 	void Bind(unsigned int slot = 0) const ;
 	void Unbind(unsigned int slot) const;
 
 	inline int GetWidth() { return m_Width; }
 	inline int GetHeight() { return m_Height; }
-	inline int GetId() { return m_RendererID; }
+	inline int GetId() const { return m_RendererID; }
 };
 

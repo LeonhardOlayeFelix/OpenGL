@@ -101,15 +101,21 @@ void FrameBuffer::AddAttachment(AttachmentTarget target, AttachmentStorage stora
 
 	if (storage == AttachmentStorage::Texture) 
 	{
-		std::unique_ptr<Texture> tex = std::make_unique<Texture>(Texture::CreateEmpty(m_Width, m_Height,ToGLInternalFormat(target), m_MSAASamples));
-		GLCall(glNamedFramebufferTexture(m_RendererID, attachPoint, tex->GetId(), 0));
+		Texture tex = Texture::CreateEmpty(m_Width, m_Height,ToGLInternalFormat(target), m_MSAASamples);
+		GLCall(glNamedFramebufferTexture(m_RendererID, attachPoint, tex.GetId(), 0));
 		attachment.storage = std::move(tex);
 	}
-	else 
+	else if (storage == AttachmentStorage::RenderBuffer)
 	{
-		std::unique_ptr<RenderBuffer> rbo = std::make_unique<RenderBuffer>(m_Width, m_Height, ToGLInternalFormat(target), m_MSAASamples);
-		GLCall(glNamedFramebufferRenderbuffer(m_RendererID, attachPoint, GL_RENDERBUFFER, rbo->GetID()));
+		RenderBuffer rbo(m_Width, m_Height, ToGLInternalFormat(target), m_MSAASamples);
+		GLCall(glNamedFramebufferRenderbuffer(m_RendererID, attachPoint, GL_RENDERBUFFER, rbo.GetID()));
 		attachment.storage = std::move(rbo);
+	}
+	else if (storage == AttachmentStorage::CubeMap) 
+	{
+		CubeMap cubeMap = CubeMap::CreateEmpty(m_Width, m_Height, GL_DEPTH_COMPONENT);
+		GLCall(glNamedFramebufferTexture(m_RendererID, attachPoint, cubeMap.GetId(), 0));
+		attachment.storage = std::move(cubeMap);
 	}
 
 	if (target == AttachmentTarget::Color)
@@ -131,20 +137,30 @@ void FrameBuffer::MarkAsNoColorBuffer()
 	Unbind();
 }
 
-Texture& FrameBuffer::GetColorTexture(int colorIndex) const
+const Texture& FrameBuffer::GetColorTexture(int colorIndex) const
 {
 	for (const Attachment& a : m_Attachments) 
 		if (a.target == AttachmentTarget::Color && a.colorIndex == colorIndex)
-			if (auto* tex = std::get_if<std::unique_ptr<Texture>>(&a.storage))
-				return **tex;
+			if (auto* tex = std::get_if<Texture>(&a.storage))
+				return *tex;
 	throw std::runtime_error("Was not able to locate Color attachment for framebuffer.");
 }
 
-Texture& FrameBuffer::GetDepthTexture() const
+const Texture& FrameBuffer::GetDepthTexture() const
 {
 	for (const Attachment& a : m_Attachments)
 		if (a.target == AttachmentTarget::Depth)
-			if (auto* tex = std::get_if<std::unique_ptr<Texture>>(&a.storage))
-				return **tex;
+			if (auto* tex = std::get_if<Texture>(&a.storage))
+				return *tex;
 	throw std::runtime_error("Was not able to locate depth attachment for framebuffer.");
 }
+
+const CubeMap& FrameBuffer::GetDepthCubeMap() const
+{
+	for (const Attachment& a : m_Attachments)
+		if (a.target == AttachmentTarget::Depth)
+			if (auto* tex = std::get_if<CubeMap>(&a.storage))
+				return *tex;
+	throw std::runtime_error("Was not able to locate depth attachment for framebuffer.");
+}
+

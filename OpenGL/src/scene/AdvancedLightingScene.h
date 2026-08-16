@@ -33,16 +33,21 @@ namespace scene {
 		UniformBuffer m_UBO;
 		ShaderProgram m_Shader;
 		ShaderProgram m_QuadShader;
-		ShaderProgram m_DepthShader;
+		ShaderProgram m_WhiteCubeShader;
+		ShaderProgram m_CubeMapShader;
+		ShaderProgram m_ShadowMap2DShader;
+		ShaderProgram m_ShadowMap3DShader;
 		Camera        m_Camera;
 		Texture		  m_WoodDiffuse;
 		Texture	      m_WoodSpecular;
-		FrameBuffer   m_ShadowFramebuffer;
+		FrameBuffer   m_ShadowMap2DFramebuffer;
+		FrameBuffer   m_ShadowMap3DFramebuffer;
 		PointLight					   m_PointLight{};
 		DirectionalLight			   m_DirectionalLight{};
 		SpotLight					   m_SpotLight{};
 		float						   m_Shininess = 256;
 		bool						   m_IsBlinn = true;
+		glm::vec3					   m_CubeMapCenter = glm::vec3(-8.0, 0.0, 0.0);
 
 	private:
 		void DoPreviousInit();

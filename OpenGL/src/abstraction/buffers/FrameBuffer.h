@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "textures/Texture.h"
+#include "textures/CubeMap.h"
 #include "RenderBuffer.h"
 #include <variant>
 #include <vector>
@@ -9,7 +10,7 @@ enum class AttachmentTarget {
 	Color, Depth, Stencil, DepthStencil
 };
 enum class AttachmentStorage {
-	Texture, RenderBuffer
+	Texture, RenderBuffer, CubeMap
 };
 
 class FrameBuffer
@@ -22,7 +23,7 @@ class FrameBuffer
 		{
 			AttachmentTarget target;
 			int colorIndex; // colorIndex only matters when target == Color
-			std::variant<std::unique_ptr<Texture>, std::unique_ptr<RenderBuffer>> storage;
+			std::variant<Texture, RenderBuffer, CubeMap> storage;
 		};
 
 		std::vector<Attachment> m_Attachments{};
@@ -49,7 +50,8 @@ class FrameBuffer
 
 		void AddAttachment(AttachmentTarget target, AttachmentStorage storage, int colorIndex = 0); // colorIndex only matters when target == Color
 		void MarkAsNoColorBuffer();
-		Texture& GetColorTexture(int colorIndex = 0) const;
-		Texture& GetDepthTexture() const;
+		const Texture& GetColorTexture(int colorIndex = 0) const;
+		const Texture& GetDepthTexture() const;
+		const CubeMap& GetDepthCubeMap() const;
 };
 

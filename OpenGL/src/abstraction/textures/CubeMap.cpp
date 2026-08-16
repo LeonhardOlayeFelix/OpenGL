@@ -61,6 +61,28 @@ CubeMap& CubeMap::operator=(CubeMap&& other) noexcept
 	return *this;
 }
 
+CubeMap CubeMap::CreateEmpty(int width, int height, GLenum internalFormat)
+{
+	CubeMap cubeMap;
+	cubeMap.m_Width = width;
+	cubeMap.m_Height = height;
+
+	glGenTextures(1, &cubeMap.m_RendererID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap.m_RendererID);
+
+	for (unsigned int i = 0; i < 6; i++) 
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, cubeMap.m_Width, cubeMap.m_Height, 0, internalFormat, GL_FLOAT, NULL);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
+	return cubeMap;
+}
+
 void CubeMap::Bind(unsigned int slot) const
 {
 	

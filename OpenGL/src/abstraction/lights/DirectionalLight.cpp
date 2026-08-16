@@ -2,6 +2,7 @@
 
 glm::mat4 DirectionalLight::GetProjectionMatrix(double left, double right, double bottom, double top, double nearPlane, double farPlane)
 {
+    //return glm::perspective(glm::radians(80.0f), 1920.0f / 1080.0f, static_cast<float>(nearPlane), static_cast<float>(farPlane));
     return glm::ortho(left, right, bottom, top, nearPlane, farPlane);
 }
 

@@ -27,6 +27,6 @@ public:
 
 	inline int GetWidth() { return m_Width; }
 	inline int GetHeight() { return m_Height; }
-	inline int GetId() { return m_RendererID; }
+	inline int GetId() const { return m_RendererID; }
 };
 
