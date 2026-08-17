@@ -28,8 +28,11 @@ namespace scene {
 		 
 		VertexArray   m_VAO;
 		VertexArray   m_VAO2;
+		VertexArray   m_VAO3;
 		VertexBuffer  m_VBO;
 		VertexBuffer  m_VBO2;
+		VertexBuffer  m_VBO3;
+		IndexBuffer   m_IBO;
 		UniformBuffer m_UBO;
 		ShaderProgram m_SceneShader;
 		ShaderProgram m_QuadShader;
@@ -43,6 +46,7 @@ namespace scene {
 		Camera        m_Camera;
 		Texture		  m_WoodDiffuse;
 		Texture	      m_WoodSpecular;
+		Texture	      m_WhiteLampDiffuse;
 		PointLight					   m_PointLight{};
 		DirectionalLight			   m_DirectionalLight{};
 		SpotLight					   m_SpotLight{};

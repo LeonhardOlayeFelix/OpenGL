@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 class IndexBuffer {
 private:
 	unsigned int m_RendererID{};
@@ -6,6 +7,7 @@ private:
 public:
 	IndexBuffer() = default;
 	IndexBuffer(const unsigned int* data, unsigned int count);
+	IndexBuffer(const std::vector<unsigned int>& data) : IndexBuffer(data.data(), data.size()){};
 	~IndexBuffer();
 
 	IndexBuffer(const IndexBuffer&) = delete;

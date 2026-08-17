@@ -5,10 +5,10 @@
 scene::AdvancedLightingScene::AdvancedLightingScene()
 {
 	DoPreviousInit();
-	m_DirectionalLight = DirectionalLight(glm::vec3(0.01), glm::vec3(0.5), glm::vec3(0.1), glm::vec3(1, -1, -1));
-	m_PointLight = PointLight(glm::vec3(0.01), glm::vec3(0.5), glm::vec3(0.1), glm::vec3(0, 5, 0), 1, 0.09f, 0.1f);
+	m_DirectionalLight = DirectionalLight(glm::vec3(0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0), glm::vec3(0.428, 0.714, 10.0));
+	m_PointLight = PointLight(glm::vec3(0.03, 0.0, 0.0), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.1), glm::vec3(-2.353, 2.353, 1.765), 1, 0.09f, 0.1f);
 	m_PointLight.Far = 10;
-	m_SpotLight = SpotLight(glm::vec3(0.01), glm::vec3(0.5), glm::vec3(0.1), glm::vec3(0, 5, 0), glm::vec3(0, -1, 0), 1, 0.09f, 0.1f, 12.5, 17.5);
+	m_SpotLight = SpotLight(glm::vec3(0.0, 0.03, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.1), glm::vec3(4.412, 3.551, -2.029), glm::vec3(-1.471, -1.0, 0.0), 1, 0.09f, 0.1f, 15, 21);
 
 	m_FrameBuffer1 = FrameBuffer(2048, 2048);
 	m_FrameBuffer1.AddAttachment(AttachmentTarget::Depth, AttachmentStorage::Texture);
@@ -85,6 +85,7 @@ void scene::AdvancedLightingScene::OnRender()
 	renderer.DrawArray(m_VAO, m_DepthMapShader1);
 	m_DepthMapShader1.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 2)), glm::vec3(2)));
 	renderer.DrawArray(m_VAO, m_DepthMapShader1);
+
 	m_FrameBuffer1.GetDepthTexture().Bind(2);
 	glCullFace(GL_BACK);
 	m_FrameBuffer1.Unbind();
@@ -121,6 +122,7 @@ void scene::AdvancedLightingScene::OnRender()
 	renderer.DrawArray(m_VAO, m_DepthMapShader2);
 	m_DepthMapShader2.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 2)), glm::vec3(2)));
 	renderer.DrawArray(m_VAO, m_DepthMapShader2);
+
 	m_FrameBuffer3.GetDepthCubeMap().Bind(4);
 	glCullFace(GL_BACK);
 	m_FrameBuffer3.Unbind();
@@ -146,8 +148,12 @@ void scene::AdvancedLightingScene::OnRender()
 	m_SceneShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 2)), glm::vec3(2)));
 	renderer.DrawArray(m_VAO, m_SceneShader);
 	m_WhiteCubeShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), m_SpotLight.Position), glm::vec3(0.5)));
-	renderer.DrawArray(m_VAO, m_WhiteCubeShader);
-
+	m_WhiteCubeShader.SetUniform3f("u_Color", m_SpotLight.Diffuse);
+	renderer.DrawElements(m_VAO3, m_WhiteCubeShader);
+	m_WhiteCubeShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), m_PointLight.Position), glm::vec3(0.5)));
+	m_WhiteCubeShader.SetUniform3f("u_Color", m_PointLight.Diffuse);
+	renderer.DrawElements(m_VAO3, m_WhiteCubeShader);
+	
 	//Quad drawing
 	m_QuadShader.SetUniform1i("u_DepthTexture", 2);
 	m_QuadShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(1.5, 0.7, 0)), glm::vec3(0.2)));
@@ -182,6 +188,9 @@ void scene::AdvancedLightingScene::OnImGuiRender()
 	LightGuiDrawer::DrawObjectInspector(m_PointLight, "Point Light");
 	LightGuiDrawer::DrawObjectInspector(m_SpotLight, "Spot Light");
 
+	if (ImGui::Button("Teleport to cubemap"))
+		m_Camera.Position = m_CubeMapCenter;
+
 	ImGui::Separator();
 	ImGui::TextDisabled("Move camera: WASD");
 	ImGui::TextDisabled("Look around: JILK");
@@ -204,6 +213,12 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 	VertexBufferLayout layout2{ 3, 2 };
 	m_VAO2.RecordVBOLayout(m_VBO2, layout2);
 
+	m_VBO3 = VertexBuffer(Primitives::SpherePNT());
+	VertexBufferLayout layout3{ 3, 3, 2 };
+	m_VAO3.RecordVBOLayout(m_VBO3, layout3);
+	m_IBO = IndexBuffer(Primitives::SphereIndicies());
+	m_VAO3.RecordIndexBuffer(m_IBO);
+
 	m_SceneShader = ShaderProgram("res/shaders/BlinnPhongLightingShader.shader");
 	m_SceneShader.SetUniformBlockBinding("Matrices", 0);
 	m_WhiteCubeShader = ShaderProgram("res/shaders/WhiteCubeShader.shader");
@@ -213,4 +228,6 @@ void scene::AdvancedLightingScene::DoPreviousInit()
 	m_WoodDiffuse.Bind(0);
 	m_WoodSpecular = Texture("res/textures/White.jpg");
 	m_WoodSpecular.Bind(1);
+	m_WhiteLampDiffuse = Texture("res/textures/MinecraftLamp.png");
+	m_WhiteLampDiffuse.Bind(5);
 }
