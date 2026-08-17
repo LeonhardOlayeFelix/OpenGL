@@ -1,5 +1,6 @@
 #include "AdvancedLightingScene.h"
 #include "vendor/imgui/imgui.h"
+#include "lights/LightGuiDrawer.h"
 
 scene::AdvancedLightingScene::AdvancedLightingScene()
 {
@@ -177,23 +178,9 @@ void scene::AdvancedLightingScene::OnImGuiRender()
 	ImGui::SetNextWindowSizeConstraints(ImVec2(400.0f, 0.0f), ImVec2(FLT_MAX, FLT_MAX));
 	ImGuiIO& io = ImGui::GetIO();
 
-	if (ImGui::CollapsingHeader("Material Settings"))
-	{
-		ImGui::SliderFloat("Shininess", &m_Shininess, 1, 512);
-		ImGui::Checkbox("Use blinn", &m_IsBlinn);
-	}
-	if (ImGui::CollapsingHeader("Light Settings"))
-	{
-		ImGui::SliderFloat3("Direcitonal Light Direction", glm::value_ptr(m_DirectionalLight.Direction), -1, 1);
-		ImGui::SliderFloat3("Point Light Position", glm::value_ptr(m_PointLight.Position), -10, 10);
-		ImGui::SliderFloat3("Spot Light Position", glm::value_ptr(m_SpotLight.Position), -10, 10);
-		ImGui::SliderFloat3("Spot Light Direction", glm::value_ptr(m_SpotLight.Direction), -10, 10);
-		ImGui::SliderFloat3("CubeMap Center Position", glm::value_ptr(m_CubeMapCenter), -10, 10);
-		if (ImGui::Button("View point light depth cube map")) {
-			m_Camera.Position = m_CubeMapCenter;
-		}
-	}
-
+	LightGuiDrawer::DrawObjectInspector(m_DirectionalLight, "Directional Light");
+	LightGuiDrawer::DrawObjectInspector(m_PointLight, "Point Light");
+	LightGuiDrawer::DrawObjectInspector(m_SpotLight, "Spot Light");
 
 	ImGui::Separator();
 	ImGui::TextDisabled("Move camera: WASD");

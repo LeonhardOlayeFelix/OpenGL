@@ -180,6 +180,9 @@
     <ClCompile Include="src\abstraction\model\Primitives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\abstraction\lights\LightGuiDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\abstraction\Renderer.h">
@@ -1221,6 +1224,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\abstraction\model\Primitives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\abstraction\lights\LightGuiDrawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,7 +2,7 @@
 
 glm::mat4 SpotLight::GetProjectionMatrix()
 {
-    float fov = 2.0f * OuterCutOff;
+    float fov = 2.0f * glm::radians(OuterCutOff);
     return glm::perspective(fov, 1.0f, Near, Far);
 }
 

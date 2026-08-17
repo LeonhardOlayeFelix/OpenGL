@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\abstraction\lights\LightGuiDrawer.cpp" />
     <ClCompile Include="src\abstraction\model\Primitives.cpp" />
     <ClCompile Include="src\abstraction\materials\Material.cpp" />
     <ClCompile Include="src\abstraction\lights\DirectionalLight.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="src\abstraction\buffers\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\abstraction\lights\LightGuiDrawer.h" />
     <ClInclude Include="src\abstraction\model\Primitives.h" />
     <ClInclude Include="src\abstraction\materials\Material.h" />
     <ClInclude Include="src\abstraction\lights\DirectionalLight.h" />
