@@ -29,7 +29,7 @@ scene::AdvancedLightingScene::AdvancedLightingScene()
 	m_QuadShader = ShaderProgram("res/shaders/QuadShaderPerspective.shader");
 
 
-	m_CubeMapShader = ShaderProgram("res/shaders/QuadShader3D.shader");
+	m_CubeShader = ShaderProgram("res/shaders/QuadShader3D.shader");
 }
 
 scene::AdvancedLightingScene::~AdvancedLightingScene()
@@ -64,6 +64,8 @@ void scene::AdvancedLightingScene::OnUpdate(double deltaTime, GLFWwindow* window
 
 void scene::AdvancedLightingScene::OnRender()
 {
+	float aspect = 1920.0f / 1080.0f;
+
 	Renderer renderer;
 	m_UBO.SetData(glm::value_ptr(m_Camera.GetViewMatrix()), sizeof(glm::mat4), sizeof(glm::mat4));
 	m_UBO.SetData(glm::value_ptr(m_DirectionalLight.GetLightSpaceMatrix()), sizeof(glm::mat4), 2 * sizeof(glm::mat4));
@@ -118,8 +120,7 @@ void scene::AdvancedLightingScene::OnRender()
 	renderer.DrawArray(m_VAO, m_DepthMapShader2);
 	m_DepthMapShader2.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 2)), glm::vec3(2)));
 	renderer.DrawArray(m_VAO, m_DepthMapShader2);
-	const CubeMap& cubeMap = m_FrameBuffer3.GetDepthCubeMap();
-	cubeMap.Bind(4);
+	m_FrameBuffer3.GetDepthCubeMap().Bind(4);
 	glCullFace(GL_BACK);
 	m_FrameBuffer3.Unbind();
 	glViewport(0, 0, 1920, 1080);
@@ -146,14 +147,14 @@ void scene::AdvancedLightingScene::OnRender()
 	m_WhiteCubeShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), m_SpotLight.Position), glm::vec3(0.5)));
 	renderer.DrawArray(m_VAO, m_WhiteCubeShader);
 
-	float aspect = 1920.0f / 1080.0f;
-
+	//Quad drawing
 	m_QuadShader.SetUniform1i("u_DepthTexture", 2);
 	m_QuadShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(1.5, 0.7, 0)), glm::vec3(0.2)));
 	m_QuadShader.SetUniformMat4f("u_Proj", glm::ortho(-aspect, aspect, -1.0f, 1.0f));
 	m_QuadShader.SetUniform1i("u_Linearize", 0);
 	renderer.DrawArray(m_VAO2, m_QuadShader);
-
+	
+	//Quad drawing
 	m_QuadShader.SetUniform1i("u_DepthTexture", 3);
 	m_QuadShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(1.5, -0.6, 0)), glm::vec3(0.2)));
 	m_QuadShader.SetUniform1i("u_Linearize", 1);
@@ -161,12 +162,12 @@ void scene::AdvancedLightingScene::OnRender()
 	m_QuadShader.SetUniform1f("u_FarPlane", 10);
 	renderer.DrawArray(m_VAO2, m_QuadShader);
 
-
-	m_CubeMapShader.SetUniform1i("u_DepthTexture3D", 4);
-	m_CubeMapShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), m_CubeMapCenter), glm::vec3(3)));
-	m_CubeMapShader.SetUniformMat4f("u_Proj", m_Camera.GetPerspectiveMatrix());
-	m_CubeMapShader.SetUniformMat4f("u_View", m_Camera.GetViewMatrix());
-	renderer.DrawArray(m_VAO, m_CubeMapShader);
+	//Cube map drawing
+	m_CubeShader.SetUniform1i("u_DepthTexture3D", 4);
+	m_CubeShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), m_CubeMapCenter), glm::vec3(3)));
+	m_CubeShader.SetUniformMat4f("u_Proj", m_Camera.GetPerspectiveMatrix());
+	m_CubeShader.SetUniformMat4f("u_View", m_Camera.GetViewMatrix());
+	renderer.DrawArray(m_VAO, m_CubeShader);
 
 	m_Camera.UpdateCameraVectors();
 }

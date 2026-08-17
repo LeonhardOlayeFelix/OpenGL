@@ -34,7 +34,7 @@ namespace scene {
 		ShaderProgram m_SceneShader;
 		ShaderProgram m_QuadShader;
 		ShaderProgram m_WhiteCubeShader;
-		ShaderProgram m_CubeMapShader;
+		ShaderProgram m_CubeShader;
 		ShaderProgram m_DepthMapShader1;
 		ShaderProgram m_DepthMapShader2;
 		FrameBuffer   m_FrameBuffer1;
