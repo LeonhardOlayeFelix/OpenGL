@@ -33,5 +33,8 @@ public:
 public:
 	SpotLight() = default;
 	SpotLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, glm::vec3 position, glm::vec3 direction, float kc, float kl, float kq, float cutOff, float outerCutOff) : LightBase(ambient, diffuse, specular), Attenuated(kc, kl, kq), Positional(position), Directional(direction), CutOff(cutOff), OuterCutOff(outerCutOff) {};
+    glm::mat4 GetProjectionMatrix();
+    glm::mat4 GetViewMatrix();
+    glm::mat4 GetLightSpaceMatrix();
 };
 

@@ -207,8 +207,8 @@ void ShaderProgram::SetUniform1SpotLight(const std::string& name, const SpotLigh
     SetUniform1f(name + ".Kc", spotLight.Kc);
     SetUniform1f(name + ".Kl", spotLight.Kl);
     SetUniform1f(name + ".Kq", spotLight.Kq);
-    SetUniform1f(name + ".cutOff", glm::cos(glm::radians(spotLight.CutOff)));
-    SetUniform1f(name + ".outerCutOff", glm::cos(glm::radians(spotLight.OuterCutOff)));
+    SetUniform1f(name + ".CutOff", glm::cos(glm::radians(spotLight.CutOff)));
+    SetUniform1f(name + ".OuterCutOff", glm::cos(glm::radians(spotLight.OuterCutOff)));
 }
 
 void ShaderProgram::SetUniformBlockBinding(const std::string& name, int bindingPoint)

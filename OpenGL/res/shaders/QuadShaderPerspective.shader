@@ -24,6 +24,7 @@ layout(location = 0) out vec4 color;
 uniform sampler2D u_DepthTexture;
 uniform float u_NearPlane;
 uniform float u_FarPlane;
+uniform bool u_Linearize;
 
 in vec2 v_TexCoord;
 
@@ -36,6 +37,13 @@ float LinearizeDepth(float depth)
 void main()
 {
     float depth = texture(u_DepthTexture, v_TexCoord).r;
-    color = vec4(vec3(LinearizeDepth(depth) / u_FarPlane), 1.0);
+    if (u_Linearize)
+    {
+        color = vec4(vec3(LinearizeDepth(depth) / u_FarPlane), 1.0);
+    }
+    else
+    {
+        color = vec4(vec3(depth), 1.0);
+    }
     //color = vec4(1.0, 0.0, 0.0, 1.0);
 };

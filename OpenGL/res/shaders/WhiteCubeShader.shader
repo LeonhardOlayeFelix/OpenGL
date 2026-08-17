@@ -9,6 +9,7 @@ layout (std140) uniform Matrices
     mat4 u_View;
     mat4 u_DirectionalLightSpaceMatrix;
     mat4 u_PointLightSpaceMatrices[6];
+    mat4 u_SpotLightSpaceMatrix;
 };
 
 uniform mat4 u_Model;

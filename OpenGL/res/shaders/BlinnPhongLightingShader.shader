@@ -11,6 +11,7 @@ layout (std140) uniform Matrices
     mat4 u_View;
     mat4 u_DirectionalLightSpaceMatrix;
     mat4 u_PointLightSpaceMatrices[6];
+    mat4 u_SpotLightSpaceMatrix;
 };
 
 uniform mat4 u_Model;
@@ -20,7 +21,8 @@ out VS_OUT
     vec3 Normal;
     vec3 FragPosWorld;
     vec2 TexCoord;
-    vec4 FragPosLight;
+    vec4 FragPosLightDirectional;
+    vec4 FragPosLightSpot;
 } vs_out;
 
 void main()
@@ -29,7 +31,8 @@ void main()
     vs_out.Normal = transpose(inverse(mat3(u_Model))) * a_Normal;
     vs_out.FragPosWorld = vec3(u_Model * vec4(a_Position, 1.0));
     vs_out.TexCoord = a_TexCoord;
-    vs_out.FragPosLight = u_DirectionalLightSpaceMatrix * vec4(vs_out.FragPosWorld, 1.0);
+    vs_out.FragPosLightDirectional = u_DirectionalLightSpaceMatrix * vec4(vs_out.FragPosWorld, 1.0);
+    vs_out.FragPosLightSpot = u_SpotLightSpaceMatrix * vec4(vs_out.FragPosWorld, 1.0);
 };
 
 #shader fragment
@@ -95,40 +98,37 @@ uniform Material u_WoodMaterial;
 
 uniform vec3 u_ViewPosition;
 
-uniform sampler2D u_DirectionalLightShadowMap;
+uniform sampler2D u_DepthTexture1;
+uniform sampler2D u_DepthTexture2;
 uniform samplerCube u_DepthTexture3D;
-uniform vec3 u_ViewPos;
 
 in VS_OUT 
 {
     vec3 Normal;
     vec3 FragPosWorld;
     vec2 TexCoord;
-    vec4 FragPosLight;
+    vec4 FragPosLightDirectional;
+    vec4 FragPosLightSpot;
 } fs_in;
 
-float CalcShadow2D(vec4 fragPosLightSpace, float bias);
+float CalcShadow2D(vec4 fragPosLightSpace, float bias, sampler2D shadowMap);
 float CalcShadow3D(vec3 fragPosWorldSpace, vec3 lightPos, float farPlane, float bias);
 vec3 CalcDirectionalLight(DirectionalLight light, Material material, vec3 normal, vec3 viewDir, vec2 texCoord, vec4 fragPosLight);
 vec3 CalcPointLight(PointLight light, Material material, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoord);
-vec3 CalcSpotLight(SpotLight light, Material material, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoord);
+vec3 CalcSpotLight(SpotLight light, Material material, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoord, vec4 fragPosLight);
 
 void main()
 {
-    vec3 viewDir = normalize(u_ViewPosition - fs_in.FragPosWorld);
+   vec3 viewDir = normalize(u_ViewPosition - fs_in.FragPosWorld);
 
-    //color = vec4(CalcPointLight(u_PointLight, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord), 1.0);
-    //color += vec4(CalcPointLight(u_PointLight2, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord), 1.0);
-    //color += vec4(CalcPointLight(u_PointLight3, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord), 1.0);
-    //color += vec4(CalcPointLight(u_PointLight4, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord), 1.0);
+   color = vec4(CalcDirectionalLight(u_DirectionalLight, u_WoodMaterial, fs_in.Normal, viewDir, fs_in.TexCoord, fs_in.FragPosLightDirectional), 1.0);
+   color += vec4(CalcPointLight(u_PointLight, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord), 1.0);
+   color += vec4(CalcSpotLight(u_SpotLight, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord, fs_in.FragPosLightSpot), 1.0);
 
-    color = vec4(CalcDirectionalLight(u_DirectionalLight, u_WoodMaterial, fs_in.Normal, viewDir, fs_in.TexCoord, fs_in.FragPosLight), 1.0);
-    color += vec4(CalcPointLight(u_PointLight, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord), 1.0);
-
-    color.rgb = pow(color.rgb, vec3(1.0/2.2));
+   color.rgb = pow(color.rgb, vec3(1.0/2.2));
 };
 
-float CalcShadow2D(vec4 fragPosLightSpace, float bias)
+float CalcShadow2D(vec4 fragPosLightSpace, float bias, sampler2D shadowMap)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
@@ -138,13 +138,13 @@ float CalcShadow2D(vec4 fragPosLightSpace, float bias)
     
     float currentDepth = projCoords.z;
     float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(u_DirectionalLightShadowMap, 0);
+    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     
     for(int x = -1; x <= 1; ++x)
     {
         for(int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = texture(u_DirectionalLightShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
             shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
         }
     }
@@ -167,7 +167,7 @@ float CalcShadow3D(vec3 fragPosWorldSpace, vec3 lightPos, float farPlane, float 
     float shadow = 0.0;
     int samples = 20;
 
-    float viewDistance = length(u_ViewPos - fragPosWorldSpace);
+    float viewDistance = length(u_ViewPosition - fragPosWorldSpace);
     float diskRadius = (1.0 + (viewDistance / farPlane)) / 25.0;
 
     for (int i = 0; i < samples; ++i)
@@ -190,7 +190,7 @@ vec3 CalcDirectionalLight(DirectionalLight light, Material material, vec3 normal
     vec3 diffuse  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Diffuse  * max(dot(normal, lightDir), 0.0);
     vec3 specular = vec3(texture(material.texture_specular1, texCoord)) * light.Specular * pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    float shadow = CalcShadow2D(fragPosLightSpace, max(0.0005 * (1.0 - dot(normal, lightDir)), 0.00005));
+    float shadow = CalcShadow2D(fragPosLightSpace, max(0.0005 * (1.0 - dot(normal, lightDir)), 0.00005), u_DepthTexture1);
     return ambient + (1.0 - shadow) * (diffuse + specular);
 }
 
@@ -221,8 +221,9 @@ vec3 CalcPointLight(PointLight light, Material material, vec3 normal, vec3 fragP
     return attenuation * (ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
-vec3 CalcSpotLight(SpotLight light, Material material, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoord){
-    vec3 lightDir   = normalize(light.Position - fragPos);
+vec3 CalcSpotLight(SpotLight light, Material material, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoord, vec4 fragPosLightSpace){
+    vec3 lightDir = normalize(light.Position - fragPos);
+    normal = normalize(normal);
     vec3 reflectDir = reflect(-lightDir, normal);
 
     vec3 ambient  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Ambient;
@@ -232,10 +233,11 @@ vec3 CalcSpotLight(SpotLight light, Material material, vec3 normal, vec3 fragPos
     float distance    = length(light.Position - fragPos);
     float attenuation = 1.0 / (light.Kc + light.Kl * distance + light.Kq * distance * distance);
 
+    float shadow    = CalcShadow2D(fragPosLightSpace, max(0.0005 * (1.0 - dot(normal, lightDir)), 0.00005), u_DepthTexture2);
     float theta     = dot(lightDir, normalize(-light.Direction));
     float epsilon   = light.CutOff - light.OuterCutOff;
     float intensity = clamp((theta - light.OuterCutOff) / epsilon, 0.0, 1.0);
 
-    return ambient + attenuation * intensity * (diffuse + specular);
+    return attenuation * (ambient + intensity * (1.0 - shadow) * (diffuse + specular));
 }
 
