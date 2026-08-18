@@ -213,11 +213,10 @@ void ShaderProgram::SetUniform1SpotLight(const std::string& name, const SpotLigh
 
 void ShaderProgram::SetUniform1Material(const std::string& name, const Material& material)
 {
-    material.BindMaps();
-    SetUniform1i(name + ".DiffuseMap", material.DiffuseMap.GetBoundSlot());
-    SetUniform1i(name + ".SpecularMap", material.SpecularMap.GetBoundSlot());
-    SetUniform1i(name + ".NormalMap", material.NormalMap.GetBoundSlot());
-    SetUniform1i(name + ".EmissiveMap", material.EmissiveMap.GetBoundSlot());
+    SetUniform1i(name + ".DiffuseMap", material.DiffuseMap.GetLastBoundSlot());
+    SetUniform1i(name + ".SpecularMap", material.SpecularMap.GetLastBoundSlot());
+    SetUniform1i(name + ".NormalMap", material.NormalMap.GetLastBoundSlot());
+    SetUniform1i(name + ".EmissiveMap", material.EmissiveMap.GetLastBoundSlot());
     SetUniform1f(name + ".Shininess", material.Shininess);
     SetUniform1i(name + ".Blinn", material.Blinn);
 }

@@ -177,9 +177,9 @@ void scene::AdvancedLightingScene::RenderLightedScene()
 {
 	Renderer renderer;
 	//Depth Maps
-	m_SceneShader.SetUniform1i("u_DepthTexture1", m_FrameBuffer1.GetDepthTexture().GetBoundSlot());
-	m_SceneShader.SetUniform1i("u_DepthTexture2", m_FrameBuffer2.GetDepthTexture().GetBoundSlot());
-	m_SceneShader.SetUniform1i("u_DepthTexture3D", m_FrameBuffer3.GetDepthCubeMap().GetBoundSlot());
+	m_SceneShader.SetUniform1i("u_DepthTexture1", m_FrameBuffer1.GetDepthTexture().GetLastBoundSlot());
+	m_SceneShader.SetUniform1i("u_DepthTexture2", m_FrameBuffer2.GetDepthTexture().GetLastBoundSlot());
+	m_SceneShader.SetUniform1i("u_DepthTexture3D", m_FrameBuffer3.GetDepthCubeMap().GetLastBoundSlot());
 
 	m_SceneShader.SetUniform3f("u_ViewPosition", m_Camera.Position);
 
@@ -188,14 +188,17 @@ void scene::AdvancedLightingScene::RenderLightedScene()
 	m_SceneShader.SetUniform1SpotLight("u_SpotLight", m_SpotLight);
 
 	//Floor
-	m_SceneShader.SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(10, 1, 10)));
+	m_Material1.BindMaps();
 	m_SceneShader.SetUniform1Material("u_Material", m_Material1);
+	m_SceneShader.SetUniformMat4f("u_Model", glm::scale(glm::mat4(1), glm::vec3(10, 1, 10)));
 	renderer.DrawArray(m_VAO, m_SceneShader);
 
 	//Boxes
+	m_Material2.BindMaps();
 	m_SceneShader.SetUniform1Material("u_Material", m_Material2);
 	m_SceneShader.SetUniformMat4f("u_Model", glm::translate(glm::mat4(1), glm::vec3(0, 1, -2)));
 	renderer.DrawArray(m_VAO, m_SceneShader);
+	m_Material3.BindMaps();
 	m_SceneShader.SetUniform1Material("u_Material", m_Material3);
 	m_SceneShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 2)), glm::vec3(2)));
 	renderer.DrawArray(m_VAO, m_SceneShader);
@@ -217,14 +220,14 @@ void scene::AdvancedLightingScene::DisplayDepthMaps()
 	float aspect = 1920.0f / 1080.0f;
 	Renderer renderer;
 	//Quad drawing
-	m_QuadShader.SetUniform1i("u_DepthTexture", m_FrameBuffer1.GetDepthTexture().GetBoundSlot());
+	m_QuadShader.SetUniform1i("u_DepthTexture", m_FrameBuffer1.GetDepthTexture().GetLastBoundSlot());
 	m_QuadShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(1.5, 0.7, 0)), glm::vec3(0.2)));
 	m_QuadShader.SetUniformMat4f("u_Proj", glm::ortho(-aspect, aspect, -1.0f, 1.0f));
 	m_QuadShader.SetUniform1i("u_Linearize", 0);
 	renderer.DrawArray(m_VAO2, m_QuadShader);
 
 	//Quad drawing
-	m_QuadShader.SetUniform1i("u_DepthTexture", m_FrameBuffer2.GetDepthTexture().GetBoundSlot());
+	m_QuadShader.SetUniform1i("u_DepthTexture", m_FrameBuffer2.GetDepthTexture().GetLastBoundSlot());
 	m_QuadShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), glm::vec3(1.5, -0.6, 0)), glm::vec3(0.2)));
 	m_QuadShader.SetUniform1i("u_Linearize", 1);
 	m_QuadShader.SetUniform1f("u_NearPlane", 0.1);
@@ -232,7 +235,7 @@ void scene::AdvancedLightingScene::DisplayDepthMaps()
 	renderer.DrawArray(m_VAO2, m_QuadShader);
 
 	//Cube map drawing
-	m_CubeShader.SetUniform1i("u_DepthTexture3D", m_FrameBuffer3.GetDepthCubeMap().GetBoundSlot());
+	m_CubeShader.SetUniform1i("u_DepthTexture3D", m_FrameBuffer3.GetDepthCubeMap().GetLastBoundSlot());
 	m_CubeShader.SetUniformMat4f("u_Model", glm::scale(glm::translate(glm::mat4(1), m_CubeMapCenter), glm::vec3(3)));
 	m_CubeShader.SetUniformMat4f("u_Proj", m_Camera.GetPerspectiveMatrix());
 	m_CubeShader.SetUniformMat4f("u_View", m_Camera.GetViewMatrix());

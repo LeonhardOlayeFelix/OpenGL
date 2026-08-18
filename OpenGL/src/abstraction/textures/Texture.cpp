@@ -95,7 +95,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
 void Texture::Bind(unsigned int slot) const
 {
-	m_BoundSlot = slot;
+	m_LastBoundSlot = slot;
 	GLCall(glBindTextureUnit(slot, m_RendererID));
 }
 
