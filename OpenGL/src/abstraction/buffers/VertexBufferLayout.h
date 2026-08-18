@@ -23,11 +23,11 @@ class VertexBufferLayout
 {
 private:
 	std::vector<VertexAttribute> m_Attributes;
-	unsigned int m_Stride;
+	unsigned int m_Stride{ 0 };
 
 public:
 	VertexBufferLayout(std::initializer_list<int> nums);
-	VertexBufferLayout() : m_Stride(0) {}
+	VertexBufferLayout() = default;
 
 	template<typename T>
 	void Push(unsigned int count) {

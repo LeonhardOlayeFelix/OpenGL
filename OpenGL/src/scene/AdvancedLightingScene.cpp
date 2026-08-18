@@ -114,46 +114,7 @@ void scene::AdvancedLightingScene::OnImGuiRender()
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 }
 
-void scene::AdvancedLightingScene::DoPreviousInit()
-{
-	m_Camera = Camera(glm::vec3(-6.35, 5.2, -8.1), glm::vec3(0, 1, 0), 60, -26.0f);
 
-	m_UBO = UniformBuffer(2 * sizeof(glm::mat4));
-	m_UBO2 = UniformBuffer(8 * sizeof(glm::mat4));
-	m_UBO.BindToPoint(0);
-	m_UBO2.BindToPoint(1);
-	m_UBO.SetData(glm::value_ptr(m_Camera.GetPerspectiveMatrix()), sizeof(glm::mat4), 0);
-
-	m_VBO = VertexBuffer(Primitives::CubePNT());
-	VertexBufferLayout layout{ 3, 3, 2 };
-	m_VAO.RecordVBOLayout(m_VBO, layout);
-
-	m_VBO2 = VertexBuffer(Primitives::NDCQuad());
-	VertexBufferLayout layout2{ 3, 2 };
-	m_VAO2.RecordVBOLayout(m_VBO2, layout2);
-
-	m_VBO3 = VertexBuffer(Primitives::SpherePNT());
-	VertexBufferLayout layout3{ 3, 3, 2 };
-	m_VAO3.RecordVBOLayout(m_VBO3, layout3);
-	m_IBO = IndexBuffer(Primitives::SphereIndicies());
-	m_VAO3.RecordIndexBuffer(m_IBO);
-
-	m_SceneShader = ShaderProgram("res/shaders/BlinnPhongLightingShader.shader");
-	m_SceneShader.SetUniformBlockBinding("CameraMatrices", 0);
-	m_SceneShader.SetUniformBlockBinding("LightMatrices", 1);
-	m_LampShader = ShaderProgram("res/shaders/WhiteCubeShader.shader");
-	m_LampShader.SetUniformBlockBinding("CameraMatrices", 0);
-	m_LampShader.SetUniformBlockBinding("LightMatrices", 1);
-
-	m_Material1 = Material("res/textures/brickwall.jpg", "res/textures/White.jpg", "res/textures/brickwall_normal.jpg");
-	m_Material1.SetBindingConfig(MapBindingConfig(3, 4, 5));
-
-	m_Material2 = Material("res/textures/WoodTiles.jpg", "res/textures/White.jpg", "res/textures/brickwall_normal.jpg");
-	m_Material2.SetBindingConfig(MapBindingConfig(3, 4, 5));
-
-	m_Material3 = Material("res/textures/MinecraftLamp.png", "res/textures/White.jpg", "res/textures/brickwall_normal.jpg");
-	m_Material3.SetBindingConfig(MapBindingConfig(3, 4, 5));
-}
 
 void scene::AdvancedLightingScene::RenderDepthMaps()
 {
@@ -276,4 +237,44 @@ void scene::AdvancedLightingScene::DisplayDepthMaps()
 	m_CubeShader.SetUniformMat4f("u_Proj", m_Camera.GetPerspectiveMatrix());
 	m_CubeShader.SetUniformMat4f("u_View", m_Camera.GetViewMatrix());
 	renderer.DrawArray(m_VAO, m_CubeShader);
+}
+
+void scene::AdvancedLightingScene::DoPreviousInit()
+{
+	m_Camera = Camera(glm::vec3(-6.35, 5.2, -8.1), glm::vec3(0, 1, 0), 60, -26.0f);
+
+	m_UBO = UniformBuffer(2 * sizeof(glm::mat4));
+	m_UBO.BindToPoint(0);
+	m_UBO.SetData(glm::value_ptr(m_Camera.GetPerspectiveMatrix()), sizeof(glm::mat4), 0);
+
+	m_UBO2 = UniformBuffer(8 * sizeof(glm::mat4));
+	m_UBO2.BindToPoint(1);
+
+	m_VBO = VertexBuffer(Primitives::CubePNT());
+	m_VAO.RecordVBOLayout(m_VBO, VertexBufferLayout{ 3, 3, 2 });
+
+	m_VBO2 = VertexBuffer(Primitives::NDCQuad());
+	m_VAO2.RecordVBOLayout(m_VBO2, VertexBufferLayout{ 3, 2 });
+
+	m_VBO3 = VertexBuffer(Primitives::SpherePNT());
+	m_IBO = IndexBuffer(Primitives::SphereIndicies());
+	m_VAO3.RecordVBOLayout(m_VBO3, VertexBufferLayout{ 3, 3, 2 });
+	m_VAO3.RecordIndexBuffer(m_IBO);
+
+	m_SceneShader = ShaderProgram("res/shaders/BlinnPhongLightingShader.shader");
+	m_SceneShader.SetUniformBlockBinding("CameraMatrices", 0);
+	m_SceneShader.SetUniformBlockBinding("LightMatrices", 1);
+
+	m_LampShader = ShaderProgram("res/shaders/WhiteCubeShader.shader");
+	m_LampShader.SetUniformBlockBinding("CameraMatrices", 0);
+	m_LampShader.SetUniformBlockBinding("LightMatrices", 1);
+
+	m_Material1 = Material("res/textures/brickwall.jpg", "res/textures/White.jpg", "res/textures/brickwall_normal.jpg");
+	m_Material1.SetBindingConfig(MapBindingConfig(3, 4, 5));
+
+	m_Material2 = Material("res/textures/WoodTiles.jpg", "res/textures/White.jpg", "res/textures/brickwall_normal.jpg");
+	m_Material2.SetBindingConfig(MapBindingConfig(3, 4, 5));
+
+	m_Material3 = Material("res/textures/MinecraftLamp.png", "res/textures/White.jpg", "res/textures/brickwall_normal.jpg");
+	m_Material3.SetBindingConfig(MapBindingConfig(3, 4, 5));
 }
