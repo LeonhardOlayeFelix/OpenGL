@@ -26,6 +26,7 @@ namespace scene {
 	private:
 		GLFWwindow* m_Window;
 		 
+		Camera        m_Camera;
 		VertexArray   m_VAO;
 		VertexArray   m_VAO2;
 		VertexArray   m_VAO3;
@@ -34,27 +35,35 @@ namespace scene {
 		VertexBuffer  m_VBO3;
 		IndexBuffer   m_IBO;
 		UniformBuffer m_UBO;
+		UniformBuffer m_UBO2;
 		ShaderProgram m_SceneShader;
+		ShaderProgram m_LampShader;
 		ShaderProgram m_QuadShader;
-		ShaderProgram m_WhiteCubeShader;
 		ShaderProgram m_CubeShader;
 		ShaderProgram m_DepthMapShader1;
 		ShaderProgram m_DepthMapShader2;
 		FrameBuffer   m_FrameBuffer1;
 		FrameBuffer   m_FrameBuffer2;
 		FrameBuffer   m_FrameBuffer3;
-		Camera        m_Camera;
-		Texture		  m_WoodDiffuse;
-		Texture	      m_WoodSpecular;
-		Texture	      m_WhiteLampDiffuse;
-		PointLight					   m_PointLight{};
-		DirectionalLight			   m_DirectionalLight{};
-		SpotLight					   m_SpotLight{};
-		float						   m_Shininess = 256;
-		bool						   m_IsBlinn = true;
-		glm::vec3					   m_CubeMapCenter = glm::vec3(-8.0, 0.0, 0.0);
+		Material	  m_Material1;
+		Material	  m_Material2;
+		Material	  m_Material3;
+		PointLight		 m_PointLight{};
+		DirectionalLight m_DirectionalLight{};
+		SpotLight		 m_SpotLight{};
+		float			 m_Shininess = 256;
+		bool			 m_IsBlinn = true;
+
+
+		//ImGui constants
+		glm::vec3 m_CubeMapCenter = glm::vec3(-8.0, 0.0, 0.0);
+		bool m_DepthMapVisible = false;
 
 	private:
 		void DoPreviousInit();
+		void RenderDepthMaps();
+		void DisplayDepthMaps();
+		void RenderLightedScene();
+		void RenderLights();
 	};
 }

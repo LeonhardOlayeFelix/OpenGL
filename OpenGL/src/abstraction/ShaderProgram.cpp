@@ -211,6 +211,17 @@ void ShaderProgram::SetUniform1SpotLight(const std::string& name, const SpotLigh
     SetUniform1f(name + ".OuterCutOff", glm::cos(glm::radians(spotLight.OuterCutOff)));
 }
 
+void ShaderProgram::SetUniform1Material(const std::string& name, const Material& material)
+{
+    material.BindMaps();
+    SetUniform1i(name + ".DiffuseMap", material.DiffuseMap.GetBoundSlot());
+    SetUniform1i(name + ".SpecularMap", material.SpecularMap.GetBoundSlot());
+    SetUniform1i(name + ".NormalMap", material.NormalMap.GetBoundSlot());
+    SetUniform1i(name + ".EmissiveMap", material.EmissiveMap.GetBoundSlot());
+    SetUniform1f(name + ".Shininess", material.Shininess);
+    SetUniform1i(name + ".Blinn", material.Blinn);
+}
+
 void ShaderProgram::SetUniformBlockBinding(const std::string& name, int bindingPoint)
 {
     GLCall(glUniformBlockBinding(m_RendererID, GetUniformBlockIndex(name), bindingPoint))

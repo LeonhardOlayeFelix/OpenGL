@@ -16,14 +16,18 @@ void main()
 layout (triangles) in;
 layout (triangle_strip, max_vertices=18) out;
 
-layout (std140) uniform Matrices
+layout (std140) uniform CameraMatrices
 {
     mat4 u_Proj;
     mat4 u_View;
-    mat4 u_DirectionalLightSpaceMatrix;
-    mat4 u_PointLightSpaceMatrices[6];
 };
 
+layout (std140) uniform LightMatrices
+{
+    mat4 u_DirectionalLightSpaceMatrix;
+    mat4 u_PointLightSpaceMatrices[6];
+    mat4 u_SpotLightSpaceMatrix;
+};
 out vec4 v_FragPos;
 
 void main()

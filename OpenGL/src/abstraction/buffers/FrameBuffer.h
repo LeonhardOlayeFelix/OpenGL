@@ -39,19 +39,18 @@ class FrameBuffer
 		FrameBuffer(FrameBuffer&& other) noexcept;
 		FrameBuffer& operator=(FrameBuffer&& other) noexcept;
 
+		void AddAttachment(AttachmentTarget target, AttachmentStorage storage, int colorIndex = 0); // colorIndex only matters when target == Color
 		void Bind() const;
 		void Unbind() const;
 		bool Validate();
 		void Blit(const FrameBuffer& fbo) const;
-
-		inline unsigned int GetID() const { return m_RendererID; };
-		inline unsigned int GetWidth() const { return m_Width; };
-		inline unsigned int GetHeight() const { return m_Height; };
-
-		void AddAttachment(AttachmentTarget target, AttachmentStorage storage, int colorIndex = 0); // colorIndex only matters when target == Color
 		void MarkAsNoColorBuffer();
 		const Texture& GetColorTexture(int colorIndex = 0) const;
 		const Texture& GetDepthTexture() const;
 		const CubeMap& GetDepthCubeMap() const;
+
+		inline unsigned int GetID() const { return m_RendererID; };
+		inline unsigned int GetWidth() const { return m_Width; };
+		inline unsigned int GetHeight() const { return m_Height; };
 };
 

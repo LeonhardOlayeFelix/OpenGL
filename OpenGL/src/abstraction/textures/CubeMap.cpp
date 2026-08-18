@@ -85,7 +85,7 @@ CubeMap CubeMap::CreateEmpty(int width, int height, GLenum internalFormat)
 
 void CubeMap::Bind(unsigned int slot) const
 {
-	
+	m_BoundSlot = slot;
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID));
 }

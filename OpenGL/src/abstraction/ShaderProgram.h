@@ -5,6 +5,7 @@
 #include "lights/PointLight.h"
 #include "lights/DirectionalLight.h"
 #include "lights/SpotLight.h"
+#include "materials/Material.h"
 
 struct ShaderProgramSource {
 	std::string VertexSource;
@@ -43,6 +44,7 @@ public:
 	void SetUniform1PointLight(const std::string& name, const PointLight& pointLight);
 	void SetUniform1DirectionalLight(const std::string& name, const DirectionalLight& directionalLight);
 	void SetUniform1SpotLight(const std::string& name, const SpotLight& spotLight);
+	void SetUniform1Material(const std::string& name, const Material& material);
 	void SetUniformBlockBinding(const std::string& name, int bindingPoint);
 	void Bind() const;
 	void Unbind() const;

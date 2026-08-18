@@ -10,6 +10,7 @@ class CubeMap
 {
 private:
 	unsigned int m_RendererID{};
+	mutable unsigned int m_BoundSlot{};
 	std::array<std::string, 6> m_FilePaths{};
 	unsigned char* m_LocalBuffer{};
 	int m_Width{}, m_Height{}, m_BPP{};
@@ -31,6 +32,7 @@ public:
 
 	inline int GetWidth() { return m_Width; }
 	inline int GetHeight() { return m_Height; }
-	inline int GetId() const { return m_RendererID; }
+	inline unsigned int GetId() const { return m_RendererID; }
+	inline unsigned int GetBoundSlot() const { return m_BoundSlot; };
 };
 

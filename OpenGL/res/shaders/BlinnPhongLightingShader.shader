@@ -5,10 +5,14 @@ layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoord;
 
-layout (std140) uniform Matrices
+layout (std140) uniform CameraMatrices
 {
     mat4 u_Proj;
     mat4 u_View;
+};
+
+layout (std140) uniform LightMatrices
+{
     mat4 u_DirectionalLightSpaceMatrix;
     mat4 u_PointLightSpaceMatrices[6];
     mat4 u_SpotLightSpaceMatrix;
@@ -39,6 +43,7 @@ void main()
 #version 330 core
         
 layout(location = 0) out vec4 color;
+
 
 struct PointLight
 {
@@ -76,15 +81,14 @@ struct SpotLight
     float Kl;
     float Kq;
 };
-struct Material 
+struct Material
 {
-    sampler2D texture_diffuse1;
-    sampler2D texture_diffuse2;
-    sampler2D texture_diffuse3;
-    sampler2D texture_specular1;
-    sampler2D texture_specular2;
-    float shininess;
-    bool blinn;
+    sampler2D DiffuseMap;
+	sampler2D SpecularMap;
+	sampler2D NormalMap;
+	sampler2D EmissiveMap;
+	float Shininess;
+	bool Blinn;
 };
 
 uniform PointLight u_PointLight;
@@ -94,7 +98,7 @@ uniform PointLight u_PointLight4;
 uniform DirectionalLight u_DirectionalLight;
 uniform SpotLight u_SpotLight;
 
-uniform Material u_WoodMaterial;
+uniform Material u_Material;
 
 uniform vec3 u_ViewPosition;
 
@@ -121,9 +125,9 @@ void main()
 {
    vec3 viewDir = normalize(u_ViewPosition - fs_in.FragPosWorld);
 
-   color = vec4(CalcDirectionalLight(u_DirectionalLight, u_WoodMaterial, fs_in.Normal, viewDir, fs_in.TexCoord, fs_in.FragPosLightDirectional), 1.0);
-   color += vec4(CalcPointLight(u_PointLight, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord), 1.0);
-   color += vec4(CalcSpotLight(u_SpotLight, u_WoodMaterial, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord, fs_in.FragPosLightSpot), 1.0);
+   color = vec4(CalcDirectionalLight(u_DirectionalLight, u_Material, fs_in.Normal, viewDir, fs_in.TexCoord, fs_in.FragPosLightDirectional), 1.0);
+   color += vec4(CalcPointLight(u_PointLight, u_Material, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord), 1.0);
+   color += vec4(CalcSpotLight(u_SpotLight, u_Material, fs_in.Normal, fs_in.FragPosWorld, viewDir, fs_in.TexCoord, fs_in.FragPosLightSpot), 1.0);
 
    color.rgb = pow(color.rgb, vec3(1.0/2.2));
 };
@@ -186,9 +190,9 @@ vec3 CalcDirectionalLight(DirectionalLight light, Material material, vec3 normal
     normal = normalize(normal);
     vec3 reflectDir = reflect(-lightDir, normal);
 
-    vec3 ambient  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Ambient;
-    vec3 diffuse  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Diffuse  * max(dot(normal, lightDir), 0.0);
-    vec3 specular = vec3(texture(material.texture_specular1, texCoord)) * light.Specular * pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec3 ambient  = vec3(texture(material.DiffuseMap,  texCoord)) * light.Ambient;
+    vec3 diffuse  = vec3(texture(material.DiffuseMap,  texCoord)) * light.Diffuse  * max(dot(normal, lightDir), 0.0);
+    vec3 specular = vec3(texture(material.SpecularMap, texCoord)) * light.Specular * pow(max(dot(viewDir, reflectDir), 0.0), material.Shininess);
 
     float shadow = CalcShadow2D(fragPosLightSpace, max(0.0005 * (1.0 - dot(normal, lightDir)), 0.00005), u_DepthTexture1);
     return ambient + (1.0 - shadow) * (diffuse + specular);
@@ -199,7 +203,7 @@ vec3 CalcPointLight(PointLight light, Material material, vec3 normal, vec3 fragP
     normal = normalize(normal);
     float specularDot = 0.0;
 
-    if (material.blinn)
+    if (material.Blinn)
     {
         vec3 halfwayDir = normalize(lightDir + viewDir);
         specularDot = dot(normal, halfwayDir);
@@ -210,11 +214,11 @@ vec3 CalcPointLight(PointLight light, Material material, vec3 normal, vec3 fragP
         specularDot = dot(viewDir, reflectDir);
     }
 
-    vec3 ambient  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Ambient;
-    vec3 diffuse  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Diffuse  * max(dot(normal, lightDir), 0.0);
-    vec3 specular = vec3(texture(material.texture_specular1, texCoord)) * light.Specular * pow(max(specularDot, 0.0), material.shininess);
+    vec3 ambient  = vec3(texture(material.DiffuseMap,  texCoord)) * light.Ambient;
+    vec3 diffuse  = vec3(texture(material.DiffuseMap,  texCoord)) * light.Diffuse  * max(dot(normal, lightDir), 0.0);
+    vec3 specular = vec3(texture(material.SpecularMap, texCoord)) * light.Specular * pow(max(specularDot, 0.0), material.Shininess);
 
-    float shadow = CalcShadow3D(fragPos, light.Position, light.Far, max(0.05 * (1.0 - dot(normal, lightDir)), 0.005));;
+    float shadow = CalcShadow3D(fragPos, light.Position, light.Far, max(0.05 * (1.0 - dot(normal, lightDir)), 0.005));
     float distance    = length(light.Position - fragPos);
     float attenuation = 1.0 / (light.Kc + light.Kl * distance + light.Kq * distance * distance);
     
@@ -226,9 +230,9 @@ vec3 CalcSpotLight(SpotLight light, Material material, vec3 normal, vec3 fragPos
     normal = normalize(normal);
     vec3 reflectDir = reflect(-lightDir, normal);
 
-    vec3 ambient  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Ambient;
-    vec3 diffuse  = vec3(texture(material.texture_diffuse1,  texCoord)) * light.Diffuse  * max(dot(normal, lightDir), 0.0);
-    vec3 specular = vec3(texture(material.texture_specular1, texCoord)) * light.Specular * pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec3 ambient  = vec3(texture(material.DiffuseMap,  texCoord)) * light.Ambient;
+    vec3 diffuse  = vec3(texture(material.DiffuseMap,  texCoord)) * light.Diffuse  * max(dot(normal, lightDir), 0.0);
+    vec3 specular = vec3(texture(material.SpecularMap, texCoord)) * light.Specular * pow(max(dot(viewDir, reflectDir), 0.0), material.Shininess);
 
     float distance    = length(light.Position - fragPos);
     float attenuation = 1.0 / (light.Kc + light.Kl * distance + light.Kq * distance * distance);

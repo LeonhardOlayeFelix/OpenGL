@@ -3,15 +3,18 @@
         
 layout(location = 0) in vec3 a_Position;
 
-layout (std140) uniform Matrices
+layout (std140) uniform CameraMatrices
 {
     mat4 u_Proj;
     mat4 u_View;
+};
+
+layout (std140) uniform LightMatrices
+{
     mat4 u_DirectionalLightSpaceMatrix;
     mat4 u_PointLightSpaceMatrices[6];
     mat4 u_SpotLightSpaceMatrix;
 };
-
 uniform mat4 u_Model;
 
 void main()
