@@ -1,4 +1,4 @@
-This project is a pre-cursor to another project, for learning Computer Graphics with OpenGL. 
+This project is a pre-cursor to another project (https://github.com/LeonhardOlayeFelix/Fluid-Simulation-SPH) , for learning Computer Graphics with OpenGL. 
 Menu:
 <img width="1903" height="1020" alt="image" src="https://github.com/user-attachments/assets/1ba731ae-8dca-4822-85f7-6862d4966528" />
 <img width="957" height="563" alt="image" src="https://github.com/user-attachments/assets/1d478338-032a-47de-8b7e-2ca761a20233" />
